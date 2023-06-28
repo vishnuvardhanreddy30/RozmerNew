@@ -115,7 +115,7 @@
                         },
                         (err) => {
                             Utils.mask();
-                            Utils.log("[Logout] Failed to  logout");
+                            Utils.log("[Logout] Failed to logout");
                         },
                         onLogout
                     );

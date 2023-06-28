@@ -143,7 +143,7 @@ const Labels = {
     },
 
     details: {
-        comment_title: 'Comments',
+        comment_title: 'Collaborate',
         question_title: 'Questions',
         rating_title: 'Rating',
         take_down_post: 'Take Down Post',
