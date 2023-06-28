@@ -1,0 +1,26 @@
+:root {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 18px;
+    /* --primary-color: #6200EE; */
+    --primary-color: #0387B7;
+    --primary-color-alternate: #03CD80;
+    --primary-color-alternate-2: #1A9B97;
+    --text-color: #000000;
+    --white-color: #FFFFFF;
+    --btn-background: #1A9B97;
+    --btn-color: #FFFFFF;
+    --font-color: #666666;
+    --body-bg-color: #EDF1F4;
+    --link-font-color: #5EA7CB;
+    --green-shade-1: #7bdcb5;
+    --green-shade-2: #00d084;
+    --blue-shade-1: #8ed1fc;
+    --blue-shade-2: #0693e3;
+    --required: #ff0000;
+    --border-nav: #e3e5e9;
+    --nav-icon-color: #9fa2a0;
+    --nav-menu-selected-bg: #f4f8fa;
+    --list-item-border: #ede9e9;
+    --close-icon-color: #666;
+}

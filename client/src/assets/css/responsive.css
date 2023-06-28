@@ -1,0 +1,52 @@
+@media screen and (max-width: 800px) {
+    .login-left {
+        display: none;
+    }
+
+    .login-right {
+        max-width: 100%;
+    }
+}
+
+.x-mobile.x-landscape .mob-pub-header {
+    flex-direction: row;
+}
+
+.x-mobile.x-landscape .mob-pub-header>* {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.x-mobile.x-portrait .msg-body .msg-body-inner {
+    max-width: 95%;
+}
+
+.x-mobile.x-landscape .msg-body-text .coll-body {
+    max-height: 60vh;
+}
+
+.x-mobile .collaborate-cont {
+    padding: 0;
+}
+
+/* Global css for feed design which utlises in FeedList and MyPosts ends here */
+
+@media only screen and (min-width: 600px) {
+    .search-feed input {
+        border: none;
+        outline: none;
+        color: var(--font-color);
+        background-color: var(--white-color);
+    }
+
+    .search-feed input::placeholder {
+        color: var(--nav-icon-color);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .author-details {
+        padding-left: 6%;
+        width: 80%;
+    }
+}

@@ -1,0 +1,688 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    color: var(--font-color);
+    background-color: var(--body-bg-color);
+    overflow: hidden;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.theme-bg {
+    background-color: var(--primary-color-alternate-2);
+}
+
+.title {
+    color: var(--white-color);
+}
+
+.field-container {
+    min-width: 200px;
+}
+
+.field-container input {
+    padding: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #666666;
+    background-color: transparent;
+    border-radius: 4px;
+    min-width: 250px;
+}
+
+.field-label {
+    font-size: 0.8rem;
+    padding: 0.5rem 0;
+    font-weight: 500;
+}
+
+.flex-dir-left .field-label {
+    padding: 0.5rem 1rem 0.5rem 0;
+}
+
+.flex-cont {
+    display: flex;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.flex-vh {
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-dir-column {
+    flex-direction: column;
+}
+
+.margin-right-to-child-15>* {
+    margin-right: 15px;
+}
+
+.margin-bottom-to-child-15>* {
+    margin-bottom: 15px;
+}
+
+.bg-img {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.theme-bg .btn-container .btn-el {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* .btn-container {
+    width: 100%; 
+}
+ 
+.btn-container .btn-el {
+    width: 100%;
+} */
+
+/* .btn-container .btn-el .btn-icon {
+    color: var(--primary-color);
+} */
+
+.wh-100-percent {
+    width: 100%;
+    height: 100%;
+}
+
+.w-100-percent {
+    width: 100%;
+}
+
+.shadow {
+    border-radius: 48px;
+    background: var(--white-color);
+    box-shadow: rgb(170, 170, 170) 23px 23px 46px 0px,
+        rgb(255, 255, 255) -23px -23px 46px 0px;
+}
+
+.p3 {
+    padding: 3rem;
+}
+
+.pb-1 {
+    padding-bottom: 1rem;
+}
+
+.pl-1 {
+    padding-left: 0.6rem;
+}
+
+.register-link {
+    color: var(--link-font-color);
+    cursor: pointer;
+}
+
+.sub-logo {
+    width: 12rem;
+}
+
+.login-right {
+    max-width: 40%;
+    overflow: auto;
+}
+
+.login-items {
+    margin: auto;
+}
+
+.txt-center {
+    text-align: center;
+}
+
+.txt-right {
+    text-align: right;
+}
+
+.flex-mobile {
+    height: 66%;
+    flex: 1;
+}
+
+.x-mobile .flex-mobile {
+    overflow: auto;
+}
+
+.menu-selected {
+    background-color: var(--nav-menu-selected-bg);
+    color: var(--blue-shade-2);
+}
+
+.menu-selected .menu-item-icon {
+    color: var(--blue-shade-2) !important;
+}
+
+.bg-gradient {
+    background: linear-gradient(-45deg, var(--green-shade-1), var(--green-shade-2), var(--blue-shade-1), var(--blue-shade-2));
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+    height: 100vh;
+}
+
+.req-lbl {
+    color: var(--required);
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 25%;
+    }
+
+    33% {
+        background-position: 0% 50%;
+    }
+
+    66% {
+        background-position: 100% 75%;
+    }
+
+    100% {
+        background-position: 0% 25%;
+    }
+}
+
+.bg-gradient .login-title-cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: var(--white-color);
+    font-size: 3rem;
+    text-align: center;
+    padding: 0 10%;
+}
+
+.ke-powered-by {
+    display: none;
+}
+
+.register-text {
+    font-size: 0.8rem;
+}
+
+.register-link {
+    color: var(--btn-background);
+    text-decoration: underline;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.header-logo {
+    width: 7rem;
+}
+
+.msg-body .msg-body-inner {
+    background-color: var(--white-color);
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 0.3rem;
+    z-index: 1;
+    min-width: 300px;
+    max-width: 600px;
+    max-height: 95Vh;
+}
+
+.msg-body .msg-body-inner .toolbar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background-color: var(--white-color);
+    border-top-left-radius: calc(0.3rem - 1px);
+    border-top-right-radius: calc(0.3rem - 1px);
+}
+
+.msg-body .msg-body-inner .toolbar .title {
+    font-size: 1rem;
+    color: var(--font-color);
+}
+
+.msg-body .msg-body-inner .toolbar,
+.msg-body .msg-body-inner .msg-body-text {
+    border-bottom: 1px solid var(--border-nav);
+}
+
+.msg-body-text {
+    padding: 1.3rem;
+    min-height: 3rem;
+    font-size: 0.9rem;
+    overflow: hidden;
+    max-height: 80vh;
+}
+
+.msg-body-text .coll-body {
+    width: 100%;  
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.msg-body-text .replies {
+    text-align: right;
+    font-size: 0.8rem;
+    border-radius: 5px;
+}
+.coll-quest {
+    padding: 0 20px;
+}
+
+.msg-body-text .replies .reply-item {
+    background-color: var(--body-bg-color);
+    padding: 2px 25px;
+}
+
+.msg-body-text .replies .reply-item:not(:first-child) {
+    margin-top: 10px;
+}
+
+.btn-container .btn-el {
+    box-shadow: none;
+}
+
+
+/* Global css for feed design which utlises in FeedList and MyPosts */
+.virtual-list-item {
+    background: var(--nav-menu-selected-bg) none repeat scroll 0 0;
+    border: 1px solid var(--list-item-border);
+    border-radius: 5px;
+    height: 92%;
+    margin: 0.4rem auto;
+    padding: 0 2% 2% 2%;
+}
+
+.feed-info {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    margin: 6px 0;
+}
+
+.feed-info figure {
+    display: inline-block;
+    margin: 0;
+    vertical-align: middle;
+    width: 6%;
+}
+
+.author-details {
+    display: inline-block;
+    padding-left: 10px;
+    vertical-align: middle;
+    width: 90%;
+}
+
+.author-name {
+    float: left;
+    font-weight: 500;
+    width: 100%;
+    font-size: 14.5px;
+    text-decoration: none;
+}
+
+.published-details {
+    color: var(--nav-icon-color);
+    float: left;
+    font-size: 12px;
+    text-transform: capitalize;
+    width: 100%;
+}
+
+.feed-thumbnail {
+    height: calc(100% - 80px);
+    background-color: #ffffff;
+    background-size: contain;
+    background-position: center;
+}
+
+.feed-list {
+    height: 100%;
+    width: 100%;
+    /* overflow-x: auto; */
+}
+
+.thumb-det-cont {
+    padding: 4px;
+}
+
+.thumb-det-cont .thumb-title {
+    font-size: 1rem;
+    padding: 4px 0;
+}
+
+.thumb-det-cont .thumb-title b {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.overflow-y {
+    overflow-y: auto;
+}
+
+.comments-field .field-label {
+    display: none;
+}
+
+.comments-btn.btn-el {
+    padding: 6px 12px;
+}
+
+.qtn-mdle-auth-name {
+    float: left;
+    font-weight: 500;
+    width: 100%;
+    font-size: 12px;
+    font-style: italic;
+    text-decoration: none;
+}
+
+.qtn-auth-cont {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    margin-top: 14px;
+}
+
+.qtn-mdle-auth-details {
+    display: inline-block;
+    padding-left: 0px;
+    vertical-align: middle;
+    width: 99%;
+    vertical-align: top;
+    margin-right: 1%;
+}
+
+.question-text {
+    padding: 4px;
+    font-size: 1em;
+    color: var(--text-color);
+    line-height: 1.3;
+    width: 80%;
+    display: inline-block;
+}
+
+.reply-text {
+    font-size: 1em;
+    color: var(--font-color);
+    line-height: 1.3;
+}
+
+.comments-item,
+.question-item {
+    margin: 10px 0;
+    padding: 5px 10px 0 10px;
+    line-height: 16px;
+    font-size: 14px;
+    background: var(--white-color) none repeat scroll 0 0;
+    border: 1px solid var(--list-item-border);
+    border-radius: 5px;
+    position: relative;
+}
+
+.rate-btn,
+.collab-btn,
+.delete-btn,
+.ans-dlt-btn {
+    display: inline-block;
+    color: var(--required);
+    font-size: 1rem;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.delete-btn {
+    right: 0.5rem;
+    top: 10px;
+}
+
+.ans-dlt-btn {
+    right: 1rem;
+}
+
+.collab-btn {
+    right: 1.6rem;
+    top: 10px;
+    width: 30px;
+    color: var(--primary-color);
+}
+
+.rate-btn {
+    right: 3.2rem;
+    top: 10px;
+    width: 22px;
+    color: var(--primary-color);
+}
+
+.animate-bg {
+    background: #DCDCDC; 
+    animation: color 2s infinite linear;
+}
+.collaborated-content {
+    text-decoration: underline;
+    color: blue;
+    cursor: pointer;
+}
+
+.tooltip[data-qtip]:hover::after {
+    content: attr(data-qtip);
+    position: absolute;
+    color: var(--font-color);
+    font-size: 0.8rem;
+    padding: 8px;
+    min-width: 130px;
+    background-color: var(--white-color);
+    top: -35px;
+    right: 0;
+    border-radius: 10px;
+}
+
+.mob-side-menu {
+    width: 100%;
+    background-color: var(--body-bg-color);
+    overflow: hidden;
+    z-index: 1;
+    max-height: 64px;
+}
+
+.menu-item {
+    padding: 0.7rem;
+    align-items: center;
+    cursor: pointer;
+}
+
+.menu-item-icon {
+    color: var(--nav-icon-color);
+    font-size: 1.5rem;
+}
+
+.menu-item-text {
+    font-size: 0.57rem;
+}
+
+.preview-btn.btn-el{
+    padding: 4px;
+}
+
+
+.coll-quest-auth,
+.reply-item-auth {
+    text-align: right;
+    font-size: 0.7rem;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1rem;
+}
+
+/* Slider style container */
+
+.slider {
+    -webkit-appearance: none;
+    width: 95%;
+    height: 7px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
+    border-radius: 0.25rem;
+    margin-top: 20px;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.slider-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+}
+
+.slider-values span {
+    font-size: 0.8rem;
+ }
+
+ /* Modal styles */
+ /* The Modal (background) */
+ .modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(143,143,143); /* Fallback color */
+    background-color: rgba(143,143,143,0.6); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 8px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.rating-container {
+    margin: 20px auto;
+}
+
+/* to hide trigger icons from number field */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+@keyframes color {
+    0%   { background: #E0E0E0; }
+    20%  { background: #E0E0E0; }
+    40%  { background: #F0F0F0; }
+    60%  { background: #F5F5F5; }
+    80%  { background: #F8F8F8; }
+    100% { background: #FFFFFF; }
+}
+
+.toggle-side-nav-btn {
+    color: #FFFFFF;
+    cursor: pointer;
+    position: absolute;
+    top: 64px;
+    font-size: 34px;
+    z-index: 1;
+    background-color: var(--primary-color-alternate-2);
+    border-radius: 50%;
+    left: 230px;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 60%);
+    transition: all 0.7s ease-in-out;
+    max-width: 64px;
+}
+
+/* to hide/show side menu */
+.side-menu {
+    opacity: 1;
+    display: block;
+}
+
+.side-menu.toggle-menu {
+    opacity: 0;
+    display:none;
+}
+
+.kothing-editor .ke-resizing-bar .ke-navigation,
+.kothing-editor .ke-resizing-bar .ke-char-counter-wrapper {
+    opacity: 0;
+}
+
+@media only screen and  (max-device-width:768px)  {
+    .rating-container {
+        margin: 20px 10%;
+        width: 80%;
+    }
+
+    .virtual-list-item-body {
+        max-width: 94% !important;
+        padding: 0 3%;
+    }
+
+    .comments,
+    .questions {
+        width: 95%;
+        margin: auto;
+        overflow-x: hidden;
+        max-height: 57vh;
+    }
+}
