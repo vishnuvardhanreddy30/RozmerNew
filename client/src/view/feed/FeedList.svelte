@@ -16,7 +16,7 @@
     import Boot from "../../util/Boot";
 
     let api = urlConst.get_all_post,
-        itemSize = 350, // list item height
+        itemSize = 130, // list item height
         page = 1,
         listHeight = 0,
         list = [],
@@ -155,18 +155,6 @@
                 on:click={onItemClick}
             >
                 <div class="virtual-list-item">
-                    <div class="thumb-det-cont">
-                        <div class="thumb-title">
-                            <b>{list[index].title}</b>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-img feed-thumbnail"
-                        style="background-image: url({list[index].imageName
-                            ? urlConst.get_thumbnail_image +
-                              list[index].imageName
-                            : no_image});"
-                    />
                     <div class="feed-info">
                         <figure>
                             <img
@@ -178,22 +166,34 @@
                         </figure>
                         <div class="author-details">
                             <span class="author-name"
-                                >{list[index].user &&
+                                >Written by {list[index].user &&
                                     list[index].user.firstName}
                                 {list[index].user &&
                                     list[index].user.lastName}</span
                             >
-                            <span class="published-details"
-                                >{Labels.profile.published}: {TIME_SINCE(
+                            <span class="published-details ml-2"
+                                > | {Labels.profile.published} {TIME_SINCE(
                                     list[index].addedDate
                                 )}</span
                             >
                         </div>
                     </div>
+                    <div class="thumb-det-cont">
+                        <div class="thumb-title">
+                            <b>{list[index].title}</b>
+                        </div>
+                    </div>
+                    <!-- <div
+                        class="bg-img feed-thumbnail"
+                        style="background-image: url({list[index].imageName
+                            ? urlConst.get_thumbnail_image +
+                              list[index].imageName
+                            : no_image});"
+                    /> -->
                 </div>
             </div>
 
-            <div slot="footer">
+            <div slot="footer" class="footer">
                 <InfiniteLoading
                     on:infinite={infiniteHandler}
                     identifier={infiniteId}
@@ -204,11 +204,11 @@
     </div>
 </div>
 
-{#if Boot.isDesktop()}
+<!-- {#if Boot.isDesktop()}
     <div class="fab-btn flex-cont flex-vh tooltip" data-qtip="{Labels.tip.publish_fab}" on:click={onFabClick}>
         <span class="material-icons">add</span>
     </div>
-{/if}
+{/if} -->
 {#if showDetails}
     {#if Boot.isDesktop()}
         <FeedDetails {postId} on:hidedetails={onHideDetails} on:hidedetailpopup={hideDetailsPopup}/>
@@ -222,16 +222,21 @@
         flex-grow: 1;
     }
     .list :global(.virtual-list-wrapper) {
-        overflow: visible;
+        /* overflow: visible; */
         white-space: nowrap;
         /* max-width: 600px; */
         overflow-x: hidden;
     }
+    .footer{
+        padding-bottom: 2%;
+    }
     .virtual-list-item-body {
-        max-width: 94%;
+        /* max-width: 96%; */
         cursor: pointer;
-        max-width: 600px;
-        left: auto !important;
+        /* max-width: 800px; */
+        /* left: auto !important; */
+        /* padding-left: 1rem; */
+        /* margin-top: 1rem; */
     }
 
     .fab-btn {

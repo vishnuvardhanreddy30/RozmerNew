@@ -13,6 +13,7 @@
     export let labelSeperator = "";
     export let labelWidth = 100;
     export let value = "";
+    export let placeholder = "";
 
     let cmpId = "passfield-" + ++id;
 
@@ -23,27 +24,52 @@
             dispatch("enter", value);
         }
     }
-</script>
+    let showPassword = false;
 
-<div class="field-container text-field flex-cont flex-dir-column">
-    <label class="field-label" for={cmpId} width="{labelWidth}px"
+    function togglePasswordVisibility() {
+        showPassword = !showPassword;
+    }
+</script>
+<div class="email-container margin-top-20">
+<!-- <div class="field-container text-field flex-cont flex-dir-column"> -->
+    <!-- <label class="field-label" for={cmpId} width="{labelWidth}px"
         >{label}
         {#if required}
             <span class="req-lbl">*</span>
         {/if}
         {labelSeperator}</label
-    >
-
+    > -->
+    <span>
+        <i class="fa fa-lock" style="color: #1a9b97;"></i>
+    </span>
+    {#if showPassword}
     <input
-        type="password"
+        type="text"
         id={cmpId}
         {name}
         {required}
+        {placeholder}
         minlength={minLength}
         maxlength={maxLength}
         bind:value
         on:keydown={onkeydown}
     />
+{:else}
+    <input
+        type="password"
+        id={cmpId}
+        {name}
+        {required}
+        {placeholder}
+        minlength={minLength}
+        maxlength={maxLength}
+        bind:value
+        on:keydown={onkeydown}
+    />
+{/if}
+    <span>
+        <i class="fa" class:fa-eye={showPassword} class:fa-eye-slash={!showPassword} title="Toggle password visibility" style="color: #1a9b97;" on:click={togglePasswordVisibility}></i>
+    </span>
 </div>
 
 <style>

@@ -26,25 +26,26 @@
 <div class="msg wh-100-percent">
     <div class="msg-mask wh-100-percent" />
     <div class="flex-cont flex-vh msg-body flex-dir-column">
-        <div class="msg-body-inner">
-            <Toolbar cls="theme-bg">
-                <div class="title pl-1" slot="left">{title}</div>
-                <!-- <Button text={confirmText} slot="right" /> -->
-            </Toolbar>
+        <div class="msg-body-inner border-radius-10">
+            <div class="text-center p-2 border-radius-10">
+                <div class="title pl-1 mx-auto text-dark font-weight-bold">{title}</div>
+            </div>
             <div class="msg-body-text flex-cont flex-vh">
                 {message}
             </div>
-            <Toolbar ui="plain">
-                <div slot="right" class="flex-cont">
+            <Toolbar ui="plain" cls="border-radius-10">
+                <div slot="right" class="flex-cont rounded">
                     <Button
                         text={cancelText}
                         slot="right"
+                        cls="border-radius-10 col-10 mx-auto"
                         ui="cancel"
                         on:click={onCancelClick}
                     />
                     <Button
                         text={confirmText}
                         slot="right"
+                        cls="border-radius-10 col-10 mx-auto"
                         on:click={onOkClick}
                     />
                 </div>

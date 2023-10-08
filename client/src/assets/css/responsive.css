@@ -5,9 +5,28 @@
 
     .login-right {
         max-width: 100%;
+        margin-right: 0;
+    }
+    .logo-hidden{
+        display: block;
+    }
+    .sub-logo{
+        margin: auto;
+        margin-bottom: 30px;
+    }
+     /* .w-70-percent{
+        width: 100%;
+    }
+    .d-md-none{
+        display: none;
+    } */
+}
+@media screen and (min-width: 800px) and (max-width: 1000px) {
+    .login-right {
+        max-width: 40%;
+        margin-right: 0;
     }
 }
-
 .x-mobile.x-landscape .mob-pub-header {
     flex-direction: row;
 }

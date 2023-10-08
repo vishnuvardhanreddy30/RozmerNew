@@ -64,14 +64,15 @@
     transition:fly={{ x: window.innerWidth, duration: 500 }}
 >
     <div class="wh-100-percent flex-1 flex-cont flex-vh">
-        <div class="flex-1 wh-100-percent bg-gradient login-left">
+        <div class="flex-1 wh-100-percent login-left">
+            <img src={logo} alt="" class="sub-logo" />
             <!-- <div class="login-title-cont">
                 {Labels.reset.flash_msg_confirm}
             </div> -->
         </div>
-        <div class="login-right flex-1 flex-cont flex-vh">
-            <div class="margin-bottom-to-child-15 p3 login-items">
-                <img src={logo} alt="" class="sub-logo" />
+        <div class="login-right flex-1 flex-cont flex-vh bg-standard">
+            <div class="margin-bottom-to-child-15 p2 login-items">
+                <img src={logo} alt="" class="sub-logo logo-hidden" />
                 <div class="flex-cont flex-vh wh-100-percent flex-dir-column">
                     <div class="margin-bottom-to-child-15 p3">
                         <PasswordField

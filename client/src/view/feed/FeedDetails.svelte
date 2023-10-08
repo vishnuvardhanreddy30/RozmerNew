@@ -183,9 +183,12 @@
 
 <div
     class="feed-details wh-100-percent"
-    transition:fly={{ x: window.innerWidth, duration: 500 }}
 >
-    <Toolbar cls="theme-bg">
+<!-- <div
+    class="feed-details wh-100-percent"
+    transition:fly={{ x: window.innerWidth, duration: 500 }}
+> -->
+    <!-- <Toolbar cls="theme-bg">
         <div slot="left" class="title">
             <img
                 src={logo}
@@ -204,14 +207,22 @@
                 />
             {/if}
         </div>
-    </Toolbar>
+    </Toolbar> -->
 
     <div class="flex-cont">
         <div class="flex-cont flex-dir-column feed-details-body flex-1">
-            <div class="breadcrumb-cont">
+            <div class="breadcrumb-cont d-flex justify-content-between">
                 <button on:click={onBack}>
                     <i class="material-icons small">chevron_left</i> {Labels.dashboard.back}
                 </button>
+                {#if showEditPublishBtn}
+                    <Button
+                        iconCls="material-icons"
+                        iconText="edit"
+                        cls="edit-article-btn"
+                        on:click={onEdit}
+                    />
+                {/if}
                 <!-- / -->
                 <!-- <span class="breadcrumb-thumb-title">{detail.title}</span> -->
             </div>
@@ -254,7 +265,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        background-color: #fff;
+        /* background-color: #fff; */
+        background-color: var(--body-bg-color);
         z-index: 2;
     }
 

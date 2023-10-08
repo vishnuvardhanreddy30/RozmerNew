@@ -261,7 +261,7 @@
                 on:click={onRating}
             >
                 <span class="material-icons menu-item-icon">thumbs_up_down</span>
-                <span class="menu-item-text">Ratings</span>
+                <span class="menu-item-text">Rating</span>
             </div>
         {/if}
     </div>

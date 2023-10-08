@@ -24,7 +24,7 @@
         },*/
         {
             text: Labels.menu.publish,
-            icon: "publish",
+            icon: "edit_square",
             action: "publish",
         },
         {
@@ -36,13 +36,14 @@
             text: Labels.menu.profile,
             icon: "account_circle",
             action: "account",
-        },
+        }
     ];
 
     export let selected;
 
     function onMenuItemClick(e) {
         let idx = +e.currentTarget.getAttribute("data-index");
+        
 
         dispatch("showview", {
             view: menuItems[idx].action,
@@ -51,13 +52,14 @@
 
     function setSelection() {
         let items = document.querySelectorAll("[item-action]");
+        console.log("items list : ", items)
 
         for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("menu-selected");
         }
 
         let item = document.querySelector(`[item-action=${selected}]`);
-
+        console.log("selected item : ", item)
         if (!Utils.isEmpty(item)) {
             item.classList.add("menu-selected");
         }
@@ -88,7 +90,7 @@
     <div class="flex-cont">
         {#each menuItems as item, idx}
             <div
-                class="menu-item flex-cont flex-dir-column flex-1 {idx === 0
+                class="menu-item flex-cont flex-dir-column flex-1 menu-selected {idx === 0
                     ? 'menu-selected'
                     : ''}"
                 data-index={idx}

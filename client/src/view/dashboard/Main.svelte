@@ -11,6 +11,7 @@
     import MobileMenu from "./MobileMenu.svelte";
     import Collaborate from "../publish/Collaborate.svelte";
     import MyPosts from "../profile/MyPosts.svelte";
+    import FollowTopics from "../follow/Topics.svelte"
     import Boot from "../../util/Boot";
     import urlConst from "../../const/Url";
     import Request from "../../util/Request";
@@ -26,6 +27,7 @@
     let activeView = FeedList; //isMobile ? MobileFeedList : FeedList;
 
     let showSideMenu = false;
+    let hideFollowersData = false;
 
     let selected;
     let showSearch = false;
@@ -44,6 +46,12 @@
 
         if(activeViewRef.onRouteChange) {
             activeViewRef.onRouteChange(data);
+            console.log("onroute changes : ", data)
+            if(data.params.pid ){
+                hideFollowersData = true
+            }else{
+                hideFollowersData = false
+            }
         }
     }
 
@@ -167,20 +175,32 @@
 </script>
 
 <svelte:window on:resize={onViewResize} />
-<MainHeader {showLogout} {showSearch} on:searchpost={onSearchPost}/>
+<MainHeader on:showview={onActivateView} {selected} {showLogout} {showSearch} on:searchpost={onSearchPost}/>
 
+<div class="d-flex col-12 col-md-11 mx-auto mt-3">
 <div
-    class="flex-cont wh-100-percent"
+    class="flex-cont col-12 col-lg-9 pl-0 pr-0 h-100-percent {hideFollowersData ? 'col-lg-12' : 'col-lg-9'}"
     bind:this={wrapperEl}
     class:flex-dir-column={!Boot.isDesktop()}
     class:flex-mobile={!Boot.isDesktop()}
 >
-    {#if showSideMenu}
+    <!-- {#if showSideMenu}
         <SideMenu on:showview={onActivateView} {selected} />
-    {/if}
+    {/if} -->
 
     <svelte:component this={activeView} bind:this={activeViewRef} />
 </div>
-{#if !Boot.isDesktop()}
-    <MobileMenu on:showview={onActivateView} {selected} />
+{#if !hideFollowersData}
+<div
+    class="flex-cont col-lg-3 h-100-percent d-none d-lg-block"
+    bind:this={wrapperEl}
+    class:flex-dir-column={!Boot.isDesktop()}
+    class:flex-mobile={!Boot.isDesktop()}
+>
+    <FollowTopics />
+</div>
 {/if}
+</div>
+<div class="d-block d-lg-none">
+    <MobileMenu on:showview={onActivateView} {selected} />
+</div>

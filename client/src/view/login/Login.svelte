@@ -3,6 +3,8 @@
     import Utils from "../../util/Utils";
 
     import TextField from "../../widget/fields/TextField.svelte";
+    import EmailField from "../../widget/fields/EmailField.svelte";
+    import CheckBox from "../../widget/fields/CheckBox.svelte";
     import PasswordField from "../../widget/fields/PasswordField.svelte";
     import Toolbar from "../../widget/toolbar/Toolbar.svelte";
     import Button from "../../widget/button/Button.svelte";
@@ -69,27 +71,50 @@
 </script>
 
 <div class="login-cont flex-cont wh-100-percent">
-    <div class="login-left bg-gradient flex-1">
+    <div class="login-left flex-1">
+        <img src={logo} alt="" class="sub-logo" />
         <!-- <div class="login-title-cont">
             {Labels.login.flash_msg}
         </div> -->
     </div>
 
-    <div class="login-right flex-1 flex-cont flex-vh">
-        <div class="margin-bottom-to-child-15 p3 login-items">
-            <img src={logo} alt="" class="sub-logo" />
-            <TextField
+    <div class="login-right flex-1 flex-cont flex-vh bg-standard">
+        <div class="margin-bottom-to-child-15 p2 login-items">
+            <img src={logo} alt="" class="sub-logo logo-hidden" />
+            <!-- <TextField
                 label={Labels.login.login_user}
                 {required}
+                bind:value={name}
+            /> -->
+            <p class="heading">USER LOG IN</p>
+            <EmailField 
+                label={Labels.login.login_user}
+                {required} 
+                placeholder="User name or Email*"
                 bind:value={name}
             />
             <PasswordField
                 label={Labels.login.password}
+                placeholder="Password*"
                 {required}
                 bind:value={pass}
                 on:enter={onLogin}
             />
-
+            <div class="flex-cont space-between margin-top-20">
+                <CheckBox label={Labels.login.remeber}/>
+                <div class="">
+                    <div class="text-right">
+                        <span class="register-link color-white" on:click={onResetPassword}
+                            >{Labels.login.forgetPassword}</span
+                        >
+                    </div>
+                    <div class="text-right">
+                        <span class="register-link" on:click={onRegister}
+                            >{Labels.login.newUser}</span
+                        >
+                    </div>
+                </div>
+            </div>
             <Toolbar ui="plain">
                 <Button
                     text={Labels.login.login}
@@ -98,18 +123,7 @@
                     {fullWidth}
                 />
             </Toolbar>
-
-            <div class="txt-center">
-                <span class="register-link" on:click={onRegister}
-                    >{Labels.login.newUser}</span
-                >
-            </div>
-
-            <div class="txt-center">
-                <span class="register-link" on:click={onResetPassword}
-                    >{Labels.login.forgetPassword}</span
-                >
-            </div>
+            <p class="copy-text text-right">Copyright &copy; 2023 Rozmer. All rights reserved.</p>
         </div>
     </div>
 </div>

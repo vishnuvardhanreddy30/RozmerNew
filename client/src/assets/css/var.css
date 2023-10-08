@@ -10,12 +10,13 @@
     --white-color: #FFFFFF;
     --btn-background: #1A9B97;
     --btn-color: #FFFFFF;
+    --bg-color: #063a40;
     --font-color: #666666;
     --body-bg-color: #EDF1F4;
     --link-font-color: #5EA7CB;
     --green-shade-1: #7bdcb5;
     --green-shade-2: #00d084;
-    --blue-shade-1: #8ed1fc;
+    --blue-shade-1: #d6e3ec;
     --blue-shade-2: #0693e3;
     --required: #ff0000;
     --border-nav: #e3e5e9;
@@ -23,4 +24,5 @@
     --nav-menu-selected-bg: #f4f8fa;
     --list-item-border: #ede9e9;
     --close-icon-color: #666;
+    --standard-color: #1a9b97
 }

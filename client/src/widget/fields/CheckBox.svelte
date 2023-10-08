@@ -6,7 +6,6 @@
 
 <script>
     import { createEventDispatcher } from "svelte";
-    import Button from "../../widget/button/Button.svelte";
 
     export let label = "";
     export let name = "";
@@ -19,11 +18,7 @@
     export let cls = "";
     export let labelAlign = "column"; // top, left
     export let placeholder = "";
-    export let fieldtype = "";
     export let autofocus = false;
-    let searchVal;
-
-    let searchIconText = "refresh";
 
     let inputEl;
 
@@ -40,30 +35,13 @@
             dispatch("enter", value);
         }
     }
-    $: {
-        if (searchVal) {
-            searchIconText = "search";
-        } else {
-            searchIconText = "refresh";
-        }
-    }
 </script>
 
-<!-- <div class="field-container text-field flex-cont flex-dir-{labelAlign} {cls}"> -->
-<div class="email-container">
-    <!-- <label class="field-label" for={cmpId} width={labelWidth}
-        >{label}
-        {#if required}
-            <span class="req-lbl">*</span>
-        {/if}
-        {labelSeperator}</label
-    > -->
-    {#if !fieldtype}
-    <span>
-        <i class="fa fa-user" style="color: #1a9b97;"></i>
-    </span>
-    {/if}
-    <input
+<div class="">
+    <input type="checkbox" id="rememberme" name="rememberme" class="checkbox" value="true">
+    <label for="rememberme" class="check-label"> {label}</label><br>
+
+    <!-- <input
         id={cmpId}
         {name}
         {required}
@@ -74,12 +52,7 @@
         {autofocus}
         on:keydown={onkeydown}
         bind:this={inputEl}
-    />
-    {#if fieldtype}
-    <span class="pointer" title={fieldtype} on:click={dispatch("enter", value)}>
-        <i class="fa fa-search" style="color: #1a9b97;"></i>
-    </span>
-    {/if}
+    /> -->
 </div>
 
 <style>

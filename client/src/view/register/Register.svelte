@@ -11,6 +11,7 @@
     import urlConst from "../../const/Url";
 
     import logo from "../../assets/logo.png";
+  import EmailField from "../..//widget/fields/EmailField.svelte";
 
     let mobNumber, email, pass, cpass, fname, lname;
 
@@ -102,22 +103,26 @@
 
     <div class="login-cont flex-cont wh-100-percent">
         <!-- <div class="wh-100-percent flex-1 flex-cont flex-vh"> -->
-        <div class="login-left bg-gradient flex-1">
+        <div class="login-left flex-1">
+            <img src={logo} alt="" class="sub-logo" />
             <!-- <div class="login-title-cont">
                 A new social media platform changing the meaning of news!
             </div> -->
         </div>
-        <div class="login-right flex-1 flex-cont flex-vh">
-            <div class="margin-bottom-to-child-15 p3 login-items">
-                <img src={logo} alt="" class="sub-logo" />
+        <div class="login-right flex-1 flex-cont flex-vh bg-standard">
+            <div class="margin-bottom-to-child-15 p2 login-items">
+                <img src={logo} alt="" class="sub-logo logo-hidden" />
+                <p class="heading">USER REGISTRATION</p>
                 <TextField
                     {required}
                     label={Labels.register.first_name}
+                    placeholder={Labels.register.first_name}
                     bind:value={fname}
                 />
                 <TextField
                     {required}
                     label={Labels.register.last_name}
+                    placeholder={Labels.register.last_name}
                     bind:value={lname}
                 />
                 <!-- <TextField
@@ -128,21 +133,30 @@
                 <NumberField
                     {required}
                     label={Labels.register.mob_num}
+                    placeholder={Labels.register.mob_num}
                     bind:value={mobNumber}
                     {maxLength}
                 />
-                <TextField
+                <!-- <TextField
                     {required}
                     label={Labels.register.email}
+                    bind:value={email}
+                /> -->
+                <EmailField 
+                    label={Labels.register.email}
+                    {required} 
+                    placeholder={Labels.register.email}
                     bind:value={email}
                 />
                 <PasswordField
                     {required}
+                    placeholder={Labels.register.pass}
                     label={Labels.register.pass}
                     bind:value={pass}
                 />
                 <PasswordField
                     {required}
+                    placeholder={Labels.register.cnf_pass}
                     label={Labels.register.cnf_pass}
                     bind:value={cpass}
                 />
@@ -158,7 +172,7 @@
 
                 <div class="txt-center">
                     <span class="register-link" on:click={onBack}
-                        >{Labels.register.login_screen}</span
+                        ><i class="fa fa-arrow-left"></i> {Labels.register.login_screen}</span
                     >
                 </div>
             </div>

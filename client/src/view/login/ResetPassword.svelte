@@ -1,6 +1,7 @@
 <script>
     import { fly } from "svelte/transition";
     import Toolbar from "../../widget/toolbar/Toolbar.svelte";
+    import EmailField from "../../widget/fields/EmailField.svelte";
     import Button from "../../widget/button/Button.svelte";
     import TextField from "../../widget/fields/TextField.svelte";
     import Request from "../../util/Request";
@@ -59,20 +60,27 @@
 </script>
 
 <div class="login-cont flex-cont wh-100-percent">
-    <div class="login-left bg-gradient flex-1">
+    <div class="login-left flex-1">
+        <img src={logo} alt="" class="sub-logo" />
         <!-- <div class="login-title-cont">
             {Labels.reset.flash_msg}
         </div> -->
     </div>
 
-    <div class="login-right flex-1 flex-cont flex-vh">
-        <div class="margin-bottom-to-child-15 p3 login-items">
-            <img src={logo} alt="" class="sub-logo" />
+    <div class="login-right flex-1 flex-cont flex-vh bg-standard">
+        <div class="margin-bottom-to-child-15 p2 login-items">
+            <img src={logo} alt="" class="sub-logo logo-hidden" />
+            <p class="heading">FORGOT PASSWORD</p>
             <div class="reset-pass-desc">
                 {Labels.reset.body_msg}
             </div>
-            <TextField {required} label="Email" bind:value={email} />
-
+            <!-- <TextField {required} label="Email" bind:value={email} /> -->
+            <EmailField 
+                label="Email"
+                {required} 
+                placeholder="User name or Email*"
+                bind:value={email}
+            />
             <Toolbar ui="plain">
                 <Button
                     text="Submit"
@@ -84,7 +92,7 @@
 
             <div class="txt-center">
                 <span class="register-link" on:click={onBack}
-                    >{Labels.register.login_screen}</span
+                    ><i class="fa fa-arrow-left"></i> {Labels.register.login_screen}</span
                 >
             </div>
         </div>

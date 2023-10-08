@@ -24,6 +24,7 @@ const Labels = {
     login: {
         login_user: 'Email',
         password: 'Password',
+        remeber: 'Remember me',
         login: 'Login',
         newUser: 'Register as New User',
         forgetPassword: 'Forget Password?',
@@ -74,7 +75,7 @@ const Labels = {
     menu: {
         home: 'Feed',
         publish: 'Publish',
-        profile: 'Profile',
+        profile: 'My Profile',
         notification: 'Notification',
         logout: 'Logout'
     },
@@ -85,7 +86,7 @@ const Labels = {
 
     profile: {
         no_post: '<p>No content published yet.</p><p>Publish 2 articles and get free life time access to the platform.</p>',
-        published: 'Published',
+        published: 'Published on',
         my_post: 'My Posts',
         edit_profile: 'Edit Profile',
         update_cnf: 'Profile Updated Successfully',
@@ -143,7 +144,7 @@ const Labels = {
     },
 
     details: {
-        comment_title: 'Collaborate',
+        comment_title: 'Comments',
         question_title: 'Questions',
         rating_title: 'Rating',
         take_down_post: 'Take Down Post',

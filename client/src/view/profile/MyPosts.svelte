@@ -75,7 +75,7 @@
                 rec-id={item.postId}
             >
                 <div class="virtual-list-item">
-                    <div class="thumb-det-cont">
+                    <!-- <div class="thumb-det-cont">
                         <div class="thumb-title">
                             <b>{item.title}</b>
                         </div>
@@ -84,7 +84,7 @@
                         class="bg-img feed-thumbnail"
                         style="background-image: url({urlConst.get_thumbnail_image +
                             item.imageName}), url({no_image});"
-                    />
+                    /> -->
                     <div class="feed-info">
                         <figure>
                             <img
@@ -96,14 +96,19 @@
                         </figure>
                         <div class="author-details">
                             <span class="author-name"
-                                >{userInfo.firstName}
+                                >Written by {userInfo.firstName}
                                 {userInfo.lastName}</span
                             >
                             <span class="published-details"
-                                >{Labels.profile.published}: {TIME_SINCE(
+                                > | {Labels.profile.published} {TIME_SINCE(
                                     item.addedDate
                                 )}</span
                             >
+                        </div>
+                    </div>
+                    <div class="thumb-det-cont">
+                        <div class="thumb-title">
+                            <b>{item.title}</b>
                         </div>
                     </div>
                 </div>
@@ -141,7 +146,8 @@
     }
 
     .virtual-list-item-body {
-        max-width: 600px;
+        /* max-width: 600px; */
+        max-width: 96%;
         margin: 0 auto;
     }
 

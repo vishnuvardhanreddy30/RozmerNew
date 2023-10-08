@@ -16,7 +16,7 @@
     import likeIcon from "../../assets/rating/like.png";
     import dislikeIcon from "../../assets/rating/dislike.png";
     import awesomeIcon from "../../assets/rating/ok.png";
-import Startratting from "./Startratting.svelte";
+
     export let postId = "";
     export let details;
 
@@ -502,24 +502,23 @@ import Startratting from "./Startratting.svelte";
         </div>
         <div align="center" class="rating-container wh-100-percent">
             <label for="points">Your rating for the selected Comment: 
-                <!-- <b>{valueDisplayed} 
+                <b>{valueDisplayed} 
                     <img class="icon-cont" alt="" width="13px" src={valueIcon} />
-                </b> -->
+                </b>
             </label>
-            <!-- <input
+            <input
                 type="range"
                 min="-5"
                 max="5"
                 {value}
                 class="slider"
                 on:change={onQtnValueChange}
-            /> -->
-            <Startratting />
-            <!-- <div class="slider-values">
+            />
+            <div class="slider-values">
                 <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
-                <span>reddy <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
+                <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
                 <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
-            </div> -->
+            </div>
         </div>
     </div>
 </div>
