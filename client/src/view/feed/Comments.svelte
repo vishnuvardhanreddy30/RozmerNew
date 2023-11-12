@@ -308,6 +308,7 @@
             cls="comments-field"
             placeholder= {Labels.placeholder.comments}
             maxLength={maxLength}
+            fieldtype="comment"
             bind:value={commentValue}
             on:enter={onSend}
         />

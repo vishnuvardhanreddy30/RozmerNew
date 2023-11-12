@@ -151,6 +151,12 @@
     });
 
     $: {
+        const path = window.location;
+        if(path.hash?.includes('pid')){
+            hideFollowersData = true
+            }else{
+                hideFollowersData = false
+            }
         if (!Utils.isValidUser()) {
             Utils.reload();
         }
