@@ -75,7 +75,7 @@
         on:keydown={onkeydown}
         bind:this={inputEl}
     />
-    {#if fieldtype}
+    {#if fieldtype === 'search'}
     <span class="pointer" title={fieldtype} on:click={dispatch("enter", value)}>
         <i class="fa fa-search" style="color: #1a9b97;"></i>
     </span>

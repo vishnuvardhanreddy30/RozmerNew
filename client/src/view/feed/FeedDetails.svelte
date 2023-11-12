@@ -47,7 +47,8 @@
 
     function onBack() {
         dispatch("hidedetails");
-        location.hash = 'home';
+        const path = window.location;
+        location.hash = path?.hash?.includes('home') ? 'home' : 'mypost';
         // Utils.redirectTo("home");
     }
 

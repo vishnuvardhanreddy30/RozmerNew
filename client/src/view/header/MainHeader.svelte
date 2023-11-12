@@ -30,7 +30,6 @@
     let myTotalFeed;
     $: {
         userInfo = SessionUtil.get("info", true);
-        console.log("userinfo : ", userInfo)
     }
     let isMenuOpen = false;
 
@@ -57,14 +56,12 @@
     ];
     export let selected;
     function onMenuItemClick(e, idx) {
-        console.log("selected item : ", e, idx, menuItems[idx].action)
 
         dispatch("showview", {
             view: menuItems[idx].action,
         });
     }
     function setSelection() {
-        console.log("getselection")
         let items = document.querySelectorAll("[item-action]");
 
         for (let i = 0; i < items.length; i++) {

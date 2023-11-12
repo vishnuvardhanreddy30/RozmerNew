@@ -16,6 +16,7 @@
         data = [],
         showDetails = false,
         postId,
+        detail,
         showEditPublishBtn,
         availableHeight,
         containerEl;
@@ -44,12 +45,55 @@
         showDetails = false;
     }
 
-    function showPostDetails(e) {
-        postId = e.currentTarget.getAttribute("rec-id");
+    // function showPostDetails(e) {
+    //     postId = e.currentTarget.getAttribute("rec-id");
+    //     showEditPublishBtn = true;
+    //     showDetails = true;
+    // }
+    export function showPostDetails(e, routeData) {
+        detail = null;
+        showDetails = false;
+
+        let idx = e && e.currentTarget.getAttribute("data-num");
+
+        detail = data[+idx - 1] || {};
+
+        if (routeData) {
+            idx = routeData.params.id;
+
+            detail = {
+                postId: idx,
+            };
+        }
+
+        postId = detail.postId;
         showEditPublishBtn = true;
         showDetails = true;
-    }
 
+        if(getPID() !== String(postId)) {
+            Utils.redirectTo("mypost", {
+                pid: postId,
+            });
+        }
+    }
+    function getPID() {
+        return Utils.getParamsAsObject(location.hash).pid;
+    }
+    onMount(()=> {
+        let pid = getPID();
+
+        if(pid) {
+            showDetailsFromRoute(pid);
+        }
+    });
+    function showDetailsFromRoute(pid) {
+        console.log("piddd : ", pid)
+        showPostDetails(null, {
+            params: {
+                id: pid
+            }
+        });
+    }
     $: {
         userInfo = SessionUtil.get("info", true);
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
@@ -59,19 +103,25 @@
 
     onMount(() => {
         availableHeight = Utils.calculateAvailableSpace(containerEl);
+        let pid = getPID();
+
+        if(pid) {
+            showDetailsFromRoute(pid);
+        }
     });
 </script>
-
+{#if !showDetails}
 <div
     class="feed-list flex-cont myfeed-cont overflow-y"
     style="height:{availableHeight}"
     bind:this={containerEl}
 >
     <div class="flex-1 virtual-list-item-cont">
-        {#each data as item}
+        {#each data as item, index}
             <div
                 class="flex-1 virtual-list-item-body"
                 on:click={showPostDetails}
+                data-num={index + 1}
                 rec-id={item.postId}
             >
                 <div class="virtual-list-item">
@@ -120,7 +170,7 @@
         {/if}
     </div>
 </div>
-
+{/if}
 {#if showDetails}
     {#if Boot.isDesktop()}
         <FeedDetails
@@ -147,8 +197,9 @@
 
     .virtual-list-item-body {
         /* max-width: 600px; */
-        max-width: 96%;
-        margin: 0 auto;
+        /* max-width: 96%; */
+        margin: 0.4rem !important;
+        cursor: pointer;
     }
 
     .feed-thumbnail {

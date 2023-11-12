@@ -52,14 +52,12 @@
 
     function setSelection() {
         let items = document.querySelectorAll("[item-action]");
-        console.log("items list : ", items)
 
         for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("menu-selected");
         }
 
         let item = document.querySelector(`[item-action=${selected}]`);
-        console.log("selected item : ", item)
         if (!Utils.isEmpty(item)) {
             item.classList.add("menu-selected");
         }

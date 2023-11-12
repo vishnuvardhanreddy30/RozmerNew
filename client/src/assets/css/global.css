@@ -445,7 +445,7 @@ body {
     border: 1px solid var(--list-item-border);
     border-radius: 10px;
     /* height: 92%; */
-    margin: 0.4rem auto;
+    margin: 0.4rem auto !important;
     padding: 1% 2%;
 }
 
@@ -527,6 +527,7 @@ body {
 
 .comments-btn.btn-el {
     padding: 6px 12px;
+    width: 50px !important;
 }
 
 .qtn-mdle-auth-name {
