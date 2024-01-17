@@ -6,6 +6,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
+import com.rozmer.service.entities.GuestUser;
+import com.rozmer.service.repo.GuestUserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
+
+	@Autowired
+	GuestUserRepository guestUserRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -264,26 +269,46 @@ public class UserServiceImpl implements UserService {
 	public LoginResponse login(LoginUserRequestObject loginUserRequestObject) {
 		String email = loginUserRequestObject.getEmail();
 		String password = loginUserRequestObject.getPassword();
-
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		User user = userRepository.findByEmail(loginUserRequestObject.getEmail());
-		if(ObjectUtils.isEmpty(user)){
-			throw new  ResourceNotFoundException("User not found with  ", "emailId", email);
-		}
-		
-		if (user != null && user.isEnabled() == true) {
-			String userpwdfromDB = user.getPassword();
-			boolean isPasswordMatch = passwordEncoder.matches(password, userpwdfromDB);
-			if(!isPasswordMatch){
-				throw new  ResourceNotFoundException("Password for this ", "", email + " is incorrect");
+		if ("GUEST".equals(loginUserRequestObject.getRole()))  {
+
+			GuestUser guestUser = guestUserRepository.findByGuestEmail(loginUserRequestObject.getEmail());
+			if(ObjectUtils.isEmpty(guestUser)){
+				log.info("createGuestUser method in UserServiceImpl start | LoginUserRequestObject" , loginUserRequestObject);
+				GuestUser userEntity = new GuestUser();
+				if(ObjectUtils.isEmpty(userEntity)){
+					throw new  ResourceNotFoundException("User not found with  ", "emailId", loginUserRequestObject.getEmail());
+				}
+				BCryptPasswordEncoder paswordEncoder = new BCryptPasswordEncoder();
+				String encodedPassword = paswordEncoder.encode(userEntity.getPassword());
+				userEntity.setGuestEmail(email);
+				userEntity.setPassword(encodedPassword);
+				userEntity.setRole(loginUserRequestObject.getRole());
+				guestUserRepository.save(userEntity);
 			}
-			user.setLoggedIn(true);
+			return this.modelMapper.map(loginUserRequestObject, LoginResponse.class);
+
+		} else {
+
+			User user = userRepository.findByEmail(loginUserRequestObject.getEmail());
+			if(ObjectUtils.isEmpty(user)){
+				throw new  ResourceNotFoundException("User not found with  ", "emailId", email);
+			}
+
+			if (user != null && user.isEnabled() == true) {
+				String userpwdfromDB = user.getPassword();
+				boolean isPasswordMatch = passwordEncoder.matches(password, userpwdfromDB);
+				if(!isPasswordMatch){
+					throw new  ResourceNotFoundException("Password for this ", "", email + " is incorrect");
+				}
+				user.setLoggedIn(true);
 			}
 			else{
 				throw new  ResourceNotFoundException("User not enable with ", "emailId", email);
 			}
-                userRepository.save(user);
-				return this.modelMapper.map(user, LoginResponse.class);
+			userRepository.save(user);
+			return this.modelMapper.map(user, LoginResponse.class);
+		}
 	}
 
 	@Override
