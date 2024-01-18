@@ -285,8 +285,16 @@ public class UserServiceImpl implements UserService {
 				userEntity.setPassword(encodedPassword);
 				userEntity.setRole(loginUserRequestObject.getRole());
 				guestUserRepository.save(userEntity);
+				guestUser = guestUserRepository.findByGuestEmail(loginUserRequestObject.getEmail());
+				LoginResponse loginResponse = new LoginResponse();
+				loginResponse.setEmail(guestUser.getGuestEmail());
+				loginResponse.setRole(guestUser.getRole());
+				return this.modelMapper.map(loginUserRequestObject, LoginResponse.class);
 			}
-			return this.modelMapper.map(loginUserRequestObject, LoginResponse.class);
+			LoginResponse loginResponse = new LoginResponse();
+			loginResponse.setEmail(guestUser.getGuestEmail());
+			loginResponse.setRole(guestUser.getRole());
+			return loginResponse;
 
 		} else {
 
