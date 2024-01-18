@@ -270,7 +270,7 @@ public class UserServiceImpl implements UserService {
 		String email = loginUserRequestObject.getEmail();
 		String password = loginUserRequestObject.getPassword();
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		if ("GUEST".equals(loginUserRequestObject.getRole()))  {
+		if ("guest".equals(loginUserRequestObject.getRole()))  {
 
 			GuestUser guestUser = guestUserRepository.findByGuestEmail(loginUserRequestObject.getEmail());
 			if(ObjectUtils.isEmpty(guestUser)){
@@ -280,7 +280,7 @@ public class UserServiceImpl implements UserService {
 					throw new  ResourceNotFoundException("User not found with  ", "emailId", loginUserRequestObject.getEmail());
 				}
 				BCryptPasswordEncoder paswordEncoder = new BCryptPasswordEncoder();
-				String encodedPassword = paswordEncoder.encode(userEntity.getPassword());
+				String encodedPassword = paswordEncoder.encode(loginUserRequestObject.getPassword());
 				userEntity.setGuestEmail(email);
 				userEntity.setPassword(encodedPassword);
 				userEntity.setRole(loginUserRequestObject.getRole());
