@@ -1,6 +1,7 @@
 package com.rozmer.service.dataobject;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 

@@ -4,7 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +30,8 @@ import com.rozmer.service.service.PratingService;
 @Service
 public class PratingServiceImpl
                 implements PratingService {
+        Logger LOGGER = LoggerFactory.getLogger(PratingServiceImpl.class);
+
 
         @Autowired
         private PostRepo postRepo;
@@ -82,7 +87,7 @@ public class PratingServiceImpl
          */
 
         @Override
-        public List<PratingGetDto> getPratingsOnPost(Integer postId) {
+        public PratingResponse getPratingsOnPost(Integer postId) {
 
                 List<Prating> pratings = this.pratingRepo.findByPostUsingId(postId);
                 if (pratings.size() == 0) {
@@ -91,8 +96,10 @@ public class PratingServiceImpl
                 List<PratingGetDto> pratingGetDtos = pratings.stream()
                                 .map((com) -> this.modelMapper.map(com, PratingGetDto.class))
                                 .collect(Collectors.toList());
+                PratingResponse pratingResponse = new PratingResponse();
+                pratingResponse.setPratingGetDto(pratingGetDtos);
 
-                return pratingGetDtos;
+                return pratingResponse;
         }
 
         @Override
@@ -106,13 +113,16 @@ public class PratingServiceImpl
                 Page<Prating> pagePost = this.pratingRepo.findByPost(post, paging);
 
                 List<Prating> allPrating = pagePost.getContent();
-                List<PratingGetDto> pratingGetDtos = allPrating.stream()
-                                .map((comm) -> this.modelMapper.map(comm, PratingGetDto.class))
-                                .collect(Collectors.toList());
 
                 PratingResponse pratingResponse = new PratingResponse();
 
-                // pratingResponse.setContent(pratingDtos);
+                 pratingResponse.setPratingGetDto(allPrating.stream()
+                         .map((comm) -> this.modelMapper.map(comm, PratingGetDto.class))
+                         .collect(Collectors.toList()));
+
+                LOGGER.info("pratingResponse: " + pratingResponse);
+                LOGGER.debug("pratingResponse: " + pratingResponse);
+System.out.println("pratingResponse: " + pratingResponse);
 
                 return pratingResponse;
         }
@@ -169,6 +179,7 @@ public class PratingServiceImpl
 
                 // pratingResponse.setPrating(allPrating.get(0));
                 pratingResponse.setPratingGetDto(pratingGetDtos);
+                pratingResponse.setPAverageRating(this.pratingRepo.findPAverageRating());
                 return pratingResponse;
         }
 

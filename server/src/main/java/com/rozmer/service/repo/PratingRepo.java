@@ -1,7 +1,9 @@
 package com.rozmer.service.repo;
 
 import java.util.List;
+import java.util.Map;
 
+import com.rozmer.service.entities.AverageRating;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,5 +29,9 @@ public interface PratingRepo extends JpaRepository<Prating, Integer> {
     List<Prating> findByPostIdAndUserId(@Param("postId") Integer postId, @Param("userId") Integer userId);
 
     List<Prating> findByPostAndUser(Post postId, User userId);
+
+    @Query(value = "SELECT post_post_id, AVG(rating) AS average_rating FROM pratings " +
+            "GROUP BY post_post_id ORDER BY average_rating DESC", nativeQuery = true)
+    List<Object[]> findPAverageRating();
 
 }
