@@ -40,7 +40,7 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
-    
+
     private String url;
 
     @Value("${ui.endpoint.url}") private String uiURL;
@@ -119,8 +119,8 @@ public class UserController {
 
     @PostMapping("/users/logout")
     @CrossOrigin
-    public ResponseEntity<SuccessResponse<String>> logUserOut(@RequestParam String email) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.logUserOut(email));
+    public ResponseEntity<SuccessResponse<String>> logUserOut(@RequestParam String email,@RequestParam String role) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.logUserOut(email,role));
     }
 
 }

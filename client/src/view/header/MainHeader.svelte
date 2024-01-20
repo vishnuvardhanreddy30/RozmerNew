@@ -97,7 +97,7 @@
             function (btn) {
                 if (btn === "ok") {
                     Utils.mask(true);
-                    let data = { email: SessionUtil.get("info", true).email };
+                    let data = { email: SessionUtil.get("info", true).email ,role:SessionUtil.get("info", true).role};
                     Request.post(
                         urlConst.logout + Utils.encodeForUrl(data),
                         data,
@@ -232,7 +232,7 @@
                     <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div>
                     <div class="d-flex flex-column">
                         <div class="pro-card-user-name ml-2">{userInfo.firstName} {userInfo.lastName}</div>
-                        <div class="font14 ml-2">{userInfo.email}</div> 
+                        <div class="font14 ml-2">{userInfo.email}</div>
                     </div>
                 </div>
                 <div class="border pl-3 pr-3 mt-3 mb-2"></div>
@@ -286,7 +286,7 @@
             >
                 <span class="material-icons menu-item-icon mr-2">{item.icon}</span>
                 <span class="font16 m-auto">{item.text}
-                {#if item.text === Labels.menu.publish && myTotalFeed} 
+                {#if item.text === Labels.menu.publish && myTotalFeed}
                     *
                 {/if}
                 </span>
