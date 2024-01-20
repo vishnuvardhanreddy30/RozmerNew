@@ -1,6 +1,7 @@
 package com.rozmer.service.repo;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +20,10 @@ public interface QratingRepo  extends JpaRepository<Qrating	, Integer> {
     List<Qrating> findByQuestionId(@Param("key") Integer questionId);
 
     List<Qrating> findByQuestionAndUser(Question question, User user);
+
+    @Query(value = "SELECT question_id, AVG(rating) AS average_rating FROM qratings\n" +
+            "GROUP BY question_id ORDER BY average_rating DESC", nativeQuery = true)
+    Map<String, String> findQAverageRating();
 
 /* 	Optional<Qrating> findByRatingId(Integer qratingId);  */
 
