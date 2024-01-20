@@ -224,20 +224,35 @@ public class UserServiceImpl implements UserService {
 		}
 
 	@Override
-	public SuccessResponse<String> logUserOut(String email) {
-		User user = userRepository.findByEmail(email);
-		if(ObjectUtils.isEmpty(user)){
-			throw new  ResourceNotFoundException("User not found with  ", "emailId", email);
-		}
-		if (user != null && user.isEnabled() == true) {
-			if (user.isLoggedIn()) {
-				user.setLoggedIn(false);
-				userRepository.save(user);
-			}
-			 return new SuccessResponse<>("User Logged Out");
+	public SuccessResponse<String> logUserOut(String email, String role) {
 
-		} else {
-			throw new ServiceException("User Not Found:", HttpStatus.BAD_REQUEST);
+		if ("guest".equals(role)) {
+			GuestUser guestUser = guestUserRepository.findByGuestEmail(email);
+			if (ObjectUtils.isEmpty(guestUser)) {
+				throw new ResourceNotFoundException("User not found with  ", "emailId", email);
+			}
+			if (guestUser.isLoggedIn()) {
+				guestUser.setLoggedIn(false);
+				guestUserRepository.save(guestUser);
+			}
+			return new SuccessResponse<>("User Logged Out");
+
+		}
+		else {
+			User user = userRepository.findByEmail(email);
+			if (ObjectUtils.isEmpty(user)) {
+				throw new ResourceNotFoundException("User not found with  ", "emailId", email);
+			}
+			if (user != null && user.isEnabled() == true) {
+				if (user.isLoggedIn()) {
+					user.setLoggedIn(false);
+					userRepository.save(user);
+				}
+				return new SuccessResponse<>("User Logged Out");
+
+			} else {
+				throw new ServiceException("User Not Found:", HttpStatus.BAD_REQUEST);
+			}
 		}
 	}
 
@@ -284,13 +299,16 @@ public class UserServiceImpl implements UserService {
 				userEntity.setGuestEmail(email);
 				userEntity.setPassword(encodedPassword);
 				userEntity.setRole(loginUserRequestObject.getRole());
+				userEntity.setLoggedIn(Boolean.TRUE);
 				guestUserRepository.save(userEntity);
 				guestUser = guestUserRepository.findByGuestEmail(loginUserRequestObject.getEmail());
 				LoginResponse loginResponse = new LoginResponse();
 				loginResponse.setEmail(guestUser.getGuestEmail());
 				loginResponse.setRole(guestUser.getRole());
-				return this.modelMapper.map(loginUserRequestObject, LoginResponse.class);
+				return loginResponse;
 			}
+			guestUser.setLoggedIn(Boolean.TRUE);
+			guestUserRepository.save(guestUser);
 			LoginResponse loginResponse = new LoginResponse();
 			loginResponse.setEmail(guestUser.getGuestEmail());
 			loginResponse.setRole(guestUser.getRole());

@@ -27,7 +27,7 @@ public interface UserService {
 
     LoginResponse userLogin (String email,  String password);
 
-    SuccessResponse<String> logUserOut (String email);
+    SuccessResponse<String> logUserOut (String email, String role);
 
     public boolean verify(String verificationCode);
 

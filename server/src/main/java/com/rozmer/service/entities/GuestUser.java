@@ -29,4 +29,7 @@ public class GuestUser {
 
 	@Column(name = "role", nullable = false, length = 20)
 	private String role;
+
+	@Column(name = "logged_In")
+	private boolean loggedIn;
 }
