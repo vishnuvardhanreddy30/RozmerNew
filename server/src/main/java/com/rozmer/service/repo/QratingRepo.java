@@ -23,7 +23,7 @@ public interface QratingRepo  extends JpaRepository<Qrating	, Integer> {
 
     @Query(value = "SELECT question_id, AVG(rating) AS average_rating FROM qratings\n" +
             "GROUP BY question_id ORDER BY average_rating DESC", nativeQuery = true)
-    Map<String, String> findQAverageRating();
+    List<Object[]> findQAverageRating();
 
 /* 	Optional<Qrating> findByRatingId(Integer qratingId);  */
 

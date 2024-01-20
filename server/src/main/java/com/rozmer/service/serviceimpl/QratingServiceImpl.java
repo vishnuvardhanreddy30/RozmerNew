@@ -111,6 +111,7 @@ public class QratingServiceImpl implements QratingService {
 		qratingResponse.setQrating(qratingDtos);
 
 		qratingResponse.setQAverageRatings(this.qratingRepo.findQAverageRating());
+		qratingResponse.setQAverageRatings(qratingRepo.findQAverageRating());
 
 		return qratingResponse;
 	}

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.rozmer.service.repo.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,6 @@ import com.rozmer.service.entities.Post;
 import com.rozmer.service.entities.Question;
 import com.rozmer.service.entities.User;
 import com.rozmer.service.exception.ResourceNotFoundException;
-import com.rozmer.service.repo.AnswerRepo;
-import com.rozmer.service.repo.PostRepo;
-import com.rozmer.service.repo.QuestionRepo;
-import com.rozmer.service.repo.UserRepository;
 import com.rozmer.service.response.QuestionResponse;
 import com.rozmer.service.service.QuestionService;
 import org.springframework.data.domain.Page;
@@ -43,6 +40,9 @@ public class QuestionServiceImpl implements QuestionService{
 
 	@Autowired
 	private AnswerRepo answerRepo;
+
+	@Autowired
+	private QratingRepo qratingRepo;
 
 	@Override
     public QuestionDto postQuestion(QuestionDto questionDto ,Integer postId ,Long userId) {
@@ -120,6 +120,7 @@ public class QuestionServiceImpl implements QuestionService{
 
 		postResponse.setTotalPages(pagePost.getTotalPages());
 		postResponse.setLastPage(pagePost.isLast());
+		postResponse.setQAverageRatings(qratingRepo.findQAverageRating());
 
 		return postResponse;
 	}
