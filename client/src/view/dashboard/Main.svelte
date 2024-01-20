@@ -112,7 +112,7 @@
             function (btn) {
                 if (btn === "ok") {
                     Utils.mask(true);
-                    let data = { email: SessionUtil.get("info", true).email };
+                    let data = { email: SessionUtil.get("info", true).email,role:SessionUtil.get("info", true).role };
                     Request.post(
                         urlConst.logout + Utils.encodeForUrl(data),
                         data,
