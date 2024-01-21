@@ -95,9 +95,10 @@
         if (!Utils.isEmpty(item)) {
             item.classList.add("menu-selected");
         }
-
+        if(userInfo?.userId){
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
         Request.get(url, null, onSuccess, onFailure, onSuccess);
+        }
     }
     $: {
         if (selected) {

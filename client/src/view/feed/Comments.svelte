@@ -37,6 +37,7 @@
     const api = urlConst.get_all_comments.replace("{postId}", postId);
 
     let userId = SessionUtil.get("info", true).userId;
+    let role = SessionUtil.get("info", true).role;
     let page = 0;
     let list = [];
 
@@ -79,6 +80,10 @@
         if(!commentValue) {
             return;
         }
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
 
         Request.post(
             urlConst.post_comments
@@ -107,6 +112,11 @@
     }
 
     function collaborate(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
+
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -139,6 +149,10 @@
     }
 
     function deleteComment(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -179,6 +193,10 @@
     }
 
     function onCmtValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
 
         updateValueDisplayed(value);
@@ -186,6 +204,10 @@
     }
 
     function rateComment(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         let modal = document.getElementById("myModal");
         Utils.log('Rate this comment!');
@@ -218,6 +240,10 @@
     }
 
     function submitRating(value) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         Request.post(
             urlConst.post_comment_rating
                 .replace("{userId}", SessionUtil.get("info", true).userId)
@@ -244,7 +270,7 @@
 
         setTimeout(() => {
             if(cmpEl){
-                let adjustHeight = (document.body.classList.contains('x-mobile')) ? 120 : 70;
+                let adjustHeight = (document.body.classList.contains('x-mobile')) ? 120 : 100;
 
                 cmpEl.style.height = Utils.calculateAvailableSpace(cmpEl, adjustHeight);
             }

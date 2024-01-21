@@ -98,7 +98,7 @@
         userInfo = SessionUtil.get("info", true);
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
         Utils.mask(true);
-        Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
     }
 
     onMount(() => {

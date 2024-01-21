@@ -27,9 +27,12 @@
     let searchIconText = "refresh";
 
     let userInfo = {};
+    let role = '';
     let myTotalFeed;
     $: {
         userInfo = SessionUtil.get("info", true);
+        role = userInfo.role;
+        console.log("role : ", role)
     }
     let isMenuOpen = false;
 
@@ -56,10 +59,13 @@
     ];
     export let selected;
     function onMenuItemClick(e, idx) {
-
-        dispatch("showview", {
-            view: menuItems[idx].action,
-        });
+        if(role !== 'guest'){
+            dispatch("showview", {
+                view: menuItems[idx].action,
+            });
+        }else{
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
     function setSelection() {
         let items = document.querySelectorAll("[item-action]");
@@ -75,7 +81,7 @@
         }
 
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
     }
     function onSuccess(res) {
         myTotalFeed = (res['length'] < 2);
@@ -89,7 +95,9 @@
         }
     }
 
-    onMount(() => setSelection());
+    onMount(() => {
+        setSelection()
+    });
     function onLogout() {
         Utils.confirm(
             Labels.dashboard.logout_msg,
@@ -97,7 +105,12 @@
             function (btn) {
                 if (btn === "ok") {
                     Utils.mask(true);
-                    let data = { email: SessionUtil.get("info", true).email ,role:SessionUtil.get("info", true).role};
+                    let data = { email: SessionUtil.get("info", true).email };
+                    if(role === 'guest'){
+                        data.role = 'guest'
+                    }else{
+                        data.role = ''
+                    }
                     Request.post(
                         urlConst.logout + Utils.encodeForUrl(data),
                         data,
@@ -118,7 +131,11 @@
     }
 
     function onSearchFeed(e) {
+        if(role !== 'guest'){
         dispatch("searchpost", searchVal);
+        }else{
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
 
     function showSearchField() {
@@ -138,7 +155,11 @@
     }
 
     function onFabClick() {
+        if(role !== 'guest'){
         Utils.redirectTo('publish');
+    }else{
+        Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
     // Close the menu if the user clicks outside of the image and menu
   function closeMenu(event) {
@@ -201,9 +222,11 @@
     </div>
 
     <div slot="right" class="flex-cont">
+        {#if role !== 'guest'}
         <div class="ml-2 my-auto">
             <i class="fa fa-bell fa-lg pointer" style="color: #1a9b97;"></i>
         </div>
+        {/if}
         <!-- <div class="pro-card-cont">
             <div align="center" class="flex-cont">
                 <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome ! {userInfo.firstName} {userInfo.lastName}</span></div>
@@ -222,7 +245,7 @@
         <div class="ml-4">
             <div class="pro-card-cont">
                 <div align="center" class="flex-cont">
-                    <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome ! {userInfo.firstName} {userInfo.lastName}</span></div>
+                    <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome { role === 'guest' ? 'to Rozmer' : '! '+userInfo.firstName+' '+userInfo.lastName}</span></div>
                     <img src={proIcon} alt="Profile" width="40px" class="profile-image pointer" on:click={toggleMenu}/>
                 </div>
             </div>
@@ -231,8 +254,10 @@
                 <div class="d-flex">
                     <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div>
                     <div class="d-flex flex-column">
+                        {#if role !== 'guest'}
                         <div class="pro-card-user-name ml-2">{userInfo.firstName} {userInfo.lastName}</div>
-                        <div class="font14 ml-2">{userInfo.email}</div>
+                        {/if}
+                        <div class="font14 ml-2 {role === 'guest' ? 'bold my-auto font18' : ''}">{userInfo.email}</div> 
                     </div>
                 </div>
                 <div class="border pl-3 pr-3 mt-3 mb-2"></div>
@@ -286,7 +311,7 @@
             >
                 <span class="material-icons menu-item-icon mr-2">{item.icon}</span>
                 <span class="font16 m-auto">{item.text}
-                {#if item.text === Labels.menu.publish && myTotalFeed}
+                {#if item.text === Labels.menu.publish && myTotalFeed} 
                     *
                 {/if}
                 </span>

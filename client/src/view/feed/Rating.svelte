@@ -13,9 +13,12 @@
     export let details;
 
     let value = 0;
+    let rating = 0;
+    let role = SessionUtil.get("info", true).role;
     let valueDisplayed = "Cool";
     let valueIcon = likeIcon;
-
+console.log("details in ratings : ", details, details.rating)
+rating = details.rating
     /**
      * 0 --> Post
      * 1 --> Comment
@@ -82,6 +85,10 @@
     }
 
     function onValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
     
         submitRating(value);
@@ -95,8 +102,9 @@
             null,
             (res) => {
                 let pRating = (res.pratingGetDto[0] && res.pratingGetDto[0].rating) || 0;
-
+                console.log("prate : ", pRating)
                 value = pRating;
+                rating = pRating
                 updateValueDisplayed(pRating);
                 Utils.log(res);
             },
@@ -106,30 +114,51 @@
             submitRating
         );
     }
+ 
+
+  /**
+     * @param {number} value
+     */
+  function handleRatingClick(value) {
+    if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
+    rating = value;
+    submitRating(rating);
+    console.log("after rading updated : ", rating)
+  }
 </script>
 
 <div class="rating-container wh-100-percent">
     <!-- Rating: {value} -->
     <div class="points-value-cont">
-        <label for="points"> 
-            <b>{valueDisplayed} 
+        <span class="points"> 
+            <!-- <b>{valueDisplayed} 
                 <img class="icon-cont" alt="" width="13px" src={valueIcon} />
-            </b>
-        </label>
+            </b> -->
+            <b>Average Rating</b>
+        </span>
     </div>
-    <input
+    <div class="text-center">
+        {#each [1, 2, 3, 4, 5] as value}
+          <span on:click={() => handleRatingClick(value)} class="star">{rating >= value ? '★' : '☆'}</span>
+        {/each}
+      </div>
+      
+    <!-- <input
         type="range"
         min="-5"
         max="5"
         {value}
         class="slider"
         on:change={onValueChange}
-    />
-    <div class="slider-values">
+    /> -->
+    <!-- <div class="slider-values">
         <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
         <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
         <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
-    </div>
+    </div> -->
 </div>
 
 <style>
@@ -142,7 +171,15 @@
     }
 
     .points-value-cont {
-        margin-bottom: 20px;
+        margin-top: 10px;
         text-align: center;
+    }
+    .points{
+        font-size: 20px;
+    }
+    .star {
+        color: gold;
+        cursor: pointer;
+        font-size: 40px;
     }
 </style>

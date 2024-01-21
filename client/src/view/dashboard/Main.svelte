@@ -47,7 +47,7 @@
         if(activeViewRef.onRouteChange) {
             activeViewRef.onRouteChange(data);
             console.log("onroute changes : ", data)
-            if(data.params.pid ){
+            if(data?.params?.pid ){
                 hideFollowersData = true
             }else{
                 hideFollowersData = false

@@ -63,7 +63,7 @@
         }
 
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
     }
 
     function onSuccess(res) {
@@ -75,10 +75,10 @@
     }
 
     $: {
+        userInfo = SessionUtil.get("info", true);
         if (selected) {
             setSelection();
         }
-        userInfo = SessionUtil.get("info", true);
     }
 
     onMount(() => setSelection());

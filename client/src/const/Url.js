@@ -10,7 +10,7 @@ const urlConst = {
     login: base + 'add-user/login-user',
 
     //logout
-    logout: base + '/add-user/users/logout',
+    logout: base + 'add-user/users/logout',
 
     forgot_password: base + 'forgot_password',
     reset_pass: base + 'reset_password',

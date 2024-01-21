@@ -78,6 +78,9 @@ body {
 .font14{
     font-size: 14px;
 }
+.font18{
+    font-size: 18px;
+}
 .flex-cont {
     display: flex;
 }
@@ -86,6 +89,9 @@ body {
 }
 .mx-auto{
     margin: 0 auto;
+}
+.my-auto{
+    margin: auto 0;
 }
 .mr-2{
     margin-right: 0.2rem;
@@ -125,6 +131,12 @@ body {
 }
 .border-radius-10{
     border-radius: 10px;
+}
+
+
+/* bold */
+.bold{
+    font-weight: bold;
 }
 .flex-1 {
     flex: 1;
@@ -343,6 +355,9 @@ body {
 .space-between{
     justify-content: space-between;
 }
+.space-around{
+    justify-content: space-around;
+}
 .ke-powered-by {
     display: none;
 }
@@ -438,6 +453,30 @@ body {
     box-shadow: none;
 }
 
+.btn-normal {
+    position: relative;
+    overflow: hidden;
+    transition: background 400ms;
+    color: var(--btn-color);
+    padding: 5px 12px;
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    font-size: 14px;
+    text-wrap: nowrap;
+    border: 1px solid var(--btn-background);
+    border-radius: 6rem;
+    box-shadow: 0 0 0.5rem rgb(0 0 0 / 30%);
+    cursor: pointer;
+    width: 130px;
+    text-align: center;
+    margin-right: 15px;
+}
+.btn-active {
+    background-color: var(--btn-background);
+}
+.width-auto{
+    width: auto !important;
+}
 
 /* Global css for feed design which utlises in FeedList and MyPosts */
 .virtual-list-item {
@@ -573,7 +612,7 @@ body {
 .comments-item,
 .question-item {
     margin: 10px 0;
-    padding: 5px 10px 0 10px;
+    padding: 5px 10px 10px 10px;
     line-height: 16px;
     font-size: 14px;
     background: var(--white-color) none repeat scroll 0 0;

@@ -48,7 +48,7 @@
         Utils.alert(Labels.publish.mob_info, Labels.alert.info, function(){
             let userInfo = SessionUtil.get("info", true);
             let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-            Request.get(url, null, onGetPostSuccess, ongetPostFailure, onGetPostSuccess);
+            if(userInfo?.userId) Request.get(url, null, onGetPostSuccess, ongetPostFailure, onGetPostSuccess);
         });
     });
 

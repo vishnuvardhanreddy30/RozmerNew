@@ -118,7 +118,7 @@
     function getUserPosts() {
         let userInfo = SessionUtil.get("info", true);
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, ongetPostSuccess, ongetPostFailure, ongetPostSuccess);
+        if(userInfo?.userId) Request.get(url, null, ongetPostSuccess, ongetPostFailure, ongetPostSuccess);
     }
 
     function ongetPostSuccess(res) {

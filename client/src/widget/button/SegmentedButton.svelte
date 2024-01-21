@@ -14,7 +14,7 @@
                 let btn = buttons[i];
                 let cls = btn.cls || '';
 
-                cls += ' ' + btnCls + ' segmented-btn';
+                cls += ' ' + btnCls + ' segmented-btn width-auto';
 
                 btn.cls = cls;
 
@@ -36,7 +36,7 @@
     }
 </script>
 
-<div class="segmented-btn-cont flex-cont">
+<div class="segmented-btn-cont flex-cont d-flex justify-content-around">
     {#if !Utils.isEmpty(buttons)}
          {#each buttons as button, idx}
             <Button {...button} on:click={onClick}></Button>

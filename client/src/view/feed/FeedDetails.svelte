@@ -212,10 +212,10 @@
 
     <div class="flex-cont">
         <div class="flex-cont flex-dir-column feed-details-body flex-1">
-            <div class="breadcrumb-cont d-flex justify-content-between">
-                <button on:click={onBack}>
+            <div class="breadcrumb-cont pr-2 d-flex justify-content-between">
+                <span class="back-btn" on:click={onBack}>
                     <i class="material-icons small">chevron_left</i> {Labels.dashboard.back}
-                </button>
+                </span>
                 {#if showEditPublishBtn}
                     <Button
                         iconCls="material-icons"
@@ -269,15 +269,35 @@
         /* background-color: #fff; */
         background-color: var(--body-bg-color);
         z-index: 2;
+        border-radius: 10px;
     }
 
     .feed-details-body {
         height: calc(100vh - 54px);
+        background: transparent  !important;
+        border: 1px solid var(--primary-color-alternate-2);
+        border-radius: 10px;
+        height: 78vh;
+    }
+
+    .back-btn{
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-color-alternate-2);
+        cursor: pointer;
+        padding-left: 10px;
+        margin: auto 0;
     }
 
     .breadcrumb-cont {
         width: 100%;
         margin-top: 20px;
+        border-radius: 10px !important;
+        background-color: transparent !important;
+    }
+    .thumb-autho{
+        border-radius: 10px;
+        background-color: transparent !important;
     }
 
     .breadcrumb-cont button {
@@ -306,6 +326,9 @@
         padding: 10px;
         background-color: var(--nav-menu-selected-bg);
         width: 400px;
+        border: 1px solid var(--primary-color-alternate-2);
+        border-radius: 10px;
+        margin-left: 10px;
     }
 
     :global(.feed-seg-cont .segmented-btn-cont) {
@@ -319,7 +342,7 @@
     }
 
     :global(.feed-seg-cont .segmented-btn-cont .btn-container.pressed) {
-        border-bottom: 4px solid var(--blue-shade-2);
+        border-bottom: 4px solid var(--primary-color-alternate-2);
     }
 
     :global(.feed-seg-cont .segmented-btn-cont .btn-container .ripple:hover) {

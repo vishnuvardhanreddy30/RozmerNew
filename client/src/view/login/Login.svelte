@@ -98,11 +98,11 @@
     <div class="login-right flex-1 flex-cont flex-vh bg-standard">
         <div class="margin-bottom-to-child-15 p2 login-items">
             <img src={logo} alt="" class="sub-logo logo-hidden" />
-            <div class="text-center">
-                <Button on:click={toggleForm} text={showLoginForm ? "Guest Login" : "Login"} />
+            <div class="flex-cont space-around text-center">
+                <p on:click={toggleForm} class="heading pointer btn-normal {showLoginForm? 'btn-active':''}">USER LOG IN</p>
+                <p on:click={toggleForm} class="heading pointer btn-normal {!showLoginForm? 'btn-active':''}">GUEST LOG IN</p>
             </div>
             {#if showLoginForm}
-                <p class="heading">USER LOG IN</p>
                 <EmailField
                     label={Labels.login.login_user}
                     {required}
@@ -124,7 +124,6 @@
             />
             {:else}
                 <!-- Guest Login Section -->
-                <p class="heading">GUEST LOG IN</p>
 
                 <EmailField
                     label="Guest Email"
@@ -138,7 +137,7 @@
                     on:enter={onGuestLogin}
                 /> -->
                 <Button
-                text="Guest Login"
+                text="Login"
                 on:click={onGuestLogin}
 
                 {fullWidth}

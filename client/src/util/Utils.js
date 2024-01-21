@@ -250,6 +250,17 @@ const Utils = {
 
         return array;
     },
+    
+    showNotification: function(/** @type {any} */ message) {
+        // Emit a custom event to show the toast
+        window.dispatchEvent(
+          new CustomEvent("show-toast", {
+            detail: {
+              message: message,
+            },
+          })
+        )
+    },
 };
 
 

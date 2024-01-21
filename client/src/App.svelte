@@ -6,6 +6,7 @@
     import ResetPasswordConfirm from "./view/login/ResetPasswordConfirm.svelte";
     import Verify from "./view/register/Verify.svelte";
     import Loader from "./widget/Loader.svelte";
+    import Notification from "./widget/toaster/Notification.svelte"
     import Utils from "./util/Utils";
     import { Routes } from "./store/Routes";
     import { LoadMask } from "./store/Loader";
@@ -95,7 +96,7 @@
     }
     $: onViewResize();
 </script>
-
+<Notification />
 <svelte:window on:beforeunload={beforeUnload} on:resize={onViewResize} />
 
 <svelte:component

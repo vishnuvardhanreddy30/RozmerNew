@@ -27,6 +27,7 @@
     let valueDisplayed = "Cool";
     let valueIcon = likeIcon;
     let maxLength = 999;
+    let role = SessionUtil.get("info", true).role;
 
     let cmpEl, questionValue, pressedReplyBtn, questionId, noResultsText;
 
@@ -79,6 +80,10 @@
     }
 
     function onSend() {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         if (Utils.isEmpty(questionValue)) {
             return;
         }
@@ -125,6 +130,10 @@
         return record;
     }
     function postReply(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let btnEl = e.currentTarget,
             isSend = false;
 
@@ -217,6 +226,10 @@
     }
 
     function deleteQuestion(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -241,6 +254,10 @@
     }
 
     function deleteAns(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let answerId = e.currentTarget.getAttribute("itemId");
         let questionId = e.currentTarget.getAttribute("id");
         let questionIdx = getQtnInx(+questionId);
@@ -267,6 +284,10 @@
     }
 
     function collaborate(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         Utils.confirm(
             Labels.question.collaborate_confirm_msg,
@@ -305,6 +326,10 @@
     }
 
     function onQtnValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
 
         updateValueDisplayed(value);
@@ -312,6 +337,10 @@
     }
 
     function rateQuestion(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         let modal = document.getElementById("myModal");
         Utils.log('Rate this comment!');
@@ -455,7 +484,7 @@
                         </div>
                     {/each}
                 </div>
-
+                {#if (item.user && item.user.userId) !== userId}
                 <Toolbar>
                     <div slot="center" />
                     <Button
@@ -468,6 +497,7 @@
                         itemId={item.questionId}
                     />
                 </Toolbar>
+                {/if}
             </div>
         {/each}
     </div>
