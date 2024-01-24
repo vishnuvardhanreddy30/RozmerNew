@@ -11,5 +11,4 @@ import lombok.Data;
 @Data
 public class QratingResponse {
     private List<QratingDto> qrating;
-    private List<Object[]> qAverageRatings;
 }

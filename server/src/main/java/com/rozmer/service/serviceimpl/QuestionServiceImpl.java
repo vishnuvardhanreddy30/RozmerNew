@@ -110,10 +110,18 @@ public class QuestionServiceImpl implements QuestionService{
 		List<Question> allQuestion = pagePost.getContent();
 		List<QuestionDto> questionDtos = allQuestion.stream().map((que) -> this.modelMapper.map(que, QuestionDto.class))
 				.collect(Collectors.toList());
+		List<QuestionDto> queDtos = questionDtos.stream().map((qDto) -> {
+					Double avgR = qDto.getQrating().getQrating().stream().mapToInt((qrating) -> qrating.getRating())
+							.average().orElse(0.0);
+			qDto.setQAverageRating(avgR);
+					return qDto;
+				}
+
+		).collect(Collectors.toList());
 
 		QuestionResponse postResponse = new QuestionResponse();
 
-		postResponse.setContent(questionDtos);
+		postResponse.setContent(queDtos);
 		postResponse.setPageNumber(pagePost.getNumber());
 		postResponse.setPageSize(pagePost.getSize());
 		postResponse.setTotalRecords(pagePost.getTotalElements());
@@ -165,7 +173,5 @@ public class QuestionServiceImpl implements QuestionService{
 		if(!ObjectUtils.isEmpty(question)){
 			this.questionRepo.delete(question);
 		}
-
 	}
-
 }
