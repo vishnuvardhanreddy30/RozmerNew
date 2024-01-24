@@ -1,5 +1,6 @@
 package com.rozmer.service.serviceimpl;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,19 +110,19 @@ public class QuestionServiceImpl implements QuestionService{
 
 		List<Question> allQuestion = pagePost.getContent();
 		List<QuestionDto> questionDtos = allQuestion.stream().map((que) -> this.modelMapper.map(que, QuestionDto.class))
-				.collect(Collectors.toList());
-		List<QuestionDto> queDtos = questionDtos.stream().map((qDto) -> {
+				.map((qDto) -> {
 					Double avgR = qDto.getQrating().getQrating().stream().mapToInt((qrating) -> qrating.getRating())
 							.average().orElse(0.0);
-			qDto.setQAverageRating(avgR);
+					qDto.setQAverageRating(avgR);
 					return qDto;
 				}
 
-		).collect(Collectors.toList());
+		).sorted(Comparator.comparingDouble(QuestionDto::getQAverageRating).reversed())
+				.collect(Collectors.toList());
 
 		QuestionResponse postResponse = new QuestionResponse();
 
-		postResponse.setContent(queDtos);
+		postResponse.setContent(questionDtos);
 		postResponse.setPageNumber(pagePost.getNumber());
 		postResponse.setPageSize(pagePost.getSize());
 		postResponse.setTotalRecords(pagePost.getTotalElements());
