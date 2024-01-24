@@ -14,11 +14,12 @@
 
     let value = 0;
     let rating = 0;
+    let postRatingData = {}
     let role = SessionUtil.get("info", true).role;
+    let userId = SessionUtil.get("info", true).userId;
     let valueDisplayed = "Cool";
     let valueIcon = likeIcon;
-console.log("details in ratings : ", details, details.rating)
-rating = details.rating
+    rating = details.rating
     /**
      * 0 --> Post
      * 1 --> Comment
@@ -100,13 +101,17 @@ rating = details.rating
                 .replace("{postId}", postId)
                 .replace("{userId}", SessionUtil.get("info", true).userId),
             null,
-            (res) => {
-                let pRating = (res.pratingGetDto[0] && res.pratingGetDto[0].rating) || 0;
-                console.log("prate : ", pRating)
-                value = pRating;
-                rating = pRating
-                updateValueDisplayed(pRating);
-                Utils.log(res);
+            async (res) => {
+                postRatingData = await res.pratingGetDto[0];
+                await res?.paverageRating?.forEach(item => {
+                        const matchingRating = res?.paverageRating.find(rating => rating[0] == postId);
+                        if (matchingRating) {
+                            console.log("matchingRating", matchingRating, matchingRating[1] )
+                            value = matchingRating[1];
+                        }
+                        
+                    });
+                rating = value
             },
             (err) => {
                 Utils.log(err);
@@ -124,8 +129,8 @@ rating = details.rating
             Utils.showNotification('You should signup to access this screen (or) functionality')
             return
         }
-    rating = value;
-    submitRating(rating);
+        postRatingData.rating = value;
+    submitRating(value);
     console.log("after rading updated : ", rating)
   }
 </script>
@@ -140,25 +145,21 @@ rating = details.rating
             <b>Average Rating</b>
         </span>
     </div>
-    <div class="text-center">
-        {#each [1, 2, 3, 4, 5] as value}
-          <span on:click={() => handleRatingClick(value)} class="star">{rating >= value ? '★' : '☆'}</span>
+    <div class="text-center mb-20">
+        {#each [1, 2, 3, 4, 5] as starvalue}
+        <span class="star">{rating >= starvalue ? '★' : (rating + 0.5 === starvalue ? '½' : '☆')}</span>
         {/each}
       </div>
-      
-    <!-- <input
-        type="range"
-        min="-5"
-        max="5"
-        {value}
-        class="slider"
-        on:change={onValueChange}
-    /> -->
-    <!-- <div class="slider-values">
-        <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
-        <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
-        <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
-    </div> -->
+    <div class="points-value-cont mt-20">
+        <span class="points"> <b>Your Rating</b></span>
+    </div>
+        <div class="text-center">
+            {#if postRatingData?.user?.userId === userId}
+            <span>{#each [1, 2, 3, 4, 5] as value}
+                <span class="star1" on:click={() => handleRatingClick(value)}>{postRatingData.rating >= value ? '★' : '☆'}</span>
+                {/each}</span>
+            {/if}
+    </div>
 </div>
 
 <style>
@@ -178,6 +179,10 @@ rating = details.rating
         font-size: 20px;
     }
     .star {
+        color: gold;
+        font-size: 40px;
+    }
+    .star1{
         color: gold;
         cursor: pointer;
         font-size: 40px;
