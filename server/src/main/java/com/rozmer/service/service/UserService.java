@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 
 import javax.mail.MessagingException;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rozmer.service.dataobject.Response;
@@ -42,7 +43,7 @@ public interface UserService {
 
     //update User
 	UserResponse updateUser(UserCreateRequestObject userCreateRequestObject, Long userId);
-
-
+    ResponseEntity<SuccessResponse<String>> followUser(Long followerId, Long followingId);
+    ResponseEntity<SuccessResponse<String>> unfollowUser(Long followerId, Long followingId);
     
 }

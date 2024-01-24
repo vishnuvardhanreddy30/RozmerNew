@@ -123,4 +123,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.logUserOut(email,role));
     }
 
+    @GetMapping("/followUser")
+    @CrossOrigin
+    public ResponseEntity<SuccessResponse<String>> followUser(@RequestParam Long followerId,@RequestParam Long followingId) {
+
+        return userService.followUser(followerId, followingId);
+    }
+
+    @GetMapping("/unfollowUser")
+    @CrossOrigin
+    public ResponseEntity<SuccessResponse<String>> unfollowUser(@RequestParam Long followerId,@RequestParam Long followingId) {
+
+        return userService.unfollowUser(followerId, followingId);
+    }
+
 }

@@ -78,4 +78,10 @@ public class User {
 		return null;
 	}
 
+	@OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+	private List<UserFollower> followers;
+
+	@OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+	private List<UserFollower> followings;
+
 }
