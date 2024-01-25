@@ -59,14 +59,6 @@
             async (data) => {
                 if (!Utils.isEmpty(data) && !Utils.isEmpty(data.content)) {
                     page += 1;
-                    data.content.forEach((item) => {
-                        item.qrating.qrating.forEach((rate) => {
-                            if(rate.user.userId == userId){
-                            currentUserRating = rate.rating
-                            console.log("current user rating", currentUserRating)
-                        }
-                        })
-                    })
                     list = [...data.content, ...list];
                     if (list.length >= data.totalRecords) {
                         complete();
@@ -361,7 +353,12 @@
         let modal = document.getElementById("myModal");
         Utils.log('Rate this comment!');
         console.log("valuevalue", value, item, selectedQuestion)
-        
+                        item.qrating.qrating.forEach((rate) => {
+                            if(rate.user.userId == userId){
+                            currentUserRating = rate.rating
+                            console.log("current user rating", currentUserRating)
+                        }
+                        })
 
         // questionId = id && id.replace('rate_', '');
 
