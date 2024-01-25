@@ -43,6 +43,7 @@
 
     let page = 0;
     let list = [];
+    let currentUserRating = 0
 
     function infiniteHandler({ detail: { loaded, complete } }) {
         // reset the button reply button from send to reply
@@ -58,17 +59,14 @@
             async (data) => {
                 if (!Utils.isEmpty(data) && !Utils.isEmpty(data.content)) {
                     page += 1;
-                    // Iterate over content array
-                    await data?.content?.forEach(item => {
-                        // Find matching qaverageRatings array based on questionId
-                        const matchingRating = data.qaverageRatings.find(rating => rating[0] === item.questionId);
-
-                        // If a match is found, set the qaverageRatings key in the object
-                        if (matchingRating) {
-                            item.qrating.qaverageRatings = matchingRating[1];
+                    data.content.forEach((item) => {
+                        item.qrating.qrating.forEach((rate) => {
+                            if(rate.user.userId == userId){
+                            currentUserRating = rate.rating
+                            console.log("current user rating", currentUserRating)
                         }
-                        
-                    });
+                        })
+                    })
                     list = [...data.content, ...list];
                     if (list.length >= data.totalRecords) {
                         complete();
@@ -404,6 +402,11 @@
         modal.style.display = "none"; 
     }
 
+    function submitCurrentUserRating(value) {
+        currentUserRating = value
+        submitRating(currentUserRating)
+    }
+
     function submitRating(value) {
         Request.post(
             urlConst.post_question_rating
@@ -471,7 +474,7 @@
                             itemId={"rate_" + item.questionId}>star_rate</span
                         > -->
                         {#each [1, 2, 3, 4, 5] as value}
-          <span on:click={() => rateQuestion(value, item)} class="star">{item.qrating.qaverageRatings >= value ? '★' : '☆'}</span>
+          <span on:click={() => rateQuestion(value, item)} class="star">{item.qaverageRating >= value ? '★' : '☆'}</span>
         {/each}
                     {/if}
                     <div class="feed-info qtn-auth-cont">
@@ -566,44 +569,27 @@
         <div align="right">
             <span class="close" on:click={closeModal}>&times;</span>
         </div>
-        <div align="left">
+        <div align="center">
             <span class="bold">Question Ratings</span>
         </div>
         <div class="rating-container wh-100-percent flex-cont ratings-modal">
+            <div class="flex-cont space-between">
+                <span class="bold">Your review</span>
+                <span>{#each [1, 2, 3, 4, 5] as value}
+                    <span class="star1 pointer" on:click={() => submitCurrentUserRating(value)} title="Provide your rating for this question">{currentUserRating >= value ? '★' : '☆'}</span>
+                    {/each}<span class="rating-number">{currentUserRating}</span></span>
+                    </div>
+
             {#each selectedQuestion.qrating.qrating as item, index}
             <div class="flex-cont space-between">
-                {#if item.user.userId === userId}
-                <span>Your review</span>
-                <span>{#each [1, 2, 3, 4, 5] as value}
-                    <span class="star1" on:click={() => rateIndividualQuestion(value, item, index)}>{item.rating >= value ? '★' : '☆'}</span>
-                    {/each}</span>
-                {/if}
                 {#if item.user.userId !== userId}
-                <span>{item.user.firstName} {item.user.lastName}</span>
+                <span class="text-capitalize">{item.user.firstName} {item.user.lastName}</span>
                 <span>{#each [1, 2, 3, 4, 5] as value}
-                    <span class="star1">{item.rating >= value ? '★' : '☆'}</span>
-                    {/each}</span>
+                    <span class="star1" >{item.rating >= value ? '★' : (item.rating + 0.5 === value ? '½' : '☆')}</span>
+                    {/each}<span class="rating-number">{item.rating}</span></span>
                 {/if}
     </div>
             {/each}
-            <!-- <label for="points">Your rating for the selected Comment: 
-                <b>{valueDisplayed} 
-                    <img class="icon-cont" alt="" width="13px" src={valueIcon} />
-                </b>
-            </label>
-            <input
-                type="range"
-                min="-5"
-                max="5"
-                {value}
-                class="slider"
-                on:change={onQtnValueChange}
-            />
-            <div class="slider-values">
-                <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
-                <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
-                <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
-            </div> -->
         </div>
     </div>
 </div>
@@ -639,8 +625,17 @@
     }
     .star1{
         color: gold;
-        cursor: pointer;
         font-size: 22px;
+    }
+    .pointer {
+        cursor: pointer;
+    }
+    .rating-number{
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    .bold{
+        font-weight: bold;
     }
     .ratings-modal{
         display: flex;
