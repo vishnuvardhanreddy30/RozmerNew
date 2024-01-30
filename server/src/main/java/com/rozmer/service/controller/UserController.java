@@ -1,10 +1,12 @@
 package com.rozmer.service.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.rozmer.service.entities.User;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -123,18 +125,35 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.logUserOut(email,role));
     }
 
-    @GetMapping("/followUser")
+    @GetMapping("/followUser/{followerId}/{followingId}")
     @CrossOrigin
-    public ResponseEntity<SuccessResponse<String>> followUser(@RequestParam Long followerId,@RequestParam Long followingId) {
+    public ResponseEntity<SuccessResponse<String>> followUser(@PathVariable Long followerId,@PathVariable Long followingId) {
 
         return userService.followUser(followerId, followingId);
     }
 
-    @GetMapping("/unfollowUser")
+    @GetMapping("/unfollowUser/{followerId}/{followingId}")
     @CrossOrigin
-    public ResponseEntity<SuccessResponse<String>> unfollowUser(@RequestParam Long followerId,@RequestParam Long followingId) {
+    public ResponseEntity<SuccessResponse<String>> unfollowUser(@PathVariable Long followerId,@PathVariable Long followingId) {
 
         return userService.unfollowUser(followerId, followingId);
+    }
+
+    @GetMapping("/followers/{loginUserId}")
+    public ResponseEntity<List<User>> getFollowers(@PathVariable Long loginUserId) {
+        List<User> followers = userService.getFollowers(loginUserId);
+        return ResponseEntity.ok(followers);
+    }
+
+    @GetMapping("/following/{loginUserId}")
+    public ResponseEntity<List<User>> getFollowing(@PathVariable Long loginUserId) {
+        List<User> following = userService.getFollowings(loginUserId);
+        return ResponseEntity.ok(following);
+    }
+
+    @GetMapping("/findAllUsers")
+    public List<User> findAllUsers() {
+        return userService.findAllUsers();
     }
 
 }

@@ -79,9 +79,9 @@ public class User {
 	}
 
 	@OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
-	private List<UserFollower> followers;
+	private List<UserFollower> followers = new ArrayList<>();
 
 	@OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
-	private List<UserFollower> followings;
+	private List<UserFollower> followings = new ArrayList<>();
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.rozmer.service.entities.User;
+import com.rozmer.service.service.UserService;
 import org.hibernate.engine.jdbc.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +39,9 @@ public class PostController {
 
 	@Autowired
 	private PostService postService;
+
+	@Autowired
+	UserService userService;
 
 	@Autowired
 	private FileService fileService;
@@ -179,5 +184,4 @@ public class PostController {
 				keywords);
 		return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
 	}
-
 }

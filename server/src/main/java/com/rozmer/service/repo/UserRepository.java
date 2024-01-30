@@ -5,6 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.rozmer.service.entities.User;
 
+import java.util.List;
+
 public interface UserRepository extends CrudRepository<User,Long> {
 
 //    @Query("SELECT u FROM User u WHERE u.email = ?1")
@@ -17,5 +19,5 @@ public interface UserRepository extends CrudRepository<User,Long> {
 	public User findByVerificationCode(String code);
 
 	public User findByResetPasswordToken(String token);
-	
+
 }

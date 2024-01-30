@@ -5,6 +5,7 @@ import com.rozmer.service.response.LoginResponse;
 import com.rozmer.service.response.UserResponse;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.mail.MessagingException;
 
@@ -45,5 +46,8 @@ public interface UserService {
 	UserResponse updateUser(UserCreateRequestObject userCreateRequestObject, Long userId);
     ResponseEntity<SuccessResponse<String>> followUser(Long followerId, Long followingId);
     ResponseEntity<SuccessResponse<String>> unfollowUser(Long followerId, Long followingId);
-    
+
+    List<User> getFollowers(Long loginUserId);
+    List<User> getFollowings(Long loginUserId);
+    List<User> findAllUsers();
 }

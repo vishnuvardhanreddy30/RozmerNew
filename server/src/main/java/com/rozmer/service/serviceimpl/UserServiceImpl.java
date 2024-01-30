@@ -1,8 +1,11 @@
 package com.rozmer.service.serviceimpl;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -13,6 +16,8 @@ import com.rozmer.service.entities.UserFollower;
 import com.rozmer.service.repo.GuestUserRepository;
 import com.rozmer.service.repo.UserFollowerRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -344,6 +349,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+
     @Override
     public UserResponse updateUser(UserCreateRequestObject userCreateRequestObject, Long userId) {
         User user = this.userRepository.findById(userId)
@@ -409,6 +415,45 @@ public class UserServiceImpl implements UserService {
     private boolean isAlreadyFollowing(User follower, User following) {
         List<UserFollower> userFollowers = userFollowerRepository.findByFollowerAndFollowing(follower, following);
         return !userFollowers.isEmpty();
+    }
+
+
+    public List<User> getFollowers(Long loginUserId) {
+        Optional<User> loginUserOptional = userRepository.findById(loginUserId);
+        if (loginUserOptional.isPresent()) {
+            User loginUser = loginUserOptional.get();
+            List<UserFollower> userFollowers = userFollowerRepository.findByFollower(loginUser);
+
+            return userFollowers.stream()
+                    .map(UserFollower::getFollower)
+                    .collect(Collectors.toList());
+        } else {
+            // User not found
+            return Collections.emptyList();
+        }
+    }
+
+    public List<User> getFollowings(Long loginUserId) {
+        Optional<User> loginUserOptional = userRepository.findById(loginUserId);
+        if (loginUserOptional.isPresent()) {
+            User loginUser = loginUserOptional.get();
+            List<UserFollower> userFollowings = userFollowerRepository.findByFollowing(loginUser);
+
+            return userFollowings.stream()
+                    .map(UserFollower::getFollowing)
+                    .collect(Collectors.toList());
+        } else {
+            // User not found
+            return Collections.emptyList();
+        }
+    }
+
+    public List<User> findAllUsers() {
+        Iterable<User> users = userRepository.findAll();
+
+        List<User> userList = new ArrayList<>();
+        users.forEach(userList::add);
+        return userList;
     }
 
 }
