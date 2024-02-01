@@ -151,9 +151,9 @@ public class UserController {
         return ResponseEntity.ok(following);
     }
 
-    @GetMapping("/findAllUsers")
-    public List<User> findAllUsers() {
-        return userService.findAllUsers();
+    @GetMapping("/getAllUsersWithFollowingFlag/{loginUserId}")
+    public List<User> getAllUsersWithFollowingFlag(@PathVariable Long loginUserId) {
+        return userService.getAllUsersWithFollowingFlag(loginUserId);
     }
 
 }

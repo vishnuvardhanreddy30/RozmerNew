@@ -84,4 +84,6 @@ public class User {
 	@OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
 	private List<UserFollower> followings = new ArrayList<>();
 
+	private boolean following;
+
 }

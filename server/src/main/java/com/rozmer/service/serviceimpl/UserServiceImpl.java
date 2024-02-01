@@ -447,12 +447,20 @@ public class UserServiceImpl implements UserService {
             return Collections.emptyList();
         }
     }
-
-    public List<User> findAllUsers() {
-        Iterable<User> users = userRepository.findAll();
-
+    public List<User> getAllUsersWithFollowingFlag(Long loginUserId) {
+        Iterable<User> allUsers = userRepository.findAll();
         List<User> userList = new ArrayList<>();
-        users.forEach(userList::add);
+        allUsers.forEach(userList::add);
+
+        List<Long> followingUserIds = userFollowerRepository.findByFollower(loginUserId)
+                .stream()
+                .map(userFollower -> userFollower.getFollowing().getUserId())
+                .collect(Collectors.toList());
+
+        for (User user : allUsers) {
+            user.setFollowing(followingUserIds.contains(user.getUserId()));
+        }
+
         return userList;
     }
 

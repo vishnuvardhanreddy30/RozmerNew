@@ -18,4 +18,6 @@ public class User {
     private String mobileNo;
 
     private String username;
+
+    private Boolean following;
 }
