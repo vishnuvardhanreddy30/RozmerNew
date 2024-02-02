@@ -47,7 +47,7 @@ public interface UserService {
     ResponseEntity<SuccessResponse<String>> followUser(Long followerId, Long followingId);
     ResponseEntity<SuccessResponse<String>> unfollowUser(Long followerId, Long followingId);
 
-    List<User> getFollowers(Long loginUserId);
-    List<User> getFollowings(Long loginUserId);
+    List<com.rozmer.service.dataobject.User> getFollowers(Long loginUserId);
+    List<com.rozmer.service.dataobject.User> getFollowings(Long loginUserId);
     List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(Long loginUserId);
 }

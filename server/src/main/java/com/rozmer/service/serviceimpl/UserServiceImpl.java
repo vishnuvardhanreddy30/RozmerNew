@@ -403,7 +403,7 @@ public class UserServiceImpl implements UserService {
             userFollowerRepository.deleteByFollowerAndFollowing(follower, following);
             return ResponseEntity.status(HttpStatus.CREATED).body(
                     new SuccessResponse<>(followerOptional.get().getEmail() + " unfollowed "
-                    + followingOptional.get().getEmail() + " Successfully!!"));
+                            + followingOptional.get().getEmail() + " Successfully!!"));
 
         } else {
             throw new ResourceNotFoundException("User not enable with ", "followerId", followerId);
@@ -416,7 +416,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    public List<User> getFollowers(Long loginUserId) {
+    public List<com.rozmer.service.dataobject.User> getFollowers(Long loginUserId) {
         Optional<User> loginUserOptional = userRepository.findById(loginUserId);
         if (loginUserOptional.isPresent()) {
             User loginUser = loginUserOptional.get();
@@ -424,6 +424,8 @@ public class UserServiceImpl implements UserService {
 
             return userFollowers.stream()
                     .map(UserFollower::getFollower)
+                    .collect(Collectors.toList()).stream()
+                    .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());
         } else {
             // User not found
@@ -431,7 +433,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public List<User> getFollowings(Long loginUserId) {
+    public List<com.rozmer.service.dataobject.User> getFollowings(Long loginUserId) {
         Optional<User> loginUserOptional = userRepository.findById(loginUserId);
         if (loginUserOptional.isPresent()) {
             User loginUser = loginUserOptional.get();
@@ -439,12 +441,15 @@ public class UserServiceImpl implements UserService {
 
             return userFollowings.stream()
                     .map(UserFollower::getFollowing)
+                    .collect(Collectors.toList()).stream()
+                    .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());
         } else {
             // User not found
             return Collections.emptyList();
         }
     }
+
     public List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(Long loginUserId) {
         Iterable<User> allUsers = userRepository.findAll();
         List<User> userList = new ArrayList<>();
@@ -461,12 +466,14 @@ public class UserServiceImpl implements UserService {
             for (User user : allUsers) {
                 user.setFollowing(followingUserIds.contains(user.getUserId()));
             }
-
-
+            return userList.stream()
+                    .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
+                    .collect(Collectors.toList());
+        } else {
+            // User not found
+            return Collections.emptyList();
         }
-        return userList.stream()
-                .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
-                .collect(Collectors.toList());
+
     }
 
 }

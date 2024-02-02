@@ -6,7 +6,7 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.rozmer.service.entities.User;
+import com.rozmer.service.dataobject.User;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -140,18 +140,19 @@ public class UserController {
     }
 
     @GetMapping("/followers/{loginUserId}")
+    @CrossOrigin
     public ResponseEntity<List<User>> getFollowers(@PathVariable Long loginUserId) {
-        List<User> followers = userService.getFollowers(loginUserId);
-        return ResponseEntity.ok(followers);
+        return ResponseEntity.ok(userService.getFollowers(loginUserId));
     }
 
     @GetMapping("/following/{loginUserId}")
-    public ResponseEntity<List<User>> getFollowing(@PathVariable Long loginUserId) {
-        List<User> following = userService.getFollowings(loginUserId);
-        return ResponseEntity.ok(following);
+    @CrossOrigin
+    public ResponseEntity<List<com.rozmer.service.dataobject.User>> getFollowing(@PathVariable Long loginUserId) {
+        return ResponseEntity.ok(userService.getFollowings(loginUserId));
     }
 
     @GetMapping("/getAllUsersWithFollowingFlag/{loginUserId}")
+    @CrossOrigin
     public List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(@PathVariable Long loginUserId) {
         return userService.getAllUsersWithFollowingFlag(loginUserId);
     }
