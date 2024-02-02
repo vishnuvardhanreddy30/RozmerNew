@@ -14,6 +14,7 @@
     import Labels from "../../const/Labels";
     import Request from "../../util/Request";
     import Boot from "../../util/Boot";
+    import Share from "../../widget/Share.svelte"
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -31,7 +32,7 @@
             null,
             (data) => {
                 let records = data.content;
-
+                console.log("inside lits nbdjnbdjh", data)
                 if (!Utils.isEmpty(records)) {
                     page += 1;
                     let newRecords = [];
@@ -140,6 +141,15 @@
             showDetailsFromRoute(pid);
         }
     });
+    let isModalOpen = false;
+
+  function openModal() {
+    isModalOpen = true;
+  }
+
+  function closeModal() {
+    isModalOpen = false;
+  }
 </script>
 
 <div class="feed-list flex-cont">
@@ -155,7 +165,8 @@
                 on:click={onItemClick}
             >
                 <div class="virtual-list-item">
-                    <div class="feed-info">
+                    <div class="w-90-percent">
+                    <div class="feed-info flex-cont">
                         <figure>
                             <img
                                 src={proIcon}
@@ -164,7 +175,8 @@
                                 alt=""
                             />
                         </figure>
-                        <div class="author-details">
+                        <div class="author-details flex-cont space-between">
+                            <div>
                             <span class="author-name"
                                 >Written by {list[index].user &&
                                     list[index].user.firstName}
@@ -177,19 +189,21 @@
                                 )}</span
                             >
                         </div>
+                        </div>
                     </div>
                     <div class="thumb-det-cont">
                         <div class="thumb-title">
                             <b>{list[index].title}</b>
                         </div>
                     </div>
-                    <!-- <div
+                    </div>
+                    <div
                         class="bg-img feed-thumbnail"
                         style="background-image: url({list[index].imageName
                             ? urlConst.get_thumbnail_image +
                               list[index].imageName
                             : no_image});"
-                    /> -->
+                    />
                 </div>
             </div>
 

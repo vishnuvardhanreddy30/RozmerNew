@@ -88,7 +88,22 @@ const urlConst = {
     post_answer: base + 'answer-question/question/{questionId}/answer/user/{userId}',
 
     //update user profile
-    post_user_profile: base + 'add-user/update-user/{userId}'
+    post_user_profile: base + 'add-user/update-user/{userId}',
+
+    // get userlist with follow flag
+    users_list: base + 'add-user/getAllUsersWithFollowingFlag/{loginUserId}',
+
+    // follow user
+    follow_user: base + '/add-user/followUser/{followerId}/{followingId}',
+
+    // unfollow user
+    unfollow_user: base + '/add-user/unfollowUser/{followerId}/{followingId}',
+
+    // followers list
+    followers_list: base + 'add-user/followers/{loginUserId}',
+
+    //following users list
+    following_list: base + 'add-user/following/{loginUserId}'
 };
 
 export default urlConst;

@@ -82,7 +82,7 @@ body {
     font-size: 18px;
 }
 .flex-cont {
-    display: flex;
+    display: flex !important;
 }
 .m-auto{
     margin: auto;
@@ -197,6 +197,9 @@ body {
 .w-70-percent {
     width: 70%;
     /* overflow-y: auto; */
+}
+.w-90-percent {
+    width: 90%;
 }
 .h-100-percent {
     height: 80vh;
@@ -483,9 +486,10 @@ body {
     background: var(--blue-shade-1) none repeat scroll 0 0;
     border: 1px solid var(--list-item-border);
     border-radius: 10px;
-    /* height: 92%; */
+    height: 92% !important;
     margin: 0.4rem auto !important;
     padding: 1% 2%;
+    display: flex;
 }
 
 .feed-info {
@@ -531,6 +535,9 @@ body {
     background-color: #ffffff;
     background-size: contain;
     background-position: center;
+    height: 90px;
+    width: 90px;
+    margin: auto 0;
 }
 
 .feed-list {

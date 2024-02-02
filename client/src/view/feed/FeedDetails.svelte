@@ -13,6 +13,7 @@
     import Button from "../../widget/button/Button.svelte";
     import Boot from "../../util/Boot";
     import SessionUtil from "../../util/SessionUtil";
+    import Share from '../../widget/share.svelte';
 
     import logo from "../../assets/logo_white.png";
 
@@ -180,8 +181,22 @@
     onMount(() => {
         detailsElHeight = Utils.calculateAvailableSpace(detailsEl);
     });
-</script>
+    let isModalOpen = false;
 
+  function openModal() {
+    isModalOpen = true;
+  }
+
+  function closeModal() {
+    isModalOpen = false;
+  }
+</script>
+<Share
+    title="Share post"
+    isOpen={isModalOpen}
+    onClose={closeModal}
+    postData = {detail}
+    />
 <div
     class="feed-details wh-100-percent"
 >
@@ -224,6 +239,10 @@
                         on:click={onEdit}
                     />
                 {/if}
+                
+                <div class="share-btn">
+                    <i class="fa fa-share pointer" on:click={openModal}></i>
+                </div>
                 <!-- / -->
                 <!-- <span class="breadcrumb-thumb-title">{detail.title}</span> -->
             </div>
@@ -268,7 +287,7 @@
         left: 0;
         /* background-color: #fff; */
         background-color: var(--body-bg-color);
-        z-index: 2;
+        /* z-index: 2; */
         border-radius: 10px;
     }
 
@@ -278,6 +297,10 @@
         border: 1px solid var(--primary-color-alternate-2);
         border-radius: 10px;
         height: 78vh;
+    }
+
+    .share-btn{
+        margin-right: 10px;
     }
 
     .back-btn{
