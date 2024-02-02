@@ -152,7 +152,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllUsersWithFollowingFlag/{loginUserId}")
-    public List<User> getAllUsersWithFollowingFlag(@PathVariable Long loginUserId) {
+    public List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(@PathVariable Long loginUserId) {
         return userService.getAllUsersWithFollowingFlag(loginUserId);
     }
 

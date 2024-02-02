@@ -16,8 +16,6 @@ import com.rozmer.service.entities.UserFollower;
 import com.rozmer.service.repo.GuestUserRepository;
 import com.rozmer.service.repo.UserFollowerRepository;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -447,21 +445,28 @@ public class UserServiceImpl implements UserService {
             return Collections.emptyList();
         }
     }
-    public List<User> getAllUsersWithFollowingFlag(Long loginUserId) {
+    public List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(Long loginUserId) {
         Iterable<User> allUsers = userRepository.findAll();
         List<User> userList = new ArrayList<>();
         allUsers.forEach(userList::add);
 
-        List<Long> followingUserIds = userFollowerRepository.findByFollower(loginUserId)
-                .stream()
-                .map(userFollower -> userFollower.getFollowing().getUserId())
-                .collect(Collectors.toList());
+        Optional<User> loginUserOptional = userRepository.findById(loginUserId);
+        if (loginUserOptional.isPresent()) {
+            User loginUser = loginUserOptional.get();
+            List<Long> followingUserIds = userFollowerRepository.findByFollower(loginUser)
+                    .stream()
+                    .map(userFollower -> userFollower.getFollowing().getUserId())
+                    .collect(Collectors.toList());
 
-        for (User user : allUsers) {
-            user.setFollowing(followingUserIds.contains(user.getUserId()));
+            for (User user : allUsers) {
+                user.setFollowing(followingUserIds.contains(user.getUserId()));
+            }
+
+
         }
-
-        return userList;
+        return userList.stream()
+                .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
+                .collect(Collectors.toList());
     }
 
 }
