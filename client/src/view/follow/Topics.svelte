@@ -121,7 +121,11 @@ import { writable } from 'svelte/store';
         </div> -->
         <div class="standard-bg border-radius-10 mt-10 p1">
             <div class="mb-10">
+                {#if usersList?.length > 0}
                 <span class="whom-to-follow">WHOM TO FOLLOW</span>
+                {:else}
+                <span class="whom-to-follow">No Results Found</span>
+                {/if}
             </div>
             {#each usersList as user,index (user.userId)}
                 {#if user.userId !== userInfo.userId}
