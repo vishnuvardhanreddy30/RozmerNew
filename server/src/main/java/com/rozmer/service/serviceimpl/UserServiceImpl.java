@@ -423,7 +423,7 @@ public class UserServiceImpl implements UserService {
             List<UserFollower> userFollowers = userFollowerRepository.findByFollower(loginUser);
 
             return userFollowers.stream()
-                    .map(UserFollower::getFollower)
+                    .map(UserFollower::getFollowing)
                     .collect(Collectors.toList()).stream()
                     .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());
@@ -440,7 +440,7 @@ public class UserServiceImpl implements UserService {
             List<UserFollower> userFollowings = userFollowerRepository.findByFollowing(loginUser);
 
             return userFollowings.stream()
-                    .map(UserFollower::getFollowing)
+                    .map(UserFollower::getFollower)
                     .collect(Collectors.toList()).stream()
                     .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());
