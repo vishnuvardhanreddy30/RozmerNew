@@ -100,8 +100,13 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 20px;
+    /* font-size: 30px; */
+    height: 30px;
+    width: 30px;
     cursor: pointer;
+    border: 1px solid black;
+    border-radius: 50%;
+    text-align: center;
   }
   .modal-title{
     font-size: 24px;

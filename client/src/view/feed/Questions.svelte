@@ -449,10 +449,11 @@
         {#each list as item, index}
             <div class="question-item" data-num={list.length - index}>
                 <div class="question-item-q">
-                    <div class="question-text">{item.questions}</div>
+                    <div class="flex-cont">
+                        <div class="question-text">{item.questions}</div>
                     {#if (item.user && item.user.userId) === userId}
                         <span
-                            class="material-icons delete-btn"
+                            class="material-icons delete-btn mr-10"
                             on:click={deleteQuestion}
                             itemId={item.questionId}>delete</span
                         >
@@ -464,7 +465,7 @@
                             itemId={"collab_" + item.questionId}>people-plus</span
                         >
                     {/if}
-                    {#if (item.user && item.user.userId) !== userId}
+                    <!-- {#if (item.user && item.user.userId) !== userId} -->
                         <!-- <span
                             class="material-icons rate-btn"
                             on:click={rateQuestion}
@@ -473,7 +474,8 @@
                         {#each [1, 2, 3, 4, 5] as value}
           <span on:click={() => rateQuestion(value, item)} class="star">{item.qaverageRating >= value ? '★' : '☆'}</span>
         {/each}
-                    {/if}
+                    <!-- {/if} -->
+                    </div>
                     <div class="feed-info qtn-auth-cont">
                         <div class="qtn-mdle-auth-details txt-right">
                             <span class="qtn-mdle-auth-name"
@@ -570,13 +572,14 @@
             <span class="bold">Question Ratings</span>
         </div>
         <div class="rating-container wh-100-percent flex-cont ratings-modal">
+            {#if (selectedQuestion.user && selectedQuestion.user.userId) !== userId}
             <div class="flex-cont space-between">
                 <span class="bold">Your review</span>
                 <span>{#each [1, 2, 3, 4, 5] as value}
                     <span class="star1 pointer" on:click={() => submitCurrentUserRating(value)} title="Provide your rating for this question">{currentUserRating >= value ? '★' : '☆'}</span>
                     {/each}<span class="rating-number">{currentUserRating}</span></span>
                     </div>
-
+            {/if}
             {#each selectedQuestion.qrating.qrating as item, index}
             <div class="flex-cont space-between">
                 {#if item.user.userId !== userId}
@@ -641,4 +644,16 @@
     .modal-content{
         padding: 40px;
     }
+    .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* font-size: 30px; */
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 50%;
+    text-align: center;
+  }
 </style>
