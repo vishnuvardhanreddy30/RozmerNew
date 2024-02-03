@@ -102,7 +102,6 @@
                 .replace("{userId}", SessionUtil.get("info", true).userId),
             null,
             async (res) => {
-                postRatingData = await res.pratingGetDto[0];
                 await res?.paverageRating?.forEach(item => {
                         const matchingRating = res?.paverageRating.find(rating => rating[0] == postId);
                         if (matchingRating) {
@@ -112,6 +111,11 @@
                         
                     });
                 rating = value
+                await res?.pratingGetDto?.forEach(item => {
+                        if (item.user.userId === userId) {
+                            postRatingData = item
+                        }
+                    });
             },
             (err) => {
                 Utils.log(err);
@@ -150,16 +154,18 @@
         <span class="star">{rating >= starvalue ? '★' : (rating + 0.5 === starvalue ? '½' : '☆')}</span>
         {/each}
       </div>
+      {#if postUserId !== userId}
     <div class="points-value-cont mt-20">
         <span class="points"> <b>Your Rating</b></span>
     </div>
         <div class="text-center">
-            {#if postRatingData?.user?.userId === userId}
+            <!-- {#if postRatingData?.user?.userId === userId} -->
             <span>{#each [1, 2, 3, 4, 5] as value}
-                <span class="star1" on:click={() => handleRatingClick(value)}>{postRatingData.rating >= value ? '★' : '☆'}</span>
+                <span class="star1" on:click={() => handleRatingClick(value)}>{postRatingData?.rating >= value ? '★' : '☆'}</span>
                 {/each}</span>
-            {/if}
+            <!-- {/if} -->
     </div>
+    {/if}
 </div>
 
 <style>

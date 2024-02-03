@@ -40,6 +40,9 @@
         {
             text: Labels.details.question_title,
         },
+        {
+            text: Labels.details.rating_title,
+        },
     ];
 
     let viewMap = [Comments, Questions, Rating];

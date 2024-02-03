@@ -21,7 +21,7 @@
     let showSubView = false,
         activeSubView = null,
         subViewTitle = "",
-        showRatingBtn = false,
+        showRatingBtn = true,
         postUserId;
 
     const dispatch = createEventDispatcher();
@@ -153,9 +153,9 @@
                 (resp) => {
                     postUserId = resp.user.userId;
 
-                    if (postUserId !== userId) {
-                        showRatingBtn = true;
-                    }
+                    // if (postUserId !== userId) {
+                    //     showRatingBtn = true;
+                    // }
 
                     detail = resp;
                     Utils.mask();
