@@ -17,6 +17,7 @@ public class PostDtos {
 	private Integer postId;
 
 	private String title;
+	private String category;
 
 	private String imageName;
 	

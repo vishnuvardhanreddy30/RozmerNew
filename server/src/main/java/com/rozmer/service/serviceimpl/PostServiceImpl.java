@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.var;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,9 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	static final String ARTICLE = "article";
+	static final String POEM = "poem";
 
 	@Override
 	public PostDto createPost(PostDto postDto, Long userId) {
@@ -89,17 +93,7 @@ public class PostServiceImpl implements PostService {
 		List<PostDtos> postDtos = allPosts.stream().map((post) -> this.modelMapper.map(post, PostDtos.class))
 				.collect(Collectors.toList());
 
-		PostResponse postResponse = new PostResponse();
-
-		postResponse.setContent(postDtos);
-		postResponse.setPageNumber(pagePost.getNumber());
-		postResponse.setPageSize(pagePost.getSize());
-		postResponse.setTotalRecords(pagePost.getTotalElements());
-
-		postResponse.setTotalPages(pagePost.getTotalPages());
-		postResponse.setLastPage(pagePost.isLast());
-
-		return postResponse;
+		return getPostResponse(postDtos, pagePost);
 	}
 
 	@Override
@@ -151,9 +145,17 @@ public class PostServiceImpl implements PostService {
 
 		Page<Post> pagePost = this.postRepo.searchByTitlewithPage("%" + keyword + "%", p);
 
+		return getPostResponse(postDtos, pagePost);
+	}
+
+	private PostResponse getPostResponse(List<PostDtos> postDtos, Page<Post> pagePost) {
 		PostResponse postResponse = new PostResponse();
 
-		postResponse.setContent(postDtos);
+		var postArticleDtos = postDtos.stream().filter(post -> post.getCategory().equals(ARTICLE)).collect(Collectors.toList());
+		var postPoemDtos = postDtos.stream().filter(post -> post.getCategory().equals(POEM)).collect(Collectors.toList());
+
+		postResponse.setArticleContent(postArticleDtos);
+		postResponse.setPoemContent(postPoemDtos);
 		postResponse.setPageNumber(pagePost.getNumber());
 		postResponse.setPageSize(pagePost.getSize());
 		postResponse.setTotalRecords(pagePost.getTotalElements());

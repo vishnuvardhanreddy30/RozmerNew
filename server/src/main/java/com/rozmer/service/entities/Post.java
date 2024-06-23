@@ -37,6 +37,9 @@ public class Post {
 	@Column(name = "post_title", length = 100, nullable = false)
 	private String title;
 
+	@Column(name = "post_category", length = 100, nullable = false)
+	private String category;
+
 	@Lob
 	private String content;
 

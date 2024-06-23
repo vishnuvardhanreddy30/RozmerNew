@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PostResponse {
-	private List<PostDtos> content;
+	private List<PostDtos> articleContent;
+	private List<PostDtos> poemContent;
 	private int pageNumber;
 	private int pageSize;
 	private long totalRecords;
