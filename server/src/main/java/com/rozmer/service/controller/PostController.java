@@ -46,7 +46,7 @@ public class PostController {
 	@Autowired
 	private FileService fileService;
 
-	@Value("${project.image}")
+	@Value("${project.image.posts}")
 	private String path;
 	// create
 

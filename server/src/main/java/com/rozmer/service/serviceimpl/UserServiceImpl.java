@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
@@ -15,6 +17,7 @@ import com.rozmer.service.entities.GuestUser;
 import com.rozmer.service.entities.UserFollower;
 import com.rozmer.service.repo.GuestUserRepository;
 import com.rozmer.service.repo.UserFollowerRepository;
+import lombok.var;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -362,10 +365,12 @@ public class UserServiceImpl implements UserService {
         if (userCreateRequestObject.getMobileNo() != null) {
             user.setMobileNo(userCreateRequestObject.getMobileNo());
         }
+        if (userCreateRequestObject.getImageName() != null) {
+            user.setImageName(userCreateRequestObject.getImageName());
+        }
         User updateUser = this.userRepository.save(user);
         return this.modelMapper.map(updateUser, UserResponse.class);
     }
-
 
     public ResponseEntity<SuccessResponse<String>> followUser(Long followerId, Long followingId) {
         Optional<User> followerOptional = userRepository.findById(followerId);

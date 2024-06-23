@@ -49,6 +49,8 @@ public class User {
 	@Column(name = "last_name", nullable = false, length = 20)
 	private String lastName;
 
+	private String imageName;
+
 	@Column(name = "verification_code", length = 64)
 	private String verificationCode;
 
