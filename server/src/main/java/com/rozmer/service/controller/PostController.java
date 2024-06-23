@@ -76,9 +76,10 @@ public class PostController {
 			@RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
 			@RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
 			@RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
-			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir) {
+			@RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir,
+			@RequestParam(value = "category", required = false) String category) {
 
-		PostResponse postResponse = this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir);
+		PostResponse postResponse = this.postService.getAllPost(pageNumber, pageSize, sortBy, sortDir, category);
 		return new ResponseEntity<PostResponse>(postResponse, HttpStatus.OK);
 	}
 

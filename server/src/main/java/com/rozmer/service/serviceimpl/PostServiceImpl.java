@@ -80,13 +80,13 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir, String category) {
 
 		Sort sort = (sortDir.equalsIgnoreCase("asc")) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
 		Pageable p = PageRequest.of(pageNumber, pageSize, sort);
 
-		Page<Post> pagePost = this.postRepo.findAll(p);
+		Page<Post> pagePost = this.postRepo.findByCategory(category, p);
 
 		List<Post> allPosts = pagePost.getContent();
 
@@ -151,11 +151,7 @@ public class PostServiceImpl implements PostService {
 	private PostResponse getPostResponse(List<PostDtos> postDtos, Page<Post> pagePost) {
 		PostResponse postResponse = new PostResponse();
 
-		var postArticleDtos = postDtos.stream().filter(post -> post.getCategory().equals(ARTICLE)).collect(Collectors.toList());
-		var postPoemDtos = postDtos.stream().filter(post -> post.getCategory().equals(POEM)).collect(Collectors.toList());
-
-		postResponse.setArticleContent(postArticleDtos);
-		postResponse.setPoemContent(postPoemDtos);
+		postResponse.setContent(postDtos);
 		postResponse.setPageNumber(pagePost.getNumber());
 		postResponse.setPageSize(pagePost.getSize());
 		postResponse.setTotalRecords(pagePost.getTotalElements());
