@@ -125,6 +125,7 @@
                 rec-id={item.postId}
             >
                 <div class="virtual-list-item">
+                    <div class="w-90-percent">
                     <!-- <div class="thumb-det-cont">
                         <div class="thumb-title">
                             <b>{item.title}</b>
@@ -135,7 +136,7 @@
                         style="background-image: url({urlConst.get_thumbnail_image +
                             item.imageName}), url({no_image});"
                     /> -->
-                    <div class="feed-info">
+                    <div class="feed-info flex-cont">
                         <figure>
                             <img
                                 src={proIcon}
@@ -145,6 +146,7 @@
                             />
                         </figure>
                         <div class="author-details">
+                            <div>
                             <span class="author-name"
                                 >Written by {userInfo.firstName}
                                 {userInfo.lastName}</span
@@ -155,12 +157,21 @@
                                 )}</span
                             >
                         </div>
+                        </div>
                     </div>
                     <div class="thumb-det-cont">
                         <div class="thumb-title">
                             <b>{item.title}</b>
                         </div>
                     </div>
+                    </div>
+                    <div
+                        class="bg-img feed-thumbnail"
+                        style="background-image: url({item.imageName
+                            ? urlConst.get_thumbnail_image +
+                            item.imageName
+                            : no_image});"
+                    />
                 </div>
             </div>
         {/each}
@@ -202,10 +213,10 @@
         cursor: pointer;
     }
 
-    .feed-thumbnail {
+    /* .feed-thumbnail {
         height: 240px;
         width: 100%;
-    }
+    } */
 
     .no-post-msg-cont {
         display: flex;

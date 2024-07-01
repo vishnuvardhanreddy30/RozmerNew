@@ -36,6 +36,8 @@
         home: FeedList, //isMobile ? MobileFeedList : FeedList,
         notifications: Notification,
         publish: isMobile ? MobilePublish : Publish,
+        articles: FeedList,
+        poems: FeedList,
         account: Profile,
         collaborate: Collaborate,
         mypost: MyPosts

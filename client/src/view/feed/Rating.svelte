@@ -91,7 +91,7 @@
             return
         }
         value = e.target.value;
-    
+        updateValueDisplayed(value);
         submitRating(value);
     }
 
@@ -142,28 +142,41 @@
 <div class="rating-container wh-100-percent">
     <!-- Rating: {value} -->
     <div class="points-value-cont">
-        <span class="points"> 
+        <!-- <span class="points">  -->
             <!-- <b>{valueDisplayed} 
                 <img class="icon-cont" alt="" width="13px" src={valueIcon} />
             </b> -->
-            <b>Average Rating</b>
-        </span>
+            <!-- <b>Average Rating</b>
+        </span> -->
     </div>
-    <div class="text-center mb-20">
+    <!-- <div class="text-center mb-20">
         {#each [1, 2, 3, 4, 5] as starvalue}
         <span class="star">{rating >= starvalue ? '★' : (rating + 0.5 === starvalue ? '½' : '☆')}</span>
         {/each}
-      </div>
+      </div> -->
       {#if postUserId !== userId}
     <div class="points-value-cont mt-20">
         <span class="points"> <b>Your Rating</b></span>
     </div>
         <div class="text-center">
             <!-- {#if postRatingData?.user?.userId === userId} -->
-            <span>{#each [1, 2, 3, 4, 5] as value}
+            <!-- <span>{#each [1, 2, 3, 4, 5] as value}
                 <span class="star1" on:click={() => handleRatingClick(value)}>{postRatingData?.rating >= value ? '★' : '☆'}</span>
-                {/each}</span>
+                {/each}</span> -->
             <!-- {/if} -->
+            <input
+                type="range"
+                min="-5"
+                max="5"
+                {value}
+                class="slider"
+                on:change={onValueChange}
+            />
+            <div class="slider-values">
+                <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
+                <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
+                <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
+            </div>
     </div>
     {/if}
 </div>

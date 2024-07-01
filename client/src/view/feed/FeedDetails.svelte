@@ -52,7 +52,7 @@
     function onBack() {
         dispatch("hidedetails");
         const path = window.location;
-        location.hash = path?.hash?.includes('home') ? 'home' : 'mypost';
+        location.hash = path?.hash?.includes('articles') || path?.hash?.includes('poems') || path?.hash?.includes('home') ? Utils.getHash() : 'mypost';
         // Utils.redirectTo("home");
     }
 

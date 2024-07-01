@@ -15,6 +15,7 @@
     import Base from "../../util/Base";
 
     let editor, title, files, imageName, editorEl, userFeedCount;
+    let category = 'poem'
 
     export let postId;
 
@@ -22,7 +23,7 @@
         editor = KothingEditor.create("editor_classic", {
             display: "block",
             width: "100%",
-            height: innerHeight * 0.67 + "px", //"430px",
+            height: innerHeight * .4 + "px", //"430px",
             popupDisplay: "full",
             katex: katex,
             plugins: plugins,
@@ -65,6 +66,23 @@
         getUserPosts();
     });
 
+    function showPostType(content) {
+        Utils.confirm(
+            'Publish this post as',
+            '',
+            function (btn) {
+                if (btn === "ok") {
+                    category = "article"
+                }else{
+                    category = "poem"
+                }
+                createPost(content)
+            },
+            'Article',
+            'Poem'
+        );
+    }
+
     function showSuccessConfirmation() {
         Utils.alert(Labels.publish.update_msg, Labels.alert.success);
     }
@@ -79,7 +97,7 @@
         if ((imageName && !files) || !files) {
             Base.toast('success', Labels.publish.update_msg);
             getUserPosts();
-            Utils.redirectTo('home');
+            Utils.redirectTo(category+'s');
             return;
         }
 
@@ -101,7 +119,7 @@
                 files = null;
                 Base.toast('success', Labels.publish.update_msg);
                 getUserPosts();
-                Utils.redirectTo('home');
+                Utils.redirectTo(category+'s');
             })
             .catch((error) => {
                 Utils.log(error);
@@ -168,8 +186,9 @@
                     if (id === "ok") {
                         return;
                     }
-
-                    createPost(content);
+                    
+                    showPostType(content)
+                    // createPost(content);
                 },
                 Labels.publish.yes,
                 Labels.publish.later
@@ -177,8 +196,8 @@
 
             return;
         }
-
-        createPost(content);
+        showPostType(content)
+        // createPost(content);
     }
 
     function createPost(content) {
@@ -187,6 +206,7 @@
         let data = {
             content: content,
             title: title,
+            category: category
         };
 
         let userInfo = SessionUtil.get("info", true);

@@ -46,9 +46,15 @@
             action: "account",
         },
         {
-            text: Labels.menu.home,
+            text: Labels.menu.articles,
             icon: "menu_book",
-            action: "home",
+            action: "articles",
+            selected: true,
+        },
+        {
+            text: Labels.menu.poems,
+            icon: "menu_book",
+            action: "poems",
             selected: true,
         },
         {

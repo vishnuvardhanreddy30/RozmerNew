@@ -31,7 +31,7 @@
         }
 
         SessionUtil.set("info", resp);
-        dispatch("changeview", "home");
+        dispatch("changeview", Labels.login.after_login || 'home');
     }
 
     function onFailure(err) {

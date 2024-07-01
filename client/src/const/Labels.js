@@ -30,7 +30,8 @@ const Labels = {
         forgetPassword: 'Forget Password?',
         failed: "The email address or phone number that you've entered doesn't match any account. <br/> <b>Sign up for an account.</b>",
         login_error: "Login Error",
-        flash_msg: 'A new social media platform changing the meaning of news!'
+        flash_msg: 'A new social media platform changing the meaning of news!',
+        after_login: 'articles'
     },
 
     register: {
@@ -76,6 +77,8 @@ const Labels = {
         home: 'Feed',
         publish: 'Publish',
         profile: 'My Profile',
+        articles: "Articles",
+        poems: 'Poems',
         notification: 'Notification',
         logout: 'Logout'
     },

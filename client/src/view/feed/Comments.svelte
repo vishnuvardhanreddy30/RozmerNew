@@ -290,6 +290,7 @@
 
         {#each list as item, index}
             <div class="comments-item" data-num={list.length - index}>
+                <div class="flex">
                 <div class="question-text">{item.content}</div>
                 {#if postUserId === userId}
                     <span
@@ -306,12 +307,18 @@
                     >
                 {/if}
                 {#if (item.user && item.user.userId) !== userId}
-                <span
+                <!-- <span
                     class="material-icons rate-btn"
                     on:click={rateComment}
                     itemId={"rate_" + item.id}>star_rate</span
+                > -->
+                <span
+                    class="material-icons rate-btn"
+                    on:click={rateComment}
+                    itemId={"rate_" + item.id}>favorite</span
                 >
                 {/if}
+            </div>
                 <div class="feed-info qtn-auth-cont">
                     <div class="qtn-mdle-auth-details txt-right">
                         <span class="qtn-mdle-auth-name"

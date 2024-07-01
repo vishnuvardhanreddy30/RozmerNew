@@ -1,7 +1,7 @@
 <svelte:options accessors />
 
 <script>
-    import { onMount } from "svelte";
+    import { onMount, beforeUpdate } from "svelte";
     import VirtualList from "../../widget/tinylist/VirtualList.svelte";
     import InfiniteLoading from "../../widget/tinylist/InfiniteLoading.svelte";
     import FeedDetails from "./FeedDetails.svelte";
@@ -14,7 +14,7 @@
     import Labels from "../../const/Labels";
     import Request from "../../util/Request";
     import Boot from "../../util/Boot";
-    import Share from "../../widget/Share.svelte"
+    import Share from "../../widget/Share.svelte";
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -24,15 +24,15 @@
         showDetails = false,
         detail,
         postId,
-        infiniteId = Symbol();
+        infiniteId = Symbol(),
+        category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
 
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
-            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc`,
+            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc&category=${category}`,
             null,
             (data) => {
                 let records = data.content;
-                console.log("inside lits nbdjnbdjh", data)
                 if (!Utils.isEmpty(records)) {
                     page += 1;
                     let newRecords = [];
@@ -81,7 +81,7 @@
         showDetails = true;
 
         if(getPID() !== String(postId)) {
-            Utils.redirectTo("home", {
+            Utils.redirectTo(Utils.getHash(), {
                 pid: postId,
             });
         }
@@ -105,16 +105,23 @@
     }
 
     export function onRouteChange(data) {
-        if(data.params){
-            if(Utils.isEmpty(data.params.pid)){
+        if (data.params) {
+            if (Utils.isEmpty(data.params.pid)) {
                 onHideDetails();
             }
 
-            if(!Utils.isEmpty(data.params.pid)) {
+            if (!Utils.isEmpty(data.params.pid)) {
                 showDetailsFromRoute(data.params.pid);
             }
         }
+
+        // Reset state and trigger infinite scroll for initial data fetch
+        category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
+        page = 1;
+        list = [];
+        infiniteId = Symbol();
     }
+
     function hideDetailsPopup() {
         showDetails = false;
     }
@@ -134,22 +141,32 @@
     function getPID() {
         return Utils.getParamsAsObject(location.hash).pid;
     }
-    onMount(()=> {
+
+    onMount(() => {
         let pid = getPID();
 
         if(pid) {
             showDetailsFromRoute(pid);
         }
+
+        infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } }); // Initial data fetch
     });
+
+    beforeUpdate(() => {
+        if (category !== (Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '')) {
+            onRouteChange({});
+        }
+    });
+
     let isModalOpen = false;
 
-  function openModal() {
-    isModalOpen = true;
-  }
+    function openModal() {
+        isModalOpen = true;
+    }
 
-  function closeModal() {
-    isModalOpen = false;
-  }
+    function closeModal() {
+        isModalOpen = false;
+    }
 </script>
 
 <div class="feed-list flex-cont">
