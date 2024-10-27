@@ -137,14 +137,15 @@
                             item.imageName}), url({no_image});"
                     /> -->
                     <div class="feed-info flex-cont">
-                        <figure>
+                        <!-- <figure>
                             <img
                                 src={proIcon}
                                 width="36px"
                                 height="36px"
                                 alt=""
                             />
-                        </figure>
+                        </figure> -->
+                        <div class="bg-img profile-image pointer user-profile-image" style="background-image: url({item.user.imageName ? urlConst.get_profile_pic +item.user.imageName : proIcon});"/>
                         <div class="author-details">
                             <div>
                             <span class="author-name"

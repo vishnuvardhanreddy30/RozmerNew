@@ -10,6 +10,7 @@
     import Request from "../../util/Request";
     import SessionUtil from "../../util/SessionUtil";
     import urlConst from "../../const/Url";
+    import { User } from "../../store/User"
 
     import logo from "../../assets/logo.png";
     import proIcon from "../../assets/user-icon.png";
@@ -187,6 +188,12 @@
             searchIconText = "refresh";
         }
     }
+    // after profile pic updated
+    User.subscribe(value => {
+        if(value) {
+            userInfo = value.userInfo
+        }
+    });
 </script>
 
 <!-- <Toolbar cls="theme-bg"> -->
@@ -252,13 +259,15 @@
             <div class="pro-card-cont">
                 <div align="center" class="flex-cont">
                     <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome { role === 'guest' ? 'to Rozmer' : '! '+userInfo.firstName+' '+userInfo.lastName}</span></div>
-                    <img src={proIcon} alt="Profile" width="40px" class="profile-image pointer" on:click={toggleMenu}/>
+                    <!-- <img src={proIcon} alt="Profile" width="40px" class="profile-image pointer" on:click={toggleMenu}/> -->
+                    <div class="bg-img profile-image pointer user-profile-image" style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});" on:click={toggleMenu}/>
                 </div>
             </div>
             <!-- Menu Popup -->
             <div class="menu p-3 {isMenuOpen ? 'd-block' : 'd-none'}">
                 <div class="d-flex">
-                    <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div>
+                    <!-- <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div> -->
+                     <div><div class="bg-img profile-image pointer user-profile-image" style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});" on:click={toggleMenu}/></div>
                     <div class="d-flex flex-column">
                         {#if role !== 'guest'}
                         <div class="pro-card-user-name ml-2">{userInfo.firstName} {userInfo.lastName}</div>
@@ -371,7 +380,7 @@
         padding: 4px 10px;
     }
     .pro-card-user-name {
-        padding-top: 4px;
+        /* padding-top: 4px; */
         font-size: 16px;
         font-weight: 500;
     }

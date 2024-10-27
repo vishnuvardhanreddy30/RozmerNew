@@ -5,6 +5,9 @@ const base = 'http://localhost:9001/' // Enable it for Development
 const urlConst = {
     register: base + 'add-user',
     verify_user: base + 'add-user/verify',
+    upload_profile_pic: base + 'add-user/profile/image/upload/{loginUserId}',
+    get_profile_pic: base + 'add-user/profile/image/',
+    get_user_details: base + 'add-user/getUserDetails/{userId}',
 
     // login
     login: base + 'add-user/login-user',

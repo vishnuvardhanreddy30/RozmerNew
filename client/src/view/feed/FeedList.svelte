@@ -184,14 +184,15 @@
                 <div class="virtual-list-item">
                     <div class="w-90-percent">
                     <div class="feed-info flex-cont">
-                        <figure>
+                        <!-- <figure>
                             <img
                                 src={proIcon}
                                 width="36px"
                                 height="36px"
                                 alt=""
                             />
-                        </figure>
+                        </figure> -->
+                        <div class="bg-img profile-image pointer user-profile-image" style="background-image: url({list[index].user.imageName ? urlConst.get_profile_pic +list[index].user.imageName : proIcon});"/>
                         <div class="author-details flex-cont space-between">
                             <div>
                             <span class="author-name"
