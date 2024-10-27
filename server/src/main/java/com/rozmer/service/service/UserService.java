@@ -50,4 +50,5 @@ public interface UserService {
     List<com.rozmer.service.dataobject.User> getFollowers(Long loginUserId);
     List<com.rozmer.service.dataobject.User> getFollowings(Long loginUserId);
     List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(Long loginUserId);
+    com.rozmer.service.dataobject.User getUserDetails(Long userId);
 }

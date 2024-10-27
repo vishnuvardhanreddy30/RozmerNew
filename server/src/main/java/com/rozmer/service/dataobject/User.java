@@ -1,10 +1,12 @@
 package com.rozmer.service.dataobject;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
 @Data
+@Builder
+@RequiredArgsConstructor
 public class User {
 
     private Long userId;

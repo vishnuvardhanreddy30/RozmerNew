@@ -481,4 +481,10 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public com.rozmer.service.dataobject.User getUserDetails(Long userId) {
+        return userRepository.findById(userId)
+                .map(user -> modelMapper.map(user, com.rozmer.service.dataobject.User.class))
+                .orElse(new com.rozmer.service.dataobject.User());
+    }
 }

@@ -179,7 +179,7 @@ public class UserController {
 
         String fileName = this.fileService.uploadImage(path, image);
         UserResponse updateUser = this.userService.updateUser(UserCreateRequestObject.builder().imageName(fileName).build(), loginUserId);
-        return new ResponseEntity<>(updateUser, HttpStatus.OK);
+        return new ResponseEntity<UserResponse>(updateUser, HttpStatus.OK);
 
     }
 
@@ -194,6 +194,12 @@ public class UserController {
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         StreamUtils.copy(resource, response.getOutputStream());
 
+    }
+
+    @GetMapping("/getUserDetails/{userId}")
+    @CrossOrigin
+    public com.rozmer.service.dataobject.User getUserDetails(@PathVariable Long userId) {
+        return userService.getUserDetails(userId);
     }
 
 }
