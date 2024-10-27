@@ -22,4 +22,5 @@ public class User {
     private String username;
 
     private Boolean following;
+    private String imageName;
 }
