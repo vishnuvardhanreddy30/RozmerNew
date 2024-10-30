@@ -30,18 +30,19 @@
 
     function submitRating(value) {
         if(value === '-5') {
-            Base.createRatingPopup({
-                callback: function(action, comment) {
-                    Utils.hideAlert();
+            // Base.createRatingPopup({
+            //     callback: function(action, comment) {
+            //         Utils.hideAlert();
                     
-                    // 1: takedown
-                    if(action) {
-                        submitRatingConfirm(value, 1, comment);
-                    } else {
-                        submitRatingConfirm(value);
-                    }
-                }
-            });
+            //         // 1: takedown
+            //         if(action) {
+            //             submitRatingConfirm(value, 1, comment);
+            //         } else {
+            //             submitRatingConfirm(value);
+            //         }
+            //     }
+            // });
+            submitRatingConfirm(value);
             return;
         }
 

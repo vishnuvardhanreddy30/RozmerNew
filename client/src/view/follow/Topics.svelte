@@ -1,7 +1,7 @@
 <script>
 // @ts-nocheck
 import { writable } from 'svelte/store';
-    import { onMount, createEventDispatcher } from "svelte";
+    import { onMount, onDestroy, createEventDispatcher } from "svelte";
     import Utils from "../../util/Utils";
     // import Labels from "../../const/Labels";
     import urlConst from "../../const/Url";
@@ -13,6 +13,7 @@ import { writable } from 'svelte/store';
     import axios from "axios";
     let userInfo = {};
     const activeTab = writable('users');
+    var hideUsersTab = writable(false);
     let title = 'YOU ARE FOLLOWING'
     let follow_list = [
         'Technology',
@@ -29,7 +30,27 @@ import { writable } from 'svelte/store';
     $: {
         fetchData('users')
     }
+    onMount(() => {
+        userInfo = SessionUtil.get("info", true);
+        updateTabFromURL();
 
+        // Listen for hashchange events
+        window.addEventListener("hashchange", updateTabFromURL);
+    });
+    onDestroy(() => {
+            window.removeEventListener("hashchange", updateTabFromURL);
+        });
+    function updateTabFromURL() {
+        if (window.location.href.includes("#account")) {
+            hideUsersTab = true
+            activeTab.set('followers');
+            fetchData('followers');
+        } else {
+            hideUsersTab = false
+            activeTab.set('users');
+            fetchData('users');
+        }
+    }
     function fetchData(tab) {
         usersList = []
         let url;
@@ -100,10 +121,12 @@ import { writable } from 'svelte/store';
 <div class="feed-details col-12 mx-auto">
     <div class="">
         <div class="tab-buttons">
-            <button on:click={() => {$activeTab = 'users'; fetchData('users')}} class:active={$activeTab === 'users'}>Users</button>
+            {#if !hideUsersTab}
+                <button on:click={() => {$activeTab = 'users'; fetchData('users')}} class:active={$activeTab === 'users'}>Users</button>
+            {/if}
             <button on:click={() => {$activeTab = 'followers'; fetchData('followers')}} class:active={$activeTab === 'followers'}>Followers</button>
             <button on:click={() => {$activeTab = 'following'; fetchData('following')}} class:active={$activeTab === 'following'}>Following</button>
-          </div>
+        </div>
         <!-- Added comments for following topics section -->
         <!-- <div class="mb-10">
             <span class="follow-title">{title}</span>

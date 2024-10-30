@@ -58,11 +58,11 @@
             action: "poems",
             selected: true,
         },
-        {
-            text: Labels.profile.my_post,
-            icon: "dynamic_feed",
-            action: "mypost",
-        }
+        // {
+        //     text: Labels.profile.my_post,
+        //     icon: "dynamic_feed",
+        //     action: "mypost",
+        // }
     ];
     export let selected;
     function onMenuItemClick(e, idx) {
