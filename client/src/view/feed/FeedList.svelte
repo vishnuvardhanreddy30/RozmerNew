@@ -26,12 +26,14 @@
         postId,
         infiniteId = Symbol(),
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
-
+    let initialLoad = true
+    
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
             `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc&category=${category}`,
             null,
             (data) => {
+                initialLoad = false;
                 let records = data.content;
                 if (!Utils.isEmpty(records)) {
                     page += 1;
@@ -45,7 +47,7 @@
 
                     list = [...list, ...newRecords];
 
-                    if (data.totalRecords === records.length) {
+                    if (list.length >= data.totalRecords) {
                         complete();
                     } else {
                         loaded();
@@ -114,12 +116,20 @@
                 showDetailsFromRoute(data.params.pid);
             }
         }
+        initialLoad = true;
 
         // Reset state and trigger infinite scroll for initial data fetch
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
         page = 1;
         list = [];
         infiniteId = Symbol();
+        // Ensure the first fetch occurs only once by directly calling the handler
+setTimeout(() => {
+        if (list.length === 0) {
+
+            infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } });
+        }
+    }, 0);
     }
 
     function hideDetailsPopup() {
@@ -148,9 +158,13 @@
         if(pid) {
             showDetailsFromRoute(pid);
         }
+// Ensure the first fetch occurs only once by directly calling the handler
+setTimeout(() => {
+        if (list.length === 0) {
 
-        infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } }); // Initial data fetch
-    });
+            infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } });
+        }
+    }, 0);    });
 
     beforeUpdate(() => {
         if (category !== (Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '')) {
@@ -226,11 +240,13 @@
             </div>
 
             <div slot="footer" class="footer">
+                {#if !initialLoad}
                 <InfiniteLoading
                     on:infinite={infiniteHandler}
                     identifier={infiniteId}
-                    noResultsText={Labels.list.no_results}
+                    noResultsText=""
                 />
+                {/if}
             </div>
         </VirtualList>
     </div>

@@ -274,7 +274,7 @@
     }
 
     function onCancel() {
-        Utils.redirectTo("home");
+        Utils.redirectTo("articles");
     }
 
     function onPreview() {

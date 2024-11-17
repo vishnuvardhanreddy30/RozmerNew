@@ -147,8 +147,8 @@ const Labels = {
     },
 
     details: {
-        comment_title: 'Collaborate',
-        question_title: 'Questions',
+        comment_title: 'Comments',
+        question_title: 'Collaborate',
         rating_title: 'Rating',
         take_down_post: 'Take Down Post',
         submit_rating_popup: 'No takedown, just not cool 👎',
@@ -157,7 +157,7 @@ const Labels = {
 
     collaborate: {
         comment_title: 'Comment collaborated for the selected phrase',
-        question_title: 'Q&A collaborated for the selected phrase',
+        question_title: 'Creator – Audience Collab',
         submit: 'Submit',
         add_success: 'Successfully Collaborated',
         collaborate_body: 'Please drag and select the content from the blog you want to collaborate',

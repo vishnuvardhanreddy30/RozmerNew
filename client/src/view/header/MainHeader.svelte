@@ -235,11 +235,11 @@
     </div>
 
     <div slot="right" class="flex-cont">
-        {#if role !== 'guest'}
+        <!-- {#if role !== 'guest'}
         <div class="ml-2 my-auto">
             <i class="fa fa-bell fa-lg pointer" style="color: #1a9b97;"></i>
         </div>
-        {/if}
+        {/if} -->
         <!-- <div class="pro-card-cont">
             <div align="center" class="flex-cont">
                 <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome ! {userInfo.firstName} {userInfo.lastName}</span></div>
