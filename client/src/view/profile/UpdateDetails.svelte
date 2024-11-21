@@ -14,13 +14,29 @@
     import { User } from "../../store/User"
 
     let userInfo = {};
+    let loginUserInfo = {};
+    let showDetails = true;
     let labelAlign = Boot.isDesktop() ? "left" : "column";
     let profile;
     let maxLength = 10,
         required = true;
 
     $: {
-        userInfo = SessionUtil.get("info", true);
+        loginUserInfo = SessionUtil.get("info", true);
+        let selectedUserId = getUIDFromHash()
+        if(selectedUserId){
+            showDetails = false;
+            fetchUserProfilePic(selectedUserId)
+        }else {
+            userInfo = loginUserInfo
+        }
+    }
+
+    function getUIDFromHash() {
+        const hash = location.hash; // Get the hash part of the URL
+        const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(queryString);
+        return params.get('uid');
     }
 
     function onUpdate() {
@@ -90,7 +106,7 @@
             .then((result) => {
                 result = JSON.parse(result);
                 Base.toast('success', Labels.publish.update_msg);
-                fetchUserProfilePic()
+                fetchUserProfilePic(userInfo.userId)
             })
             .catch((error) => {
                 Utils.log(error);
@@ -103,23 +119,29 @@
         document.getElementById('fileInput').click();
     }
 
-    function fetchUserProfilePic() {
-        fetch(urlConst.get_user_details.replace("{userId}", userInfo.userId), {
+    function fetchUserProfilePic(uid) {
+        fetch(urlConst.get_user_details.replace("{userId}", uid), {
             method: "GET"
         })
             .then((response) => response.text())
             .then((result) => {
                 result = JSON.parse(result);
-                userInfo.imageName = result.imageName
-                SessionUtil.set("info", userInfo)
-                User.set({ userInfo: userInfo });
+                if(loginUserInfo.userId == result.userId) {
+                    userInfo.imageName = result.imageName
+                    SessionUtil.set("info", userInfo)
+                    User.set({ userInfo: userInfo });
+                } else {
+                    userInfo = result
+                    showDetails = true
+                }
+                
             })
             .catch((error) => {
                 Utils.log(error);
             });
     }
 </script>
-
+{#if showDetails}
 <div
     class="profile-details-cont overflow-y flex-cont flex-dir-column flex-vh"
     align="center"
@@ -130,10 +152,11 @@
         <!-- <div class="profile-image pointer" on:click={triggerFileInput} style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});"/> -->
 
         <input type="file" id="fileInput" accept="image/*" style="display: none;" on:change={handleFileInput} />
-
+        {#if loginUserInfo.userId == userInfo.userId}
         <div class="plus-icon" on:click={triggerFileInput}>
             <i class="fa fa-plus-circle pointer"></i> <!-- Font Awesome icon for plus -->
         </div>
+        {/if}
     </div>
 
     <div class="flex-cont pb-1" align="left">
@@ -161,13 +184,15 @@
             {required}
         />
     </div>
-    <Toolbar ui="plaind">
-        <div class="flex-cont" slot="center">
-            <Button text={Labels.profile.update} on:click={onUpdate} />
-        </div>
-    </Toolbar>
+    {#if loginUserInfo.userId == userInfo.userId}
+        <Toolbar ui="plaind">
+            <div class="flex-cont" slot="center">
+                <Button text={Labels.profile.update} on:click={onUpdate} />
+            </div>
+        </Toolbar>
+    {/if}
 </div>
-
+{/if}
 <style>
     .profile-details-cont .flex-cont {
         align-content: center;

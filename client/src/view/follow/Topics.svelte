@@ -83,6 +83,15 @@ import { writable } from 'svelte/store';
             });
     }
 
+    function viewUserDetails(user, index) {
+        Utils.redirectTo('account', {
+                uid: user.userId,
+            });
+        setTimeout(() => {
+            window.location.reload()
+        }, 100)
+    }
+
     function unFollowUser(user, index) {
         axios.get(urlConst.unfollow_user.replace("{followerId}", userInfo.userId).replace("{followingId}", user.userId), {
             headers: Request.getHeaders(null),
@@ -155,7 +164,7 @@ import { writable } from 'svelte/store';
                 <div class="d-flex flex-wrap" key={'follow'+user.userId}>
                     <img width="60px" height="60px" src={proIcon} alt="Profile Icon" />
                     <div class="user-info">
-                        <span class="user-name">{user.firstName} {user.lastName}</span>
+                        <span class="user-name pointer" on:click={() => viewUserDetails(user, index)}>{user.firstName} {user.lastName}</span>
                         <span class="user-role">{user.email}</span>
                         {#if user.following}
                         <button class="follow-btn" on:click={() => unFollowUser(user, index)}>Following</button>

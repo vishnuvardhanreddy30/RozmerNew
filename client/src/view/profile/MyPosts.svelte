@@ -13,6 +13,7 @@
     import Labels from "../../const/Labels";
 
     let userInfo = {},
+        loginUserInfo = {},
         data = [],
         showDetails = false,
         postId,
@@ -95,10 +96,33 @@
         });
     }
     $: {
-        userInfo = SessionUtil.get("info", true);
-        let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
+        loginUserInfo = SessionUtil.get("info", true);
+        let selectedUserId = getUIDFromHash()
+        console.log("myposos : ", selectedUserId)
+        if(selectedUserId){
+            fetchUserPosts(selectedUserId)
+        }else {
+            userInfo = loginUserInfo
+            fetchUserPosts(userInfo.userId)
+        }
+    }
+
+    function fetchUserPosts(uid) {
+        console.log("yseytyegte : ", uid)
+        let url = urlConst.get_user_posts.replace("{userId}", uid);
+        console.log("urklr : ", url)
         Utils.mask(true);
-        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(uid) Request.get(url, null, onSuccess, onFailure, onSuccess);
+    }
+
+    
+        
+
+    function getUIDFromHash() {
+        const hash = location.hash; // Get the hash part of the URL
+        const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(queryString);
+        return params.get('uid');
     }
 
     onMount(() => {
@@ -149,8 +173,8 @@
                         <div class="author-details">
                             <div>
                             <span class="author-name"
-                                >Written by {userInfo.firstName}
-                                {userInfo.lastName}</span
+                                >Written by {item.user.firstName}
+                                {item.user.lastName}</span
                             >
                             <span class="published-details"
                                 > | {Labels.profile.published} {TIME_SINCE(

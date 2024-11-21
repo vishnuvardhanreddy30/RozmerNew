@@ -99,6 +99,12 @@
             activeView = view;
             location.hash = viewMapRef;
 
+            if(viewMapRef == 'account') {
+                setTimeout(() => {
+                    window.location.reload()
+                }, 100)
+            }
+
             setTimeout(() => {
                 if (activeViewRef && activeViewRef.handleResize) {
                     activeViewRef.handleResize();
