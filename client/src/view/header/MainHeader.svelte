@@ -58,6 +58,12 @@
             action: "poems",
             selected: true,
         },
+        {
+            text: 'Payment',
+            icon: "payment",
+            action: "payment",
+            selected: true,
+        },
         // {
         //     text: Labels.profile.my_post,
         //     icon: "dynamic_feed",

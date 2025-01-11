@@ -15,6 +15,7 @@
     import Request from "../../util/Request";
     import Boot from "../../util/Boot";
     import Share from "../../widget/Share.svelte";
+    import SessionUtil from "../../util/SessionUtil";
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -27,6 +28,8 @@
         infiniteId = Symbol(),
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
     let initialLoad = true
+    let userId = SessionUtil.get("info", true).userId;
+    let modalMessage = "You've alreday viewed this post (article/poem). If you want to watch it again please clear the due amount for this post";
     
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
@@ -35,12 +38,21 @@
             (data) => {
                 initialLoad = false;
                 let records = data.content;
+                // Fetch payment details from localStorage
+                let paymentDetails = JSON.parse(localStorage.getItem("paymentDetails") || "[]");
+
                 if (!Utils.isEmpty(records)) {
                     page += 1;
                     let newRecords = [];
 
                     for(let i = 0; i < records.length; i++) {
                         if(records[i].hidePost !== '1') {
+                            // Check if the postId matches with paymentDetails
+                            const isViewed = paymentDetails.some(
+                                (payment) => payment.postId === records[i].postId
+                            );
+                            // Add a viewed property to the record
+                            records[i].viewed = isViewed;
                             newRecords.push(records[i]);
                         } 
                     }
@@ -68,26 +80,62 @@
         showDetails = false;
 
         let idx = e && e.currentTarget.getAttribute("data-num");
-
         detail = list[+idx - 1] || {};
 
-        if (routeData) {
-            idx = routeData.params.id;
+        // Check if the logged-in user is the post's author
+        if (detail?.user?.userId === userId) {
+            postId = detail.postId;
+            showDetails = true;
 
-            detail = {
-                postId: idx,
-            };
+            if (getPID() !== String(postId)) {
+                Utils.redirectTo(Utils.getHash(), {
+                    pid: postId,
+                });
+            }
+            return; // Exit here to skip further checks
         }
 
-        postId = detail.postId;
-        showDetails = true;
+        // If not the author, check the viewed status
+        if (detail.viewed) {
+            // Logic to open the payment modal goes here
+            openModal();
+        } else {
+            // If accessed via routeData, update the post ID
+            if (routeData) {
+                idx = routeData.params.id;
+                detail = {
+                    postId: idx,
+                };
+            }
 
-        if(getPID() !== String(postId)) {
-            Utils.redirectTo(Utils.getHash(), {
-                pid: postId,
-            });
+            // Mark the post as viewed
+            detail.viewed = true;
+
+            // If the post has a title, record the view in paymentDetails
+            if (detail.title) {
+                let paymentDetails = JSON.parse(localStorage.getItem("paymentDetails") || "[]"); // Parse or use an empty array
+                let obj = {
+                    title: `Read ${detail.category}: ${detail.title}`,
+                    postId: detail.postId,
+                    type: 'Post Read',
+                    date: new Date(),
+                    amount: '10',
+                };
+                paymentDetails.push(obj); // Add the new payment detail
+                localStorage.setItem("paymentDetails", JSON.stringify(paymentDetails)); // Save back to localStorage
+            }
+            // Navigate to post details
+            postId = detail.postId;
+            showDetails = true;
+
+            if (getPID() !== String(postId)) {
+                Utils.redirectTo(Utils.getHash(), {
+                    pid: postId,
+                });
+            }
         }
     }
+
 
     function onHideDetails() {
         detail = null;
@@ -181,6 +229,10 @@ setTimeout(() => {
     function closeModal() {
         isModalOpen = false;
     }
+    function navigateToPayments() {
+        closeModal();
+        Utils.redirectTo('payment'); // Replace 'payments' with your actual payments page route
+    }
 </script>
 
 <div class="feed-list flex-cont">
@@ -264,6 +316,15 @@ setTimeout(() => {
         <FeedDetailsMobile {postId} on:hidedetails={onHideDetails} on:hidedetailpopup={hideDetailsPopup}/>
     {/if}
 {/if}
+{#if isModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{modalMessage}</p>
+        <button on:click={navigateToPayments}>Payment</button>
+        <button on:click={closeModal}>Close</button>
+    </div>
+</div>
+{/if}
 
 <style>
     .list {
@@ -298,5 +359,42 @@ setTimeout(() => {
         box-shadow: 0 1px 4px rgb(0 0 0 / 60%);
         color: var(--white-color);
         cursor: pointer;
+    }
+    .payment-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        z-index: 5;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .payment-modal {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .payment-modal button {
+        margin: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .payment-modal button:first-child {
+        background-color: #1a9b97;
+        color: white;
+    }
+
+    .modal button:last-child {
+        background-color: #ddd;
     }
 </style>

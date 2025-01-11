@@ -19,6 +19,7 @@
 
     import Utils from "../../util/Utils";
     import Labels from "../../const/Labels";
+    import Payments from "../payments/Payments.svelte"
 
     export let routesData;
 
@@ -40,7 +41,8 @@
         poems: FeedList,
         account: Profile,
         collaborate: Collaborate,
-        mypost: MyPosts
+        mypost: MyPosts,
+        payment: Payments
     };
 
     export function onRouteChange(data) {
