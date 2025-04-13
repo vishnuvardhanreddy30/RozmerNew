@@ -31,6 +31,8 @@ public class PostDto {
 	private PratingResponse prating;
 
 	private String hidePost;
+
+	private boolean hasAccess;
 	//private Set<Prating> prating;
 	//private List<Set<Prating>> prating;
 

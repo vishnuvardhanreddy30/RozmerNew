@@ -64,5 +64,8 @@ public class Post {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private Set<Prating> prating = new HashSet<>();
 
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private Set<ArticleAccess> articleAccesses = new HashSet<>();
+
 
 }

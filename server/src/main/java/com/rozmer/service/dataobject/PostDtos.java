@@ -30,6 +30,8 @@ public class PostDtos {
 
 	private Set<PratingGetDto> prating;
 
+	private boolean hasAccess;
+
 	// private Set<CommentDto> comments=new HashSet<>();
 
 }
