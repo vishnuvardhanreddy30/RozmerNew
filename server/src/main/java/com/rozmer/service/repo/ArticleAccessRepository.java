@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ArticleAccessRepository extends JpaRepository<ArticleAccess,Long> {
 
-    boolean existsByUserIdAndPostId(Long userId, Integer postId);
+    boolean existsByUserUserIdAndPostPostId(Long userId, Integer postId);
 
     boolean existsByUserAndPost(User user, Post post);
 }

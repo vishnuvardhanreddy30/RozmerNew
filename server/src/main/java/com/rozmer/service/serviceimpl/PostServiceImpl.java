@@ -99,7 +99,7 @@ public class PostServiceImpl implements PostService {
 		List<PostDtos> postDtos = allPosts.stream().map(post -> {
 			PostDtos dto = this.modelMapper.map(post, PostDtos.class);
 			if (userId != null) {
-				boolean hasAccess = articleAccessRepo.existsByUserIdAndPostId(userId, post.getPostId());
+				boolean hasAccess = articleAccessRepo.existsByUserUserIdAndPostPostId(userId, post.getPostId());
 				dto.setHasAccess(hasAccess);  // Add this field to PostDtos class
 			}
 			return dto;
