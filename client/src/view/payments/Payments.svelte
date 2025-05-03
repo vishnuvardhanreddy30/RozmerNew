@@ -1,9 +1,11 @@
 <script>
     import PaymentForm from './PaymentForm.svelte';
     import PaymentHistory from './PaymentHistory.svelte';
+    import Balance from './Balance.svelte';
 
-    let activeTab = 'Payment Form'; // Default tab
-    let tabs = ['Payment Form', 'Payment History'];
+    let activeTab = 'Balance'; // Default tab
+    // let tabs = [ 'Recharge', 'Payment History'];
+    let tabs = [ 'Balance', 'Recharge'];
 
     // Switch tabs dynamically
     function switchTab(tabName) {
@@ -13,6 +15,14 @@
     // Handle the "viewHistory" event from PaymentForm
     function handleViewHistory() {
         activeTab = 'Payment History'; // Switch to the Payment History tab
+    }
+
+    function handleViewPaymentForm() {
+        activeTab = 'Recharge'; // Switch to the Payment History tab
+    }
+
+    function handleViewBalance() {
+        activeTab = 'Balance';
     }
 </script>
 
@@ -30,10 +40,12 @@
         </div>
 
         <div class="tab-content">
-            {#if activeTab === 'Payment Form'}
-                <PaymentForm on:viewHistory={handleViewHistory} />
-            {:else if activeTab === 'Payment History'}
-                <PaymentHistory />
+            {#if activeTab === 'Balance'}
+                <Balance on:viewPaymentForm={handleViewPaymentForm}/>
+            {:else if activeTab === 'Recharge'}
+                <PaymentForm on:viewHistory={handleViewHistory} on:viewBalance={handleViewBalance}/>
+            <!-- {:else if activeTab === 'Payment History'}
+                <PaymentHistory /> -->
             {/if}
         </div>
     </div>

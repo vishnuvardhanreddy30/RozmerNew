@@ -106,7 +106,12 @@ const urlConst = {
     followers_list: base + 'add-user/followers/{loginUserId}',
 
     //following users list
-    following_list: base + 'add-user/following/{loginUserId}'
+    following_list: base + 'add-user/following/{loginUserId}',
+
+    // Payments API's
+    recharge_coins: base + 'api/wallet/recharge',
+    balance: base + 'api/wallet/balance?userId={loginUserId}',
+    unlock_post: base + 'api/posts/{postId}/unlock?userId={loginUserId}'
 };
 
 export default urlConst;

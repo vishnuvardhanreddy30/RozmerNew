@@ -17,6 +17,7 @@ public class WalletController {
     private WalletService walletService;
 
     @GetMapping("/balance")
+    @CrossOrigin
     public ResponseEntity<Map<String, Object>> getBalance(@RequestParam Long userId) {
         int balance = walletService.getWalletBalance(userId);
         Map<String, Object> response = new HashMap<>();
@@ -26,6 +27,7 @@ public class WalletController {
     }
 
     @PostMapping("/recharge")
+    @CrossOrigin
     public ResponseEntity<String> rechargeWallet(@RequestBody CoinRechargeRequestDto request) {
         walletService.rechargeCoins(request.getUserId(), request.getCoinsToAdd(), request.getPaymentReferenceId());
         return ResponseEntity.ok("Recharge successful");

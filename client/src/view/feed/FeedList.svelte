@@ -16,6 +16,7 @@
     import Boot from "../../util/Boot";
     import Share from "../../widget/Share.svelte";
     import SessionUtil from "../../util/SessionUtil";
+    import axios from "axios";
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -29,11 +30,11 @@
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
     let initialLoad = true
     let userId = SessionUtil.get("info", true).userId;
-    let modalMessage = "You've alreday viewed this post (article/poem). If you want to watch it again please clear the due amount for this post";
+    let modalMessage = "You don't have enough coins to open this article. If you want to watch it please recharge.";
     
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
-            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc&category=${category}`,
+            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc&category=${category}&userId=${userId}`,
             null,
             (data) => {
                 initialLoad = false;
@@ -96,9 +97,36 @@
         }
 
         // If not the author, check the viewed status
-        if (detail.viewed) {
+        if (!detail.hasAccess && detail?.user && detail?.user?.userId != userId) {
             // Logic to open the payment modal goes here
-            openModal();
+            axios.post(
+            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
+            {},
+            {
+                headers: Request.getHeaders(null),
+                timeout: 120000
+            }
+        )
+        .then(function (response) {
+            console.log("Response after unlock:", response);
+            if (response.data === "Unlocked" || response.data === "Already unlocked") {
+                showDetails = true;
+                if (getPID() !== String(postId)) {
+                    Utils.redirectTo(Utils.getHash(), {
+                        pid: postId,
+                    });
+                }
+            } else {
+                openModal();
+            }
+        })
+        .catch(function (err) {
+            if (err.response?.data?.message === "Insufficient coins") {
+                openModal();
+            } else {
+                Utils.log(err.response);
+            }
+        });
         } else {
             // If accessed via routeData, update the post ID
             if (routeData) {

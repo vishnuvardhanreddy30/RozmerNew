@@ -174,6 +174,10 @@ const Labels = {
         comments: "Type your comment here",
         question: "Type your question here",
         answer: "Type your answer here"
+    },
+
+    payment: {
+        recharge: "Payment completed successfully!",
     }
 };
 
