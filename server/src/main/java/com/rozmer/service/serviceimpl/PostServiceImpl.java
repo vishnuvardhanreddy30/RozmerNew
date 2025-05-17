@@ -110,27 +110,39 @@ public class PostServiceImpl implements PostService {
 
 	@Transactional
 	public boolean unlockPost(Integer postId, Long userId) {
-		User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
-		Post post = postRepo.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "ID", postId));
+		User user = userRepo.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
+		Post post = postRepo.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "ID", postId));
 
+		// Check if user already has access
 		if (articleAccessRepo.existsByUserAndPost(user, post)) {
 			return true;
 		}
 
-		UserCoinWallet wallet = userCoinWalletRepo.findByUser(user).orElse(ZERO);
+		UserCoinWallet wallet = userCoinWalletRepo.findByUser(user)
+				.orElseThrow(() -> new ResourceNotFoundException("Wallet", "User ID", userId));
+
 		if (wallet.getTotalCoins() < 1) {
 			throw new RuntimeException("Insufficient coins");
 		}
 
-		// Deduct and save
+		// Deduct one coin and update wallet
 		wallet.setTotalCoins(wallet.getTotalCoins() - 1);
+		wallet.setLastUpdated(LocalDateTime.now());
 		userCoinWalletRepo.save(wallet);
 
-		// Transaction
-		CoinTransaction txn = new CoinTransaction(user, post, TransactionType.DEBIT, 1, "Unlocked post: " + post.getTitle());
+		// 🔥 Record DEBIT transaction for unlock
+		CoinTransaction txn = new CoinTransaction(
+				user,
+				post,
+				TransactionType.DEBIT,
+				1,
+				"Unlocked post: " + post.getTitle()
+		);
 		coinTransactionRepo.save(txn);
 
-		// Access record
+		// Grant article access
 		ArticleAccess access = new ArticleAccess();
 		access.setUser(user);
 		access.setPost(post);
@@ -139,6 +151,7 @@ public class PostServiceImpl implements PostService {
 
 		return true;
 	}
+
 
 	@Override
 	public PostDto getPostById(Integer postId) {

@@ -1,5 +1,6 @@
 package com.rozmer.service.serviceimpl;
 
+import com.rozmer.service.dataobject.TransactionDto;
 import com.rozmer.service.entities.CoinTransaction;
 import com.rozmer.service.entities.TransactionType;
 import com.rozmer.service.entities.User;
@@ -11,6 +12,8 @@ import com.rozmer.service.repo.UserRepository;
 import com.rozmer.service.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class WalletServiceImpl implements WalletService{
@@ -60,5 +63,36 @@ public class WalletServiceImpl implements WalletService{
         );
         coinTransactionRepository.save(tx);
     }
+
+    @Override
+    public List<TransactionDto> getUserTransactions(Long userId, String transactionType) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+        List<CoinTransaction> transactions;
+
+        switch (transactionType.toLowerCase()) {
+            case "recharge":
+                transactions = coinTransactionRepository.findByUserAndTransactionType(user, TransactionType.CREDIT);
+                break;
+            case "unlock":
+                transactions = coinTransactionRepository.findByUserAndTransactionType(user, TransactionType.DEBIT);
+                break;
+            default:
+                transactions = coinTransactionRepository.findByUser(user);
+                break;
+        }
+
+        return transactions.stream().map(tx -> TransactionDto.builder()
+                .transactionId(tx.getId())
+                .userId(userId)
+                .type(tx.getTransactionType().name().toLowerCase())
+                .coins(tx.getAmount())
+                .postId(Long.valueOf(tx.getPost() != null ? tx.getPost().getPostId() : null))
+                .description(tx.getDescription())
+                .date(tx.getTransactionTime())
+                .build()).toList();
+    }
+
 }
 

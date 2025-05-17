@@ -17,7 +17,6 @@ import com.rozmer.service.entities.GuestUser;
 import com.rozmer.service.entities.UserFollower;
 import com.rozmer.service.repo.GuestUserRepository;
 import com.rozmer.service.repo.UserFollowerRepository;
-import lombok.var;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
