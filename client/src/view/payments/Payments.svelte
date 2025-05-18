@@ -5,7 +5,7 @@
 
     let activeTab = 'Balance'; // Default tab
     // let tabs = [ 'Recharge', 'Payment History'];
-    let tabs = [ 'Balance', 'Recharge'];
+    let tabs = [ 'Balance', 'Recharge', 'Payment History'];
 
     // Switch tabs dynamically
     function switchTab(tabName) {
@@ -13,7 +13,7 @@
     }
 
     // Handle the "viewHistory" event from PaymentForm
-    function handleViewHistory() {
+    function handleViewPaymentHistory() {
         activeTab = 'Payment History'; // Switch to the Payment History tab
     }
 
@@ -41,11 +41,11 @@
 
         <div class="tab-content">
             {#if activeTab === 'Balance'}
-                <Balance on:viewPaymentForm={handleViewPaymentForm}/>
+                <Balance on:viewPaymentForm={handleViewPaymentForm} on:viewPaymentHistory={handleViewPaymentHistory}/>
             {:else if activeTab === 'Recharge'}
-                <PaymentForm on:viewHistory={handleViewHistory} on:viewBalance={handleViewBalance}/>
-            <!-- {:else if activeTab === 'Payment History'}
-                <PaymentHistory /> -->
+                <PaymentForm on:viewHistory={handleViewPaymentHistory} on:viewBalance={handleViewBalance}/>
+            {:else if activeTab === 'Payment History'}
+                <PaymentHistory/>
             {/if}
         </div>
     </div>

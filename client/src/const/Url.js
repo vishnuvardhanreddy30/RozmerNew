@@ -111,7 +111,8 @@ const urlConst = {
     // Payments API's
     recharge_coins: base + 'api/wallet/recharge',
     balance: base + 'api/wallet/balance?userId={loginUserId}',
-    unlock_post: base + 'api/posts/{postId}/unlock?userId={loginUserId}'
+    unlock_post: base + 'api/posts/{postId}/unlock?userId={loginUserId}',
+    transaction_history: base + 'api/wallet/transactions'
 };
 
 export default urlConst;

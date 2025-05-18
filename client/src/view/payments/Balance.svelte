@@ -30,6 +30,10 @@
         dispatch('viewPaymentForm');
     }
 
+    function viewPaymentHistory() {
+        dispatch('viewPaymentHistory');
+    }
+
     onMount(() => {
         refreshCoins();
     });
@@ -48,6 +52,7 @@
     </div>
     <div class="button-container">
         <button class="view-history-btn" on:click={viewPaymentForm}>Recharge →</button>
+        <button class="view-history-btn ml-3" on:click={viewPaymentHistory}>History →</button>
     </div>
 </div>
 

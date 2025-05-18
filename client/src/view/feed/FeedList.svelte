@@ -30,7 +30,10 @@
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
     let initialLoad = true
     let userId = SessionUtil.get("info", true).userId;
+    let isModalOpen = false;
     let modalMessage = "You don't have enough coins to open this article. If you want to watch it please recharge.";
+    let isAccessModalOpen = false;
+    let unlockModalMessage = "You don't have access to this post. Do you want to unlock the post.?"
     
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
@@ -84,7 +87,7 @@
         detail = list[+idx - 1] || {};
 
         // Check if the logged-in user is the post's author
-        if (detail?.user?.userId === userId) {
+        if (detail?.user?.userId === userId || category == 'poem') {
             postId = detail.postId;
             showDetails = true;
 
@@ -96,37 +99,13 @@
             return; // Exit here to skip further checks
         }
 
+
+
         // If not the author, check the viewed status
         if (!detail.hasAccess && detail?.user && detail?.user?.userId != userId) {
             // Logic to open the payment modal goes here
-            axios.post(
-            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
-            {},
-            {
-                headers: Request.getHeaders(null),
-                timeout: 120000
-            }
-        )
-        .then(function (response) {
-            console.log("Response after unlock:", response);
-            if (response.data === "Unlocked" || response.data === "Already unlocked") {
-                showDetails = true;
-                if (getPID() !== String(postId)) {
-                    Utils.redirectTo(Utils.getHash(), {
-                        pid: postId,
-                    });
-                }
-            } else {
-                openModal();
-            }
-        })
-        .catch(function (err) {
-            if (err.response?.data?.message === "Insufficient coins") {
-                openModal();
-            } else {
-                Utils.log(err.response);
-            }
-        });
+            isAccessModalOpen = true;
+            return;
         } else {
             // If accessed via routeData, update the post ID
             if (routeData) {
@@ -162,6 +141,38 @@
                 });
             }
         }
+    }
+
+    function unlockPost() {
+        isAccessModalOpen = false;
+        axios.post(
+            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
+            {},
+            {
+                headers: Request.getHeaders(null),
+                timeout: 120000
+            }
+            )
+            .then(function (response) {
+                console.log("Response after unlock:", response);
+                if (response.data === "Unlocked" || response.data === "Already unlocked") {
+                    showDetails = true;
+                    if (getPID() !== String(detail.postId)) {
+                        Utils.redirectTo(Utils.getHash(), {
+                            pid: detail.postId,
+                        });
+                    }
+                } else {
+                    openModal();
+                }
+            })
+            .catch(function (err) {
+                if (err.response?.data?.message === "Insufficient coins") {
+                    openModal();
+                } else {
+                    Utils.log(err.response);
+                }
+            });
     }
 
 
@@ -248,7 +259,6 @@ setTimeout(() => {
         }
     });
 
-    let isModalOpen = false;
 
     function openModal() {
         isModalOpen = true;
@@ -257,6 +267,11 @@ setTimeout(() => {
     function closeModal() {
         isModalOpen = false;
     }
+
+    function closeAccessModal() {
+        isAccessModalOpen = false;
+    }
+
     function navigateToPayments() {
         closeModal();
         Utils.redirectTo('payment'); // Replace 'payments' with your actual payments page route
@@ -353,6 +368,16 @@ setTimeout(() => {
     </div>
 </div>
 {/if}
+{#if isAccessModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{unlockModalMessage}</p>
+        <button on:click={unlockPost}>Yes, Unlock</button>
+        <button on:click={closeAccessModal}>Cancel</button>
+    </div>
+</div>
+{/if}
+
 
 <style>
     .list {
