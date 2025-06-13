@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from "svelte";
     import Toolbar from "../../widget/toolbar/Toolbar.svelte";
     import TextField from "../../widget/fields/TextField.svelte";
     import NumberField from "../../widget/fields/NumberField.svelte";
@@ -21,16 +22,17 @@
     let maxLength = 10,
         required = true;
 
-    $: {
+    onMount(() => {
         loginUserInfo = SessionUtil.get("info", true);
-        let selectedUserId = getUIDFromHash()
+        const selectedUserId = getUIDFromHash();
+
         if(selectedUserId){
             showDetails = false;
-            fetchUserProfilePic(selectedUserId)
+            fetchUserProfilePic(selectedUserId);
         }else {
-            userInfo = loginUserInfo
+            userInfo = { ...loginUserInfo }; // Shallow copy
         }
-    }
+    });
 
     function getUIDFromHash() {
         const hash = location.hash; // Get the hash part of the URL
@@ -85,6 +87,7 @@
         }
 
         SessionUtil.set("info", userInfo);
+        User.set({ userInfo });
         Base.toast("success", Labels.profile.update_cnf, 3000);
     }
 
@@ -99,19 +102,19 @@
             let formdata = new FormData();
             formdata.append("image", profile);
             fetch(urlConst.upload_profile_pic.replace("{loginUserId}", userInfo.userId), {
-            method: "POST",
-            body: formdata,
-        })
-            .then((response) => response.text())
-            .then((result) => {
-                result = JSON.parse(result);
-                Base.toast('success', Labels.publish.update_msg);
-                fetchUserProfilePic(userInfo.userId)
+                method: "POST",
+                body: formdata,
             })
-            .catch((error) => {
-                Utils.log(error);
-                Utils.alert(Labels.publish.thumbnail_upload_fail, Labels.alert.error);
-            });
+                .then((response) => response.text())
+                .then((result) => {
+                    result = JSON.parse(result);
+                    Base.toast('success', Labels.publish.update_msg);
+                fetchUserProfilePic(userInfo.userId)
+                })
+                .catch((error) => {
+                    Utils.log(error);
+                    Utils.alert(Labels.publish.thumbnail_upload_fail, Labels.alert.error);
+                });
         }
     }
 
@@ -127,14 +130,14 @@
             .then((result) => {
                 result = JSON.parse(result);
                 if(loginUserInfo.userId == result.userId) {
-                    userInfo.imageName = result.imageName
-                    SessionUtil.set("info", userInfo)
-                    User.set({ userInfo: userInfo });
+                    userInfo = { ...result };
+                    SessionUtil.set("info", userInfo);
+                    User.set({ userInfo });
                 } else {
                     userInfo = result
                     showDetails = true
                 }
-                
+
             })
             .catch((error) => {
                 Utils.log(error);
@@ -142,15 +145,9 @@
     }
 </script>
 {#if showDetails}
-<div
-    class="profile-details-cont overflow-y flex-cont flex-dir-column flex-vh"
-    align="center"
->
+<div class="profile-details-cont overflow-y flex-cont flex-dir-column flex-vh" align="center">
     <div class="pro-img-cont" align="center">
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <img src={userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon} on:click={triggerFileInput} class="profile-image" />
-        <!-- <div class="profile-image pointer" on:click={triggerFileInput} style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});"/> -->
-
+        <img src={userInfo.imageName ? urlConst.get_profile_pic + userInfo.imageName : proIcon} on:click={triggerFileInput} class="profile-image" />
         <input type="file" id="fileInput" accept="image/*" style="display: none;" on:change={handleFileInput} />
         {#if loginUserInfo.userId == userInfo.userId}
         <div class="plus-icon" on:click={triggerFileInput}>
@@ -193,6 +190,7 @@
     {/if}
 </div>
 {/if}
+
 <style>
     .profile-details-cont .flex-cont {
         align-content: center;
@@ -221,13 +219,11 @@
         position: absolute;
         bottom: 0;
         right: 0;
-        /* font-size: 28px; */
         color: white;
         height: 32px;
         width: 32px;
         background-color: #1a9b97;
         border-radius: 50%;
-        /* padding: 4px; */
         cursor: pointer;
         border: 2px solid #1a9b97;
     }

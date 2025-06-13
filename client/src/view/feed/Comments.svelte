@@ -292,7 +292,7 @@
             <div class="comments-item" data-num={list.length - index}>
                 <div class="flex">
                 <div class="question-text">{item.content}</div>
-                {#if postUserId === userId}
+                {#if postUserId != userId}
                     <span
                          class="material-icons collab-btn"
                          on:click={collaborate}

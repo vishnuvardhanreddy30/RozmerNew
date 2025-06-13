@@ -16,6 +16,7 @@
     import Share from '../../widget/share.svelte';
 
     import logo from "../../assets/logo_white.png";
+    import axios from "axios";
 
     export let detail = {
         title: "",
@@ -48,6 +49,13 @@
     let viewMap = [Comments, Questions, Rating];
 
     let userId = SessionUtil.get("info", true).userId;
+
+    // Access functionality
+    let isBalanceModalOpen = false;
+    let modalMessage = "Insufficient balance. Please recharge to access this artcile.";
+    let isAccessModalOpen = false;
+    let unlockModalMessage = "You don't have access to this post. Do you want to unlock the post.?";
+    let category = Utils.getHash();
 
     function onBack() {
         dispatch("hidedetails");
@@ -144,7 +152,7 @@
         if (!Utils.isEmpty(postId)) {
             Utils.mask(true);
             Request.get(
-                urlConst.get_post_by_id.replace("{postId}", postId),
+                urlConst.get_post_by_id.replace("{postId}", postId).replace("{userId}", userId),
                 null,
                 (resp) => {
                     Utils.mask();
@@ -180,6 +188,120 @@
             );
         }
     }
+
+    let truncatedHTML = '';
+    let showFull = false;
+    let totalWordsCount = 0
+
+    $: if (detail?.content) {
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = detail.content;
+
+        const allText = tempElement.textContent || '';
+        const allWords = allText.match(/\b[\w']+\b/g) || [];
+        const targetWordCount = Math.ceil(allWords.length * 0.2);
+        totalWordsCount = allWords.length;
+
+        let currentCount = 0;
+
+        function truncateNode(node) {
+            if (currentCount >= targetWordCount) return '';
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                const words = node.textContent.match(/\b[\w']+\b/g) || [];
+                if (currentCount + words.length <= targetWordCount) {
+                    currentCount += words.length;
+                    return node.textContent;
+                } else {
+                    const remaining = targetWordCount - currentCount;
+                    currentCount = targetWordCount;
+                    const text = words.slice(0, remaining).join(' ');
+                    return text + ' ';
+                }
+            }
+        
+
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const tag = node.tagName.toLowerCase();
+                let innerHTML = '';
+
+                node.childNodes.forEach(child => {
+                    innerHTML += truncateNode(child);
+                });
+
+                return `<${tag}${getAttributes(node)}>${innerHTML}</${tag}>`;
+            }
+
+            return '';
+        }
+
+        function getAttributes(node) {
+            if (!node.attributes || node.attributes.length === 0) return '';
+            return Array.from(node.attributes)
+                .map(attr => ` ${attr.name}="${attr.value}"`)
+                .join('');
+        }
+
+        tempElement.childNodes.forEach(child => {
+            truncatedHTML += truncateNode(child);
+        });
+        truncatedHTML = truncatedHTML
+
+        console.log("after 20%html : ", truncatedHTML);
+    }
+
+    function readMoreArticle() {
+        console.log("readmore article clicked", detail, userId)
+        if (!detail.hasAccess && detail?.user && detail?.user?.userId != userId) {
+            // Logic to open the payment modal goes here
+            isAccessModalOpen = true;
+        } else {
+            showFull = true
+        }
+    }
+
+    function unlockPost() {
+        isAccessModalOpen = false;
+        axios.post(
+            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
+            {},
+            {
+                headers: Request.getHeaders(null),
+                timeout: 120000
+            }
+            )
+            .then(function (response) {
+                console.log("Response after unlock:", response);
+                if (response.data === "Unlocked" || response.data === "Already unlocked") {
+                    showFull = true;
+                } else {
+                    openBalanceModal();
+                }
+            })
+            .catch(function (err) {
+                if (err.response?.data?.message === "Insufficient coins") {
+                    openBalanceModal();
+                } else {
+                    Utils.log(err.response);
+                }
+            });
+    }
+    function openBalanceModal() {
+        isBalanceModalOpen = true;
+    }
+
+    function closeBalanceModal() {
+        isBalanceModalOpen = false;
+    }
+    function closeAccessModal() {
+        isAccessModalOpen = false;
+    }
+
+    function navigateToPayments() {
+        closeBalanceModal();
+        Utils.redirectTo('payment'); // Replace 'payments' with your actual payments page route
+    }
+
 
     onMount(() => {
         detailsElHeight = Utils.calculateAvailableSpace(detailsEl);
@@ -256,9 +378,20 @@
                 bind:this={detailsEl}
             >
                 <div class="thumb-title">{detail.title}</div>
-                <div on:click={onCollaborateClick}>
-                    {@html detail.content}
-                </div>
+                {#if detail.user?.userId != userId && category != 'poems'}
+                    {#if totalWordsCount > 50 && !detail.hasAccess}
+                        <div on:click={onCollaborateClick}>
+                            {@html showFull ? detail.content : truncatedHTML}
+                        </div>
+                        {#if !showFull}
+                            <button class="read-more-btn" on:click={() => readMoreArticle()}>Read more...</button>
+                        {/if}
+                    {:else}
+                        {@html detail.content}
+                    {/if}
+                {:else}
+                    {@html detail.content}   
+                {/if}
 
                 <!-- <Button
                     iconCls="material-icons"
@@ -282,6 +415,24 @@
         {/if}
     </div>
 </div>
+{#if isBalanceModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{modalMessage}</p>
+        <button on:click={navigateToPayments}>Payment</button>
+        <button on:click={closeBalanceModal}>Close</button>
+    </div>
+</div>
+{/if}
+{#if isAccessModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{unlockModalMessage}</p>
+        <button on:click={unlockPost}>Yes, Unlock</button>
+        <button on:click={closeAccessModal}>Cancel</button>
+    </div>
+</div>
+{/if}
 
 <style>
     .feed-details {
@@ -383,4 +534,56 @@
     :global(.edit-article-btn .material-icons) {
         font-size: 18px;
     } 
+    .read-more-btn {
+        color: blue;
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 0;
+        font-size: 16px;
+    }
+
+    .read-more-btn:hover {
+        text-decoration: underline;
+    }
+
+    .payment-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        z-index: 5;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .payment-modal {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .payment-modal button {
+        margin: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .payment-modal button:first-child {
+        background-color: #1a9b97;
+        color: white;
+    }
+
+    .modal button:last-child {
+        background-color: #ddd;
+    }
+
 </style>

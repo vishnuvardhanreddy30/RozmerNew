@@ -40,7 +40,7 @@ const urlConst = {
     update_post: base + 'api/posts/{postId}',
 
     // get post by post ID
-    get_post_by_id: base + 'api/posts/{postId}',
+    get_post_by_id: base + 'api/posts/{postId}?userId={userId}',
 
     // delete a post by ID
     delete_post_by_id: base + 'api/posts/{postId}',

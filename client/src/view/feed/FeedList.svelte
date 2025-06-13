@@ -14,9 +14,19 @@
     import Labels from "../../const/Labels";
     import Request from "../../util/Request";
     import Boot from "../../util/Boot";
-    import Share from "../../widget/Share.svelte";
     import SessionUtil from "../../util/SessionUtil";
-    import axios from "axios";
+  
+    $: {
+        if(Utils.getPID()) {
+            postId = Utils.getPID();
+            Utils.redirectTo(Utils.getHash(), {
+                pid: Utils.getPID(),
+            });
+            setTimeout(() => {
+                showDetails = true;
+            })
+        }
+    }
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -30,10 +40,6 @@
         category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
     let initialLoad = true
     let userId = SessionUtil.get("info", true).userId;
-    let isModalOpen = false;
-    let modalMessage = "You don't have enough coins to open this article. If you want to watch it please recharge.";
-    let isAccessModalOpen = false;
-    let unlockModalMessage = "You don't have access to this post. Do you want to unlock the post.?"
     
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
@@ -86,95 +92,21 @@
         let idx = e && e.currentTarget.getAttribute("data-num");
         detail = list[+idx - 1] || {};
 
-        // Check if the logged-in user is the post's author
-        if (detail?.user?.userId === userId || category == 'poem') {
-            postId = detail.postId;
-            showDetails = true;
+        if(!detail.postId) return
 
-            if (getPID() !== String(postId)) {
-                Utils.redirectTo(Utils.getHash(), {
-                    pid: postId,
-                });
-            }
-            return; // Exit here to skip further checks
-        }
+        postId = detail.postId;
 
-
-
-        // If not the author, check the viewed status
-        if (!detail.hasAccess && detail?.user && detail?.user?.userId != userId) {
-            // Logic to open the payment modal goes here
-            isAccessModalOpen = true;
-            return;
-        } else {
-            // If accessed via routeData, update the post ID
-            if (routeData) {
-                idx = routeData.params.id;
-                detail = {
-                    postId: idx,
-                };
-            }
-
-            // Mark the post as viewed
-            detail.viewed = true;
-
-            // If the post has a title, record the view in paymentDetails
-            if (detail.title) {
-                let paymentDetails = JSON.parse(localStorage.getItem("paymentDetails") || "[]"); // Parse or use an empty array
-                let obj = {
-                    title: `Read ${detail.category}: ${detail.title}`,
-                    postId: detail.postId,
-                    type: 'Post Read',
-                    date: new Date(),
-                    amount: '10',
-                };
-                paymentDetails.push(obj); // Add the new payment detail
-                localStorage.setItem("paymentDetails", JSON.stringify(paymentDetails)); // Save back to localStorage
-            }
-            // Navigate to post details
-            postId = detail.postId;
-            showDetails = true;
-
-            if (getPID() !== String(postId)) {
-                Utils.redirectTo(Utils.getHash(), {
-                    pid: postId,
-                });
-            }
-        }
-    }
-
-    function unlockPost() {
-        isAccessModalOpen = false;
-        axios.post(
-            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
-            {},
-            {
-                headers: Request.getHeaders(null),
-                timeout: 120000
-            }
-            )
-            .then(function (response) {
-                console.log("Response after unlock:", response);
-                if (response.data === "Unlocked" || response.data === "Already unlocked") {
-                    showDetails = true;
-                    if (getPID() !== String(detail.postId)) {
-                        Utils.redirectTo(Utils.getHash(), {
-                            pid: detail.postId,
-                        });
-                    }
-                } else {
-                    openModal();
-                }
-            })
-            .catch(function (err) {
-                if (err.response?.data?.message === "Insufficient coins") {
-                    openModal();
-                } else {
-                    Utils.log(err.response);
-                }
+        if (getPID() !== String(postId)) {
+            Utils.redirectTo(Utils.getHash(), {
+                pid: postId,
             });
-    }
+        }
+        setTimeout(() => {
+            showDetails = true;
+        })
+        return; // Exit here to skip further checks
 
+    }
 
     function onHideDetails() {
         detail = null;
@@ -245,8 +177,8 @@ setTimeout(() => {
         if(pid) {
             showDetailsFromRoute(pid);
         }
-// Ensure the first fetch occurs only once by directly calling the handler
-setTimeout(() => {
+    // Ensure the first fetch occurs only once by directly calling the handler
+    setTimeout(() => {
         if (list.length === 0) {
 
             infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } });
@@ -259,23 +191,6 @@ setTimeout(() => {
         }
     });
 
-
-    function openModal() {
-        isModalOpen = true;
-    }
-
-    function closeModal() {
-        isModalOpen = false;
-    }
-
-    function closeAccessModal() {
-        isAccessModalOpen = false;
-    }
-
-    function navigateToPayments() {
-        closeModal();
-        Utils.redirectTo('payment'); // Replace 'payments' with your actual payments page route
-    }
 </script>
 
 <div class="feed-list flex-cont">
@@ -359,24 +274,6 @@ setTimeout(() => {
         <FeedDetailsMobile {postId} on:hidedetails={onHideDetails} on:hidedetailpopup={hideDetailsPopup}/>
     {/if}
 {/if}
-{#if isModalOpen}
-<div class="payment-modal-backdrop">
-    <div class="payment-modal">
-        <p>{modalMessage}</p>
-        <button on:click={navigateToPayments}>Payment</button>
-        <button on:click={closeModal}>Close</button>
-    </div>
-</div>
-{/if}
-{#if isAccessModalOpen}
-<div class="payment-modal-backdrop">
-    <div class="payment-modal">
-        <p>{unlockModalMessage}</p>
-        <button on:click={unlockPost}>Yes, Unlock</button>
-        <button on:click={closeAccessModal}>Cancel</button>
-    </div>
-</div>
-{/if}
 
 
 <style>
@@ -412,42 +309,5 @@ setTimeout(() => {
         box-shadow: 0 1px 4px rgb(0 0 0 / 60%);
         color: var(--white-color);
         cursor: pointer;
-    }
-    .payment-modal-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        z-index: 5;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .payment-modal {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        text-align: center;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .payment-modal button {
-        margin: 10px;
-        padding: 10px 20px;
-        cursor: pointer;
-        border: none;
-        border-radius: 4px;
-    }
-
-    .payment-modal button:first-child {
-        background-color: #1a9b97;
-        color: white;
-    }
-
-    .modal button:last-child {
-        background-color: #ddd;
     }
 </style>

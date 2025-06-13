@@ -113,6 +113,16 @@ const Utils = {
         return location.hash.replace('#', '').split('?')[0];
     },
 
+    getPID: function() {
+        const hash = location.hash; // "#articles?pid=17"
+        const queryIndex = hash.indexOf("?");
+        if (queryIndex === -1) return null;
+    
+        const queryString = hash.substring(queryIndex + 1); // "pid=17"
+        const params = new URLSearchParams(queryString);
+        return params.get("pid");
+    },
+
     isObject: (toString.call(null) === '[object Object]')
         ? function (value) {
             // check ownerDocument here as well to exclude DOM nodes

@@ -91,8 +91,8 @@ public class PostController {
 	} */
 	@GetMapping("/posts/{postId}")
 	@CrossOrigin
-	public ResponseEntity<PostDto> getPostById(@PathVariable Integer postId) {
-			PostDto postDto = this.postService.getPostById(postId);
+	public ResponseEntity<PostDto> getPostById(@PathVariable Integer postId , @RequestParam(value = "userId", required = false) Long userId) {
+			PostDto postDto = this.postService.getPostById(postId, userId);
 			return new ResponseEntity<>(postDto, HttpStatus.OK);
 	}
 

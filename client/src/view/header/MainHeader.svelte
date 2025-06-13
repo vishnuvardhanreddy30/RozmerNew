@@ -164,7 +164,8 @@
     }
 
     function takeBacktoHome() {
-        Utils.redirectTo('home');
+        Utils.redirectTo('articles');
+        location.reload()
     }
 
     function onFabClick() {

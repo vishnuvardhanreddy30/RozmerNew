@@ -154,13 +154,16 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
-	public PostDto getPostById(Integer postId) {
+	public PostDto getPostById(Integer postId, Long userId) {
 		Post post = this.postRepo.findById(postId)
 		//Post post = this.postRepo.findByPostUsingId(postId)
 				.orElseThrow(() -> new ResourceNotFoundException("Post", "post id", postId));
 
 		PostDto returnPostDto = this.modelMapper.map(post, PostDto.class);
-
+		if (userId != null) {
+			boolean hasAccess = articleAccessRepo.existsByUserUserIdAndPostPostId(userId, post.getPostId());
+			returnPostDto.setHasAccess(hasAccess);
+		}
 		return returnPostDto;
 	}
 

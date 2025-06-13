@@ -17,7 +17,8 @@
 
     let required = true,
         fullWidth = true,
-        maxLength = 10;
+        maxLength = 10,
+        agreed = false;
 
     function onBack() {
         Utils.redirectBack();
@@ -64,6 +65,10 @@
                 Labels.register.email_validation,
                 Labels.alert.register
             );
+            return;
+        }
+        if (!agreed) {
+            Utils.alert("Please agree to the terms and conditions.", Labels.alert.register)
             return;
         }
 
@@ -160,6 +165,13 @@
                     label={Labels.register.cnf_pass}
                     bind:value={cpass}
                 />
+                <div>
+                    <input type="checkbox" id="agree" bind:checked={agreed} />
+                    <label for="agree">
+                      I agree to the
+                      <a href="/terms_and_conditions.docx" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+                    </label>
+                  </div>
 
                 <Toolbar ui="plain">
                     <Button
