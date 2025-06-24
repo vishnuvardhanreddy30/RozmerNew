@@ -283,10 +283,10 @@
                     </div>
                 </div>
                 <div class="border pl-3 pr-3 mt-3 mb-2"></div>
-                <div class="d-flex pointer">
+                <!-- <div class="d-flex pointer">
                     <i class="fa fa-gear fa-lg pointer my-auto" style="color: #1a9b97;"></i>
                     <span class="pro-card-user-name ml-2 pl-1 my-auto">Settings</span>
-                </div>
+                </div> -->
                 <div class="mt-2">
                     <span class="flex-cont pointer" on:click={onLogout}>
                         <span class="material-icons my-auto" style="color: #1a9b97;">logout</span>

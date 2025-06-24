@@ -424,10 +424,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> loginUserOptional = userRepository.findById(loginUserId);
         if (loginUserOptional.isPresent()) {
             User loginUser = loginUserOptional.get();
-            List<UserFollower> userFollowers = userFollowerRepository.findByFollower(loginUser);
+            List<UserFollower> userFollowers = userFollowerRepository.findByFollowing(loginUser);
 
             return userFollowers.stream()
-                    .map(UserFollower::getFollowing)
+                    .map(UserFollower::getFollower)
                     .collect(Collectors.toList()).stream()
                     .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());
@@ -441,10 +441,10 @@ public class UserServiceImpl implements UserService {
         Optional<User> loginUserOptional = userRepository.findById(loginUserId);
         if (loginUserOptional.isPresent()) {
             User loginUser = loginUserOptional.get();
-            List<UserFollower> userFollowings = userFollowerRepository.findByFollowing(loginUser);
+            List<UserFollower> userFollowings = userFollowerRepository.findByFollower(loginUser);
 
             return userFollowings.stream()
-                    .map(UserFollower::getFollower)
+                    .map(UserFollower::getFollowing)
                     .collect(Collectors.toList()).stream()
                     .map(source -> modelMapper.map(source, com.rozmer.service.dataobject.User.class))
                     .collect(Collectors.toList());

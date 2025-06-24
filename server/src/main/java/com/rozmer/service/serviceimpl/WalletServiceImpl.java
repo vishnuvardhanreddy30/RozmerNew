@@ -88,7 +88,7 @@ public class WalletServiceImpl implements WalletService{
                 .userId(userId)
                 .type(tx.getTransactionType().name().toLowerCase())
                 .coins(tx.getAmount())
-                .postId(Long.valueOf(tx.getPost() != null ? tx.getPost().getPostId() : null))
+                .postId(Long.valueOf(tx.getPost() != null ? tx.getPost().getPostId() : 0))
                 .description(tx.getDescription())
                 .date(tx.getTransactionTime())
                 .build()).toList();

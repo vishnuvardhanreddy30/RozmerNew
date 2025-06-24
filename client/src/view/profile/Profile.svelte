@@ -37,10 +37,10 @@
             </div>
             <div
                 class="tab"
-                class:active-tab={activeTab === 'My Posts'}
-                on:click={() => switchTab('My Posts')}
+                class:active-tab={activeTab === 'Posts'}
+                on:click={() => switchTab('Posts')}
             >
-                My Posts
+                Posts
             </div>
         </div>
 

@@ -150,6 +150,9 @@ body {
 .flex-dir-column {
     flex-direction: column;
 }
+.flex-between {
+    justify-content: space-between;
+}
 
 .margin-right-to-child-15>* {
     margin-right: 15px;

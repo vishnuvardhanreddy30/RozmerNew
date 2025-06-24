@@ -27,9 +27,9 @@ import { writable } from 'svelte/store';
         userInfo = SessionUtil.get("info", true);
     }
 
-    $: {
-        fetchData('users')
-    }
+    // $: {
+    //     fetchData('users')
+    // }
     onMount(() => {
         userInfo = SessionUtil.get("info", true);
         updateTabFromURL();
@@ -151,7 +151,7 @@ import { writable } from 'svelte/store';
             <span class="follow-title">{title1}</span>
             <span class="material-icons pointer"> add_box </span>
         </div> -->
-        <div class="standard-bg border-radius-10 mt-10 p1">
+        <div class="standard-bg border-radius-10 mt-10 p1 height-80">
             <div class="mb-10">
                 {#if usersList?.length > 0}
                 <span class="whom-to-follow">WHOM TO FOLLOW</span>
@@ -247,5 +247,9 @@ import { writable } from 'svelte/store';
   .tab-buttons button.active {
     border-bottom: 3px solid var(--primary-color-alternate-2); /* Adjust the color as needed */
     font-weight: 700;
+  }
+  .height-80{
+    height: 70vh;
+    overflow-y: auto;
   }
 </style>

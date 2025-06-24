@@ -90,7 +90,7 @@ const Labels = {
     profile: {
         no_post: '<p>No content published yet.</p><p>Publish 2 articles and get free life time access to the platform.</p>',
         published: 'Published on',
-        my_post: 'My Posts',
+        my_post: 'Posts',
         edit_profile: 'Edit Profile',
         update_cnf: 'Profile Updated Successfully',
         update_fail: 'Failed to update User information',

@@ -26,7 +26,8 @@
     export let postId = null;
     export let showEditPublishBtn = false;
 
-    let segmentActiveView = Comments,
+    let segmentActiveView = null,
+        selectedSegment = null,
         detailsEl,
         detailsElHeight,
         postUserId;
@@ -36,7 +37,6 @@
     let buttons = [
         {
             text: Labels.details.comment_title,
-            pressed: true,
         },
         {
             text: Labels.details.question_title,
@@ -64,10 +64,16 @@
         // Utils.redirectTo("home");
     }
 
-    function onSegmentBtnSelect(e) {
-        let data = e.detail;
+    function onSegmentBtnSelect(e, index) {
+        // let data = e.detail;
+        if(selectedSegment == e) {
+            selectedSegment = null;
+            segmentActiveView = null
+        } else {
+            selectedSegment = e;
 
-        segmentActiveView = viewMap[data.itemId];
+            segmentActiveView = viewMap[index];
+        }
     }
 
     function onEdit() {
@@ -163,7 +169,6 @@
                         buttons = [
                             {
                                 text: Labels.details.comment_title,
-                                pressed: true,
                             },
                             {
                                 text: Labels.details.question_title,
@@ -364,9 +369,41 @@
                         on:click={onEdit}
                     />
                 {/if}
+                <div class="flex-cont">
                 
-                <div class="share-btn">
-                    <i class="fa fa-share pointer" on:click={openModal}></i>
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.comment_title}
+                            class:active={selectedSegment === Labels.details.comment_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.comment_title , 0)}
+                        >
+                            chat
+                        </span>
+                    </div>
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.question_title}
+                            class:active={selectedSegment === Labels.details.question_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.question_title, 1)}
+                        >
+                            quiz
+                        </span>
+                    </div>
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.rating_title}
+                            class:active={selectedSegment === Labels.details.rating_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.rating_title, 2)}
+                        >
+                            reviews
+                        </span>
+                    </div>
+                    <div class="share-btn ">
+                        <i class="fa fa-share pointer segment-icon" title="Share" on:click={openModal}></i>
+                    </div>
                 </div>
                 <!-- / -->
                 <!-- <span class="breadcrumb-thumb-title">{detail.title}</span> -->
@@ -387,10 +424,14 @@
                             <button class="read-more-btn" on:click={() => readMoreArticle()}>Read more...</button>
                         {/if}
                     {:else}
+                    <div on:click={onCollaborateClick}>
                         {@html detail.content}
+                        </div>
                     {/if}
                 {:else}
+                <div on:click={onCollaborateClick}>
                     {@html detail.content}   
+                    </div>
                 {/if}
 
                 <!-- <Button
@@ -402,9 +443,10 @@
             </div>
         </div>
 
-        {#if Boot.isDesktop()}
+        {#if segmentActiveView && Boot.isDesktop()}
             <div class="f1 feed-seg-cont">
-                <SegmentedButton {buttons} on:select={onSegmentBtnSelect} />
+                <!-- <SegmentedButton {buttons} on:select={onSegmentBtnSelect} /> -->
+                 <h6 class="text-center bold">{selectedSegment}</h6>
                 <svelte:component
                     this={segmentActiveView}
                     {postId}
@@ -455,6 +497,11 @@
 
     .share-btn{
         margin-right: 10px;
+    border-radius: 50%;
+    font-size: 24px;
+    background-color: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
     }
 
     .back-btn{
@@ -585,5 +632,22 @@
     .modal button:last-child {
         background-color: #ddd;
     }
+    .segment-icon {
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 24px;
+    background-color: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.segment-icon:hover {
+    background-color: rgb(215, 215, 215);
+}
+
+.segment-icon.active {
+    background-color: var(--primary-color-alternate-2);
+    font-size: 20px;
+    color: white;
+}
 
 </style>

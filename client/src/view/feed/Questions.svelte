@@ -338,48 +338,53 @@
         submitRating(value);
     }
 
-    /**
-     * @param {number} value
-     * @param {any} item
-     */
-    async function rateQuestion(value, item) {
+    // /**
+    //  * @param {number} value
+    //  * @param {any} item
+    //  */
+    // async function rateQuestion(value, item) {
+    async function rateQuestion(e) {
         if(role === 'guest'){
             Utils.showNotification('You should signup to access this screen (or) functionality')
             return
         }
-        selectedQuestion = await item
-        // let id = e.currentTarget.getAttribute("itemId");
-        setTimeout(() => {
-        let modal = document.getElementById("myModal");
-        Utils.log('Rate this comment!');
-        console.log("valuevalue", value, item, selectedQuestion)
-                        item.qrating.qrating.forEach((rate) => {
-                            if(rate.user.userId == userId){
-                            currentUserRating = rate.rating
-                            console.log("current user rating", currentUserRating)
-                        }
-                        })
-
-        // questionId = id && id.replace('rate_', '');
-
-        // Request.get(
-        //     urlConst.get_question_rating
-        //         .replace("{userId}", SessionUtil.get("info", true).userId)
-        //         .replace("{qnId}", questionId),
-        //     null,
-        //     (res) => {
-        //         value = res['qrating'][0].rating;
-        //         updateValueDisplayed(res['qrating'][0].rating);
-        //         Utils.log(res);
-        //     },
-        //     (err) => {
-        //         Utils.log(err);
-        //     },
-        //     submitRating
-        // );
-
+        // selectedQuestion = await item
+        let id = e.currentTarget.getAttribute("itemId");
+        // setTimeout(() => {
+        let modal = document.getElementById("myModal1");
         modal.style.display = "flex";
-    },100)
+        Utils.log('Rate this question!');
+        // console.log("valuevalue", value, item, selectedQuestion)
+        //                 item.qrating.qrating.forEach((rate) => {
+        //                     if(rate.user.userId == userId){
+        //                     currentUserRating = rate.rating
+        //                     console.log("current user rating", currentUserRating)
+        //                 }
+        //                 })
+
+        questionId = id && id.replace('rate_', '');
+        console.log("questionId", questionId)
+
+        Request.get(
+            urlConst.get_question_rating
+                .replace("{userId}", SessionUtil.get("info", true).userId)
+                .replace("{qnId}", questionId),
+            null,
+            (res) => {
+                Utils.log(res);
+                console.log("respose : ", res)
+                value = res['qrating'][0].rating;
+                updateValueDisplayed(res['qrating'][0].rating);
+                
+            },
+            (err) => {
+                Utils.log(err);
+            },
+            submitRating
+        );
+        console.log("value", value)
+
+    // },100)
     }
     /**
      * @param {number} value
@@ -394,7 +399,7 @@
 
     function closeModal(){
         selectedQuestion = null
-        let modal = document.getElementById("myModal");
+        let modal = document.getElementById("myModal1");
 
         modal.style.display = "none"; 
     }
@@ -408,7 +413,7 @@
         Request.post(
             urlConst.post_question_rating
                 .replace("{userId}", SessionUtil.get("info", true).userId)
-                .replace("{questionId}", selectedQuestion.questionId),
+                .replace("{questionId}", questionId),
             {
                 rating: value
             },
@@ -449,7 +454,7 @@
         {#each list as item, index}
             <div class="question-item" data-num={list.length - index}>
                 <div class="question-item-q">
-                    <div class="flex-cont">
+                    <div class="flex-cont flex-between">
                         <div class="question-text">{item.questions}</div>
                     {#if (item.user && item.user.userId) === userId}
                         <span
@@ -465,16 +470,16 @@
                             itemId={"collab_" + item.questionId}>people-plus</span
                         >
                     {/if}
-                    <!-- {#if (item.user && item.user.userId) !== userId} -->
-                        <!-- <span
+                    {#if (item.user && item.user.userId) !== userId}
+                        <span
                             class="material-icons rate-btn"
                             on:click={rateQuestion}
                             itemId={"rate_" + item.questionId}>star_rate</span
-                        > -->
-                        {#each [1, 2, 3, 4, 5] as value}
+                        >
+                        <!-- {#each [1, 2, 3, 4, 5] as value}
           <span on:click={() => rateQuestion(value, item)} class="star">{item.qaverageRating >= value ? '★' : '☆'}</span>
-        {/each}
-                    <!-- {/if} -->
+        {/each} -->
+                    {/if}
                     </div>
                     <div class="feed-info qtn-auth-cont">
                         <div class="qtn-mdle-auth-details txt-right">
@@ -559,9 +564,9 @@
     {/if}
 </div>
 
-{#if selectedQuestion}
+<!-- {#if selectedQuestion} -->
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div id="myModal1" class="modal">
 
     <!-- Modal content -->
     <div class="modal-content">
@@ -572,7 +577,7 @@
             <span class="bold">Question Ratings</span>
         </div>
         <div class="rating-container wh-100-percent flex-cont ratings-modal">
-            {#if (selectedQuestion.user && selectedQuestion.user.userId) !== userId}
+            <!-- {#if (selectedQuestion.user && selectedQuestion.user.userId) !== userId}
             <div class="flex-cont space-between">
                 <span class="bold">Your review</span>
                 <span>{#each [1, 2, 3, 4, 5] as value}
@@ -589,11 +594,29 @@
                     {/each}<span class="rating-number">{item.rating}</span></span>
                 {/if}
     </div>
-            {/each}
+            {/each} -->
+            <label for="points">Your rating for the selected Comment: 
+                <b>{valueDisplayed} 
+                    <img class="icon-cont" alt="" width="13px" src={valueIcon} />
+                </b>
+            </label>
+            <input
+                type="range"
+                min="-5"
+                max="5"
+                {value}
+                class="slider"
+                on:change={onQtnValueChange}
+            />
+            <div class="slider-values">
+                <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
+                <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
+                <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
+            </div>
         </div>
     </div>
 </div>
-{/if}
+<!-- {/if} -->
 <style>
     :global(.questions-container .field-container){
         width: 85%;

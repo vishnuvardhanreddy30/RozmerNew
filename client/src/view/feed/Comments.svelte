@@ -290,15 +290,15 @@
 
         {#each list as item, index}
             <div class="comments-item" data-num={list.length - index}>
-                <div class="flex">
+                <div class="flex-cont flex-between">
                 <div class="question-text">{item.content}</div>
-                {#if postUserId != userId}
+                <!-- {#if postUserId != userId}
                     <span
                          class="material-icons collab-btn"
                          on:click={collaborate}
                          itemId={"collab_" + item.id}>people-plus</span
                      >
-                {/if}
+                {/if} -->
                 {#if (item.user && item.user.userId) === userId}
                      <span
                         class="material-icons delete-btn"
