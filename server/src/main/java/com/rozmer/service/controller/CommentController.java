@@ -1,5 +1,6 @@
 package com.rozmer.service.controller;
 
+import com.rozmer.service.dataobject.UserCommentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ import com.rozmer.service.dataobject.CommentDto;
 import com.rozmer.service.response.ApiResponse;
 import com.rozmer.service.response.CommentResponse;
 import com.rozmer.service.service.CommentService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -78,6 +81,12 @@ public class CommentController {
 
 		CommentResponse commentResponse = this.commentService.getCommentById(postId, commentId);
 		return new ResponseEntity<CommentResponse>(commentResponse, HttpStatus.OK);
+	}
+
+	@GetMapping("/comments/my/{userId}")
+	@CrossOrigin
+	public ResponseEntity<List<UserCommentDTO>> getMyAllComments(@PathVariable Long userId) {
+		return new ResponseEntity<> (commentService.getCommentsByLoggedInUser(userId), HttpStatus.OK);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.rozmer.service.dataobject.UserCommentDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -129,5 +130,9 @@ public class CommentServiceImpl
 		commentResponse.setContent(commentDtos);
 
 		return commentResponse;
+	}
+
+	public List<UserCommentDTO> getCommentsByLoggedInUser(Long userId) {
+		return commentRepo.findAllByUserId(userId);
 	}
 }

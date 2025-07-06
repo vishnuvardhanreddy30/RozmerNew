@@ -3,6 +3,7 @@ package com.rozmer.service.service;
 import java.util.List;
 
 import com.rozmer.service.dataobject.CommentDto;
+import com.rozmer.service.dataobject.UserCommentDTO;
 import com.rozmer.service.response.CommentResponse;
 
 public interface CommentService {
@@ -21,5 +22,7 @@ public interface CommentService {
 			Integer postId);
 
 	CommentResponse getCommentById(Integer postId, Integer commentId);
+
+	List<UserCommentDTO> getCommentsByLoggedInUser(Long userId);
 
 }
