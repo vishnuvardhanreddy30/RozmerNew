@@ -373,8 +373,13 @@
             (res) => {
                 Utils.log(res);
                 console.log("respose : ", res)
+                if(res.qrating?.length > 0) {
                 value = res['qrating'][0].rating;
                 updateValueDisplayed(res['qrating'][0].rating);
+                } else {
+                    value = 0;
+                    updateValueDisplayed(0)
+                }
                 
             },
             (err) => {

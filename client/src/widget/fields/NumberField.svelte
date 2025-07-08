@@ -16,6 +16,7 @@
     export let labelAlign = "column"; // top, left
     export let cls = "";
     export let placeholder = "";
+    export let disabled = false;
 
     let cmpId = "textfield-" + ++id;
 
@@ -46,6 +47,7 @@
         {placeholder}
         minlength={minLength}
         maxlength={maxLength}
+        {disabled}
         bind:value
         on:keypress={handleMaxMin}
     />

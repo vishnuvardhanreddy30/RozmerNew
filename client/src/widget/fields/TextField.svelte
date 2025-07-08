@@ -21,6 +21,7 @@
     export let placeholder = "";
     export let fieldtype = "";
     export let autofocus = false;
+    export let disabled = false;
     let searchVal;
 
     let searchIconText = "refresh";
@@ -72,6 +73,8 @@
         bind:value
         {placeholder}
         {autofocus}
+        {disabled}
+        autocomplete="off"
         on:keydown={onkeydown}
         bind:this={inputEl}
     />

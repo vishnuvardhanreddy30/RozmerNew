@@ -22,7 +22,7 @@ const urlConst = {
     create_post: base + 'api/user/{userId}/posts',
 
     // Thumbnail update
-    upload_post_thumbnail: base + 'api/post/image/upload/{postId}',
+    upload_post_thumbnail: base + 'api/post/image/upload/{postId}?userId={userId}',
 
     // get thumbnail image - 'api/post/image/{imageName}'
     get_thumbnail_image: base + 'api/post/image/',
@@ -35,6 +35,9 @@ const urlConst = {
 
     // Get User POST
     get_user_posts: base + 'api/user/{userId}/posts',
+
+    // Get User Comments
+    get_user_comments: base + 'api/comments/my/{userId}',
 
     // Update a post
     update_post: base + 'api/posts/{postId}',

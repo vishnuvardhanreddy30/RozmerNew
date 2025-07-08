@@ -74,6 +74,11 @@ import { writable } from 'svelte/store';
                 let data = response.data;
                 console.log("response : ", data)
                 if(data.length > 0) {
+                    if($activeTab == 'following') {
+                        data.forEach(item => {
+                            item.following = true;
+                        });
+                    }
                     usersList = data
                 }
 
@@ -154,7 +159,9 @@ import { writable } from 'svelte/store';
         <div class="standard-bg border-radius-10 mt-10 p1 height-80">
             <div class="mb-10">
                 {#if usersList?.length > 0}
-                <span class="whom-to-follow">WHOM TO FOLLOW</span>
+                    {#if $activeTab != 'following'}
+                        <span class="whom-to-follow">WHOM TO FOLLOW</span>
+                    {/if}
                 {:else}
                 <span class="whom-to-follow">No Results Found</span>
                 {/if}

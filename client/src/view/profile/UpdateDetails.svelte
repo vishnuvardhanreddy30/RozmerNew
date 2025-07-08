@@ -162,6 +162,7 @@
             bind:value={userInfo.firstName}
             {labelAlign}
             {required}
+            disabled={loginUserInfo.userId !== userInfo.userId}
         />
     </div>
     <div class="flex-cont pb-1" align="left">
@@ -170,8 +171,10 @@
             bind:value={userInfo.lastName}
             {labelAlign}
             {required}
+            disabled={loginUserInfo.userId !== userInfo.userId}
         />
     </div>
+    {#if loginUserInfo.userId == userInfo.userId}
     <div class="flex-cont pb-1" align="left">
         <NumberField
             label={Labels.register.mob_num}
@@ -179,9 +182,9 @@
             {labelAlign}
             {maxLength}
             {required}
+            disabled={loginUserInfo.userId !== userInfo.userId}
         />
     </div>
-    {#if loginUserInfo.userId == userInfo.userId}
         <Toolbar ui="plaind">
             <div class="flex-cont" slot="center">
                 <Button text={Labels.profile.update} on:click={onUpdate} />

@@ -302,8 +302,12 @@ body {
 }
 
 .flex-mobile {
-    height: 66%;
+    height: 80%;
     flex: 1;
+}
+
+.height-300 {
+    height: 300px !important;
 }
 
 .x-mobile .flex-mobile {

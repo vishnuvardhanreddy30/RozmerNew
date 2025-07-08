@@ -127,9 +127,9 @@ public class PostController {
 	@PostMapping("/post/image/upload/{postId}")
 	@CrossOrigin
 	public ResponseEntity<PostDto> uploadPostImage(@RequestParam("image") MultipartFile image,
-			@PathVariable Integer postId) throws IOException {
+			@PathVariable Integer postId, @RequestParam Long userId) throws IOException {
 
-		PostDto postDto = this.postService.getPostById(postId);
+		PostDto postDto = this.postService.getPostById(postId, userId);
 
 		String fileName = this.fileService.uploadImage(path, image);
 		postDto.setImageName(fileName);

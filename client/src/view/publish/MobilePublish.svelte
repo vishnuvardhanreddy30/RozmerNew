@@ -68,6 +68,7 @@
 
     function onSuccess(res) {
         Utils.mask();
+        let userInfo = SessionUtil.get("info", true);
 
         if (Utils.isEmpty(res.postId)) {
             return Utils.log("Post id is null");
@@ -86,7 +87,7 @@
         let formdata = new FormData();
         formdata.append("image", files[0]);
 
-        fetch(urlConst.upload_post_thumbnail.replace("{postId}", postId), {
+        fetch(urlConst.upload_post_thumbnail.replace("{postId}", postId).replace("{userId}", userInfo.userId), {
             method: "POST",
             body: formdata,
             redirect: "follow",
@@ -247,14 +248,14 @@
 
     $: {
         let params = Utils.getParamsAsObject(location.hash);
-
+        let userInfo = SessionUtil.get("info", true);
         if (!Utils.isEmpty(params.postId)) {
             postId = params.postId;
 
             // get the publish page gets redirected for update then get the
             // details and fill the content
             Request.get(
-                urlConst.get_post_by_id.replace("{postId}", postId),
+                urlConst.get_post_by_id.replace("{postId}", postId).replace("{userId}", userInfo.userId),
                 null,
                 (resp) => {
                     Utils.log("[Post Details] Getting post details");

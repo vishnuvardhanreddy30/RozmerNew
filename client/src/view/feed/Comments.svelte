@@ -220,8 +220,13 @@
                 .replace("{commentId}", commentId),
             null,
             (res) => {
+                if(res.crating?.length > 0) {
                 value = res['crating'][0].rating;
                 updateValueDisplayed(res['crating'][0].rating);
+                } else {
+                    value = 0;
+                    updateValueDisplayed(0)
+                }
                 Utils.log(res);
             },
             (err) => {

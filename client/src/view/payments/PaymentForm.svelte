@@ -316,7 +316,6 @@
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 60%;
         margin: 0 auto;
         max-height: 80vh;
         overflow-y: auto;
@@ -403,4 +402,10 @@
         -webkit-appearance: none;
         margin: 0;
     }
+
+    @media (min-width: 768px) {
+        .payment-form {
+            width: 60%;
+        }
+    } 
 </style>

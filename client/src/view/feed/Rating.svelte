@@ -7,6 +7,7 @@
     import likeIcon from "../../assets/rating/like.png";
     import dislikeIcon from "../../assets/rating/dislike.png";
     import awesomeIcon from "../../assets/rating/ok.png";
+    import { onMount } from "svelte";
 
     export let postId = "";
     export let postUserId = null;
@@ -61,12 +62,13 @@
             },
             (res) => {
                 updateValueDisplayed(res.rating);
+                value = res.rating
                 Utils.log(res);
             },
             (err) => {
                 Utils.log(err);
             },
-            submitRating
+            // submitRating
         );
     }
 
@@ -96,7 +98,7 @@
         submitRating(value);
     }
 
-    $: {
+    onMount(() => {
         Request.get(
             urlConst.get_rating
                 .replace("{postId}", postId)
@@ -106,15 +108,16 @@
                 await res?.paverageRating?.forEach(item => {
                         const matchingRating = res?.paverageRating.find(rating => rating[0] == postId);
                         if (matchingRating) {
-                            console.log("matchingRating", matchingRating, matchingRating[1] )
                             value = matchingRating[1];
                         }
                         
                     });
                 rating = value
                 await res?.pratingGetDto?.forEach(item => {
-                        if (item.user.userId === userId) {
-                            postRatingData = item
+                        if (item.user.userId == userId) {
+                            postRatingData = item;
+                            value = item.rating;
+                            updateValueDisplayed(item.rating)
                         }
                     });
             },
@@ -123,7 +126,7 @@
             },
             submitRating
         );
-    }
+    })
  
 
   /**

@@ -284,7 +284,7 @@
                 }
             })
             .catch(function (err) {
-                if (err.response?.data?.message === "Insufficient coins") {
+                if (err.response?.data?.message === "Insufficient coins" || err.response?.data?.message?.includes("Wallet not found")) {
                     openBalanceModal();
                 } else {
                     Utils.log(err.response);

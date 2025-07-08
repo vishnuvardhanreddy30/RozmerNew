@@ -208,10 +208,8 @@
 </div>
 {#if !hideFollowersData}
 <div
-    class="flex-cont col-lg-3 h-100-percent d-none d-lg-block"
+    class="col-lg-3 h-100-percent d-none d-lg-block d-lg-flex"
     bind:this={wrapperEl}
-    class:flex-dir-column={!Boot.isDesktop()}
-    class:flex-mobile={!Boot.isDesktop()}
 >
     <FollowTopics />
 </div>
