@@ -1,5 +1,8 @@
 package com.rozmer.service.dataobject;
 
+import lombok.Data;
+
+@Data
 public class UserCommentDTO {
     private Integer commentId;
     private String content;
