@@ -3,8 +3,10 @@
     import MyPosts from "./MyPosts.svelte";
     import Toolbar from "../../widget/toolbar/Toolbar.svelte";
     import SessionUtil from "../../util/SessionUtil";
+    import MyComments from "./MyComments.svelte";
 
     let userInfo = {};
+    let selectedUserId = null;
     let activeTab = 'Profile Details';
     let activeView = UpdateDetails;
 
@@ -15,7 +17,26 @@
     // Function to switch tabs
     function switchTab(tabName) {
         activeTab = tabName;
-        activeView = tabName === 'Profile Details' ? UpdateDetails : MyPosts;
+        if(tabName === 'Profile Details') {
+            activeView = UpdateDetails
+        } else if(tabName === 'Posts') {
+            // @ts-ignore
+            activeView = MyPosts
+        } else {
+            // @ts-ignore
+            activeView = MyComments
+        }
+        // activeView = tabName === 'Profile Details' ? UpdateDetails : MyPosts;
+    }
+    $: {
+        selectedUserId = getUIDFromHash()
+        
+    }
+    function getUIDFromHash() {
+        const hash = location.hash; // Get the hash part of the URL
+        const queryString = hash.includes('?') ? hash.split('?')[1] : '';
+        const params = new URLSearchParams(queryString);
+        return params.get('uid');
     }
 </script>
 
@@ -42,6 +63,15 @@
             >
                 Posts
             </div>
+            {#if selectedUserId == null || userInfo.userId == selectedUserId }
+            <div
+                class="tab"
+                class:active-tab={activeTab === 'Comments'}
+                on:click={() => switchTab('Comments')}
+            >
+                Comments
+            </div>
+            {/if}
         </div>
 
         <div class="tab-content">
