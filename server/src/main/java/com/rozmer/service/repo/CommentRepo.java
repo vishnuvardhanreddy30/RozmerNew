@@ -22,7 +22,7 @@ public interface CommentRepo  extends JpaRepository<Comment	, Integer> {
 
 	Optional<Comment> findById(Integer commentId);
 
-    @Query("SELECT new com.rozmer.service.dataobject.UserCommentDTO(c.id, c.content, c.post.postId) " +
+    @Query("SELECT new com.rozmer.service.dataobject.UserCommentDTO(c.id, c.content, c.post.postId, c.addedDate) " +
             "FROM Comment c WHERE c.user.userId = :userId")
     List<UserCommentDTO> findAllByUserId(@Param("userId") Long userId);
 }
