@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.rozmer</groupId>
 	<artifactId>rozmer-service-api</artifactId>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rozmer-service-api</name>
 	<description>Rozmer APIS  </description>
