@@ -4,6 +4,7 @@
     import Register from "./view/register/Register.svelte";
     import ResetPassword from "./view/login/ResetPassword.svelte";
     import ResetPasswordConfirm from "./view/login/ResetPasswordConfirm.svelte";
+    import ContactUs from "./view/login/ContactUs.svelte";
     import Verify from "./view/register/Verify.svelte";
     import Loader from "./widget/Loader.svelte";
     import Notification from "./widget/toaster/Notification.svelte"
@@ -20,6 +21,7 @@
         register: Register,
         reset: ResetPassword,
         resetConfirm: ResetPasswordConfirm,
+        contactus: ContactUs
     };
 
     Routes.subscribe((val) => {

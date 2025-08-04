@@ -111,6 +111,11 @@
     onMount(() => {
         setSelection()
     });
+
+    function onContactUs() {
+        window.open('/#contactus', '_blank');
+    }
+
     function onLogout() {
         Utils.confirm(
             Labels.dashboard.logout_msg,
@@ -287,6 +292,10 @@
                     <i class="fa fa-gear fa-lg pointer my-auto" style="color: #1a9b97;"></i>
                     <span class="pro-card-user-name ml-2 pl-1 my-auto">Settings</span>
                 </div> -->
+                <div class="d-flex pointer" on:click={onContactUs}>
+                    <i class="fa fa-envelope" style="color: #1a9b97;" aria-hidden="true"></i>
+                    <span class="pro-card-user-name ml-2 pl-1 my-auto">Contact Us</span>
+                </div>
                 <div class="mt-2">
                     <span class="flex-cont pointer" on:click={onLogout}>
                         <span class="material-icons my-auto" style="color: #1a9b97;">logout</span>
