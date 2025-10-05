@@ -38,8 +38,9 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.0.33</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -103,11 +104,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version> <!-- optional but safe to specify -->
+				<version>3.8.1</version>
 				<configuration>
 					<source>17</source>
 					<target>17</target>
-					<release>17</release> <!-- Optional but recommended -->
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
         </plugins>

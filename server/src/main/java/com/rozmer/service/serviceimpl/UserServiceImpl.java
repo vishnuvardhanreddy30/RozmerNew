@@ -465,7 +465,7 @@ public class UserServiceImpl implements UserService {
             List<Long> followingUserIds = userFollowerRepository.findByFollower(loginUser)
                     .stream()
                     .map(userFollower -> userFollower.getFollowing().getUserId())
-                    .collect(Collectors.toList());
+                    .toList();
 
             for (User user : allUsers) {
                 user.setFollowing(followingUserIds.contains(user.getUserId()));
