@@ -22,7 +22,7 @@ public class CashfreeOrderPayController {
         return ResponseEntity.ok(cashfreeOrderPayService.preauthorize(request));
     }
 
-    @GetMapping("/orders/{orderId}")
+    @GetMapping("/orders/pay/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable String orderId) {
         return ResponseEntity.ok(cashfreeOrderPayService.getOrder(orderId));
     }
