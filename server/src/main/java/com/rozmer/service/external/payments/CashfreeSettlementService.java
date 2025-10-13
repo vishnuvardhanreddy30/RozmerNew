@@ -21,7 +21,7 @@ public class CashfreeSettlementService {
     private String cashfreeApiUrl;
     @Value("${cashfree.app.id}")
     private String appId;
-    @Value("${cashfree.secret.key}")
+    @Value("${cashfree.key}")
     private String secretKey;
 
     public Object getSettlementsByOrderId(String orderId) {

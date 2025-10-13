@@ -20,7 +20,7 @@ public class CashfreePaymentService {
     @Value("${cashfree.app.id}")
     private String appId;
 
-    @Value("${cashfree.secret.key}")
+    @Value("${cashfree.key}")
     private String secretKey;
 
     @Autowired
