@@ -2,10 +2,12 @@
     import PaymentForm from './PaymentForm.svelte';
     import PaymentHistory from './PaymentHistory.svelte';
     import Balance from './Balance.svelte';
+    import AddCustomerForm from './AddCustomerForm.svelte';
+    import PaymentsFormLatest from './Recharge_Form.svelte';
 
-    let activeTab = 'Balance'; // Default tab
+    let activeTab = 'Add Bank details'; // Default tab
     // let tabs = [ 'Recharge', 'Payment History'];
-    let tabs = [ 'Balance', 'Recharge', 'Payment History'];
+    let tabs = [ 'Balance', 'Recharge', 'Payment History', 'Add Bank details'];
 
     // Switch tabs dynamically
     function switchTab(tabName) {
@@ -23,6 +25,10 @@
 
     function handleViewBalance() {
         activeTab = 'Balance';
+    }
+
+    function handleViewAddCustomerForm() {
+        activeTab = 'Add Bank details'
     }
 </script>
 
@@ -43,10 +49,16 @@
             {#if activeTab === 'Balance'}
                 <Balance on:viewPaymentForm={handleViewPaymentForm} on:viewPaymentHistory={handleViewPaymentHistory}/>
             {:else if activeTab === 'Recharge'}
-                <PaymentForm on:viewHistory={handleViewPaymentHistory} on:viewBalance={handleViewBalance}/>
+                <!-- <PaymentForm on:viewHistory={handleViewPaymentHistory} on:viewBalance={handleViewBalance}/> -->
+                <PaymentsFormLatest on:viewAddCustomerForm={handleViewAddCustomerForm}/>
             {:else if activeTab === 'Payment History'}
                 <PaymentHistory/>
+            {:else if activeTab === 'Add Bank details'}
+                <AddCustomerForm/>
+            <!-- {:else if activeTab === 'Payments Form'}
+                <PaymentsFormLatets on:viewAddCustomerForm={handleViewAddCustomerForm}/> -->
             {/if}
+
         </div>
     </div>
 </div>
