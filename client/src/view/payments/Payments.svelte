@@ -4,6 +4,7 @@
     import Balance from './Balance.svelte';
     import AddCustomerForm from './AddCustomerForm.svelte';
     import PaymentsFormLatest from './Recharge_Form.svelte';
+    import Recharge from './Recharge.svelte';
 
     let activeTab = 'Add Bank details'; // Default tab
     // let tabs = [ 'Recharge', 'Payment History'];
@@ -50,7 +51,8 @@
                 <Balance on:viewPaymentForm={handleViewPaymentForm} on:viewPaymentHistory={handleViewPaymentHistory}/>
             {:else if activeTab === 'Recharge'}
                 <!-- <PaymentForm on:viewHistory={handleViewPaymentHistory} on:viewBalance={handleViewBalance}/> -->
-                <PaymentsFormLatest on:viewAddCustomerForm={handleViewAddCustomerForm}/>
+                <!-- <PaymentsFormLatest on:viewAddCustomerForm={handleViewAddCustomerForm}/> -->
+                <Recharge />
             {:else if activeTab === 'Payment History'}
                 <PaymentHistory/>
             {:else if activeTab === 'Add Bank details'}

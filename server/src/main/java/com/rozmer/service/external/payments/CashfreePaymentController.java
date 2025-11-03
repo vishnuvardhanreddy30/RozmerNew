@@ -8,6 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cashfree")
+@CrossOrigin
 public class CashfreePaymentController {
 
     @Autowired

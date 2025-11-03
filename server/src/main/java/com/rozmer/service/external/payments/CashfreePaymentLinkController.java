@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cashfree/payment-links")
+@CrossOrigin
 public class CashfreePaymentLinkController {
 
     @Autowired

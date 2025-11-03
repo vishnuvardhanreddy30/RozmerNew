@@ -23,7 +23,8 @@ public class SwaggerSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/login",
                 "/register",
                 "/payment/**",
-                "/api/**"
+                "/api/**",
+                "/add-user/**"
             ).permitAll()
             .anyRequest().authenticated()
             .and()
