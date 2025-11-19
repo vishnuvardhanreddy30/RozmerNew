@@ -1,9 +1,12 @@
 package com.rozmer.service.serviceimpl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.rozmer.service.dataobject.PostDto;
+import com.rozmer.service.dataobject.PostDtos;
+import com.rozmer.service.entities.*;
+import com.rozmer.service.exception.ResourceNotFoundException;
+import com.rozmer.service.repo.*;
+import com.rozmer.service.response.PostResponse;
+import com.rozmer.service.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,15 +16,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import com.rozmer.service.dataobject.PostDto;
-import com.rozmer.service.dataobject.PostDtos;
-import com.rozmer.service.entities.Post;
-import com.rozmer.service.entities.User;
-import com.rozmer.service.exception.ResourceNotFoundException;
-import com.rozmer.service.repo.PostRepo;
-import com.rozmer.service.repo.UserRepository;
-import com.rozmer.service.response.PostResponse;
-import com.rozmer.service.service.PostService;
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -34,6 +33,21 @@ public class PostServiceImpl implements PostService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private CoinTransactionRepository coinTransactionRepo;
+
+	@Autowired
+	private UserCoinWalletRepository userCoinWalletRepo;
+
+	@Autowired
+	private ArticleAccessRepository articleAccessRepo;
+
+
+	static final String ARTICLE = "article";
+	static final String POEM = "poem";
+
+	public static final UserCoinWallet ZERO = new UserCoinWallet(null, null, 0, LocalDateTime.now());
 
 	@Override
 	public PostDto createPost(PostDto postDto, Long userId) {
@@ -76,40 +90,80 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
-
-		Sort sort = (sortDir.equalsIgnoreCase("asc")) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-
+	public PostResponse getAllPost(Integer pageNumber, Integer pageSize, String sortBy, String sortDir, String category, Long userId) {
+		Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 		Pageable p = PageRequest.of(pageNumber, pageSize, sort);
-
-		Page<Post> pagePost = this.postRepo.findAll(p);
-
+		Page<Post> pagePost = this.postRepo.findByCategory(category, p);
 		List<Post> allPosts = pagePost.getContent();
 
-		List<PostDtos> postDtos = allPosts.stream().map((post) -> this.modelMapper.map(post, PostDtos.class))
-				.collect(Collectors.toList());
+		List<PostDtos> postDtos = allPosts.stream().map(post -> {
+			PostDtos dto = this.modelMapper.map(post, PostDtos.class);
+			if (userId != null) {
+				boolean hasAccess = articleAccessRepo.existsByUserUserIdAndPostPostId(userId, post.getPostId());
+				dto.setHasAccess(hasAccess);  // Add this field to PostDtos class
+			}
+			return dto;
+		}).collect(Collectors.toList());
 
-		PostResponse postResponse = new PostResponse();
-
-		postResponse.setContent(postDtos);
-		postResponse.setPageNumber(pagePost.getNumber());
-		postResponse.setPageSize(pagePost.getSize());
-		postResponse.setTotalRecords(pagePost.getTotalElements());
-
-		postResponse.setTotalPages(pagePost.getTotalPages());
-		postResponse.setLastPage(pagePost.isLast());
-
-		return postResponse;
+		return getPostResponse(postDtos, pagePost);
 	}
 
+	@Transactional
+	public boolean unlockPost(Integer postId, Long userId) {
+		User user = userRepo.findById(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
+		Post post = postRepo.findById(postId)
+				.orElseThrow(() -> new ResourceNotFoundException("Post", "ID", postId));
+
+		// Check if user already has access
+		if (articleAccessRepo.existsByUserAndPost(user, post)) {
+			return true;
+		}
+
+		UserCoinWallet wallet = userCoinWalletRepo.findByUser(user)
+				.orElseThrow(() -> new ResourceNotFoundException("Wallet", "User ID", userId));
+
+		if (wallet.getTotalCoins() < 1) {
+			throw new RuntimeException("Insufficient coins");
+		}
+
+		// Deduct one coin and update wallet
+		wallet.setTotalCoins(wallet.getTotalCoins() - 1);
+		wallet.setLastUpdated(LocalDateTime.now());
+		userCoinWalletRepo.save(wallet);
+
+		// 🔥 Record DEBIT transaction for unlock
+		CoinTransaction txn = new CoinTransaction(
+				user,
+				post,
+				TransactionType.DEBIT,
+				1,
+				"Unlocked post: " + post.getTitle()
+		);
+		coinTransactionRepo.save(txn);
+
+		// Grant article access
+		ArticleAccess access = new ArticleAccess();
+		access.setUser(user);
+		access.setPost(post);
+		access.setAccessedAt(LocalDateTime.now());
+		articleAccessRepo.save(access);
+
+		return true;
+	}
+
+
 	@Override
-	public PostDto getPostById(Integer postId) {
+	public PostDto getPostById(Integer postId, Long userId) {
 		Post post = this.postRepo.findById(postId)
 		//Post post = this.postRepo.findByPostUsingId(postId)
 				.orElseThrow(() -> new ResourceNotFoundException("Post", "post id", postId));
 
 		PostDto returnPostDto = this.modelMapper.map(post, PostDto.class);
-
+		if (userId != null) {
+			boolean hasAccess = articleAccessRepo.existsByUserUserIdAndPostPostId(userId, post.getPostId());
+			returnPostDto.setHasAccess(hasAccess);
+		}
 		return returnPostDto;
 	}
 
@@ -151,6 +205,10 @@ public class PostServiceImpl implements PostService {
 
 		Page<Post> pagePost = this.postRepo.searchByTitlewithPage("%" + keyword + "%", p);
 
+		return getPostResponse(postDtos, pagePost);
+	}
+
+	private PostResponse getPostResponse(List<PostDtos> postDtos, Page<Post> pagePost) {
 		PostResponse postResponse = new PostResponse();
 
 		postResponse.setContent(postDtos);

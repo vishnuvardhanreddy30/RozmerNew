@@ -19,6 +19,7 @@
 
     import Utils from "../../util/Utils";
     import Labels from "../../const/Labels";
+    import Payments from "../payments/Payments.svelte"
 
     export let routesData;
 
@@ -36,9 +37,12 @@
         home: FeedList, //isMobile ? MobileFeedList : FeedList,
         notifications: Notification,
         publish: isMobile ? MobilePublish : Publish,
+        articles: FeedList,
+        poems: FeedList,
         account: Profile,
         collaborate: Collaborate,
-        mypost: MyPosts
+        mypost: MyPosts,
+        payment: Payments
     };
 
     export function onRouteChange(data) {
@@ -47,7 +51,7 @@
         if(activeViewRef.onRouteChange) {
             activeViewRef.onRouteChange(data);
             console.log("onroute changes : ", data)
-            if(data.params.pid ){
+            if(data?.params?.pid ){
                 hideFollowersData = true
             }else{
                 hideFollowersData = false
@@ -97,6 +101,12 @@
             activeView = view;
             location.hash = viewMapRef;
 
+            if(viewMapRef == 'account') {
+                setTimeout(() => {
+                    window.location.reload()
+                }, 100)
+            }
+
             setTimeout(() => {
                 if (activeViewRef && activeViewRef.handleResize) {
                     activeViewRef.handleResize();
@@ -112,7 +122,7 @@
             function (btn) {
                 if (btn === "ok") {
                     Utils.mask(true);
-                    let data = { email: SessionUtil.get("info", true).email };
+                    let data = { email: SessionUtil.get("info", true).email,role:SessionUtil.get("info", true).role };
                     Request.post(
                         urlConst.logout + Utils.encodeForUrl(data),
                         data,
@@ -151,6 +161,12 @@
     });
 
     $: {
+        const path = window.location;
+        if(path.hash?.includes('pid')){
+            hideFollowersData = true
+            }else{
+                hideFollowersData = false
+            }
         if (!Utils.isValidUser()) {
             Utils.reload();
         }
@@ -192,10 +208,8 @@
 </div>
 {#if !hideFollowersData}
 <div
-    class="flex-cont col-lg-3 h-100-percent d-none d-lg-block"
+    class="col-lg-3 h-100-percent d-none d-lg-block d-lg-flex"
     bind:this={wrapperEl}
-    class:flex-dir-column={!Boot.isDesktop()}
-    class:flex-mobile={!Boot.isDesktop()}
 >
     <FollowTopics />
 </div>

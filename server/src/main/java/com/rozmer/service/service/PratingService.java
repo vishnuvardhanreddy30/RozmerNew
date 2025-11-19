@@ -21,7 +21,7 @@ public interface PratingService {
 	PratingResponse getPratingByPostandUserID(Integer postId, Integer userId);
 
 	// get all Pratings on Post
-	List<PratingGetDto> getPratingsOnPost(Integer postId);
+	PratingResponse getPratingsOnPost(Integer postId);
 
 	// get all Question by Post ID with Pagination
 	public PratingResponse getPratingsByPostIds(Integer pageNumber, Integer pageSize, String sortBy, String sortDir,

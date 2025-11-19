@@ -17,6 +17,7 @@ public class PostDto {
 	private Integer postId;
 
 	private String title;
+	private String category;
 
 	private String content;
 
@@ -30,6 +31,8 @@ public class PostDto {
 	private PratingResponse prating;
 
 	private String hidePost;
+
+	private boolean hasAccess;
 	//private Set<Prating> prating;
 	//private List<Set<Prating>> prating;
 

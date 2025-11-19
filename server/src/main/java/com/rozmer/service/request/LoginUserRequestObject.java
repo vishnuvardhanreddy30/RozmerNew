@@ -14,5 +14,6 @@ public class LoginUserRequestObject {
     @Email(message = "Email address is not valid !!")
     private String email;
     private String password;
+    private String role;
     
 }

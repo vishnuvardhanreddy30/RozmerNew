@@ -3,6 +3,7 @@ package com.rozmer.service.repo;
 import java.util.List;
 import java.util.Optional;
 
+import com.rozmer.service.dataobject.UserCommentDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,9 @@ public interface CommentRepo  extends JpaRepository<Comment	, Integer> {
 
     Page<Comment> findByPost(Post post,Pageable p);
 
-	Optional<Comment> findById(Integer commentId); 
+	Optional<Comment> findById(Integer commentId);
 
+    @Query("SELECT new com.rozmer.service.dataobject.UserCommentDTO(c.id, c.content, c.post.postId, c.addedDate) " +
+            "FROM Comment c WHERE c.user.userId = :userId")
+    List<UserCommentDTO> findAllByUserId(@Param("userId") Long userId);
 }

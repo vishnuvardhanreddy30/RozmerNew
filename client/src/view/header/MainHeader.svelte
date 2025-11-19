@@ -10,6 +10,7 @@
     import Request from "../../util/Request";
     import SessionUtil from "../../util/SessionUtil";
     import urlConst from "../../const/Url";
+    import { User } from "../../store/User"
 
     import logo from "../../assets/logo.png";
     import proIcon from "../../assets/user-icon.png";
@@ -27,10 +28,12 @@
     let searchIconText = "refresh";
 
     let userInfo = {};
+    let role = '';
     let myTotalFeed;
     $: {
         userInfo = SessionUtil.get("info", true);
-        console.log("userinfo : ", userInfo)
+        role = userInfo.role;
+        console.log("role : ", role)
     }
     let isMenuOpen = false;
 
@@ -44,27 +47,40 @@
             action: "account",
         },
         {
-            text: Labels.menu.home,
+            text: Labels.menu.articles,
             icon: "menu_book",
-            action: "home",
+            action: "articles",
             selected: true,
         },
         {
-            text: Labels.profile.my_post,
-            icon: "dynamic_feed",
-            action: "mypost",
-        }
+            text: Labels.menu.poems,
+            icon: "menu_book",
+            action: "poems",
+            selected: true,
+        },
+        {
+            text: 'Payment',
+            icon: "payment",
+            action: "payment",
+            selected: true,
+        },
+        // {
+        //     text: Labels.profile.my_post,
+        //     icon: "dynamic_feed",
+        //     action: "mypost",
+        // }
     ];
     export let selected;
     function onMenuItemClick(e, idx) {
-        console.log("selected item : ", e, idx, menuItems[idx].action)
-
-        dispatch("showview", {
-            view: menuItems[idx].action,
-        });
+        if(role !== 'guest'){
+            dispatch("showview", {
+                view: menuItems[idx].action,
+            });
+        }else{
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
     function setSelection() {
-        console.log("getselection")
         let items = document.querySelectorAll("[item-action]");
 
         for (let i = 0; i < items.length; i++) {
@@ -78,7 +94,7 @@
         }
 
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
     }
     function onSuccess(res) {
         myTotalFeed = (res['length'] < 2);
@@ -92,7 +108,14 @@
         }
     }
 
-    onMount(() => setSelection());
+    onMount(() => {
+        setSelection()
+    });
+
+    function onContactUs() {
+        window.open('/#contactus', '_blank');
+    }
+
     function onLogout() {
         Utils.confirm(
             Labels.dashboard.logout_msg,
@@ -101,6 +124,11 @@
                 if (btn === "ok") {
                     Utils.mask(true);
                     let data = { email: SessionUtil.get("info", true).email };
+                    if(role === 'guest'){
+                        data.role = 'guest'
+                    }else{
+                        data.role = ''
+                    }
                     Request.post(
                         urlConst.logout + Utils.encodeForUrl(data),
                         data,
@@ -121,7 +149,11 @@
     }
 
     function onSearchFeed(e) {
+        if(role !== 'guest'){
         dispatch("searchpost", searchVal);
+        }else{
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
 
     function showSearchField() {
@@ -137,11 +169,16 @@
     }
 
     function takeBacktoHome() {
-        Utils.redirectTo('home');
+        Utils.redirectTo('articles');
+        location.reload()
     }
 
     function onFabClick() {
+        if(role !== 'guest'){
         Utils.redirectTo('publish');
+    }else{
+        Utils.showNotification('You should signup to access this screen (or) functionality')
+        }
     }
     // Close the menu if the user clicks outside of the image and menu
   function closeMenu(event) {
@@ -163,6 +200,12 @@
             searchIconText = "refresh";
         }
     }
+    // after profile pic updated
+    User.subscribe(value => {
+        if(value) {
+            userInfo = value.userInfo
+        }
+    });
 </script>
 
 <!-- <Toolbar cls="theme-bg"> -->
@@ -204,9 +247,11 @@
     </div>
 
     <div slot="right" class="flex-cont">
+        <!-- {#if role !== 'guest'}
         <div class="ml-2 my-auto">
             <i class="fa fa-bell fa-lg pointer" style="color: #1a9b97;"></i>
         </div>
+        {/if} -->
         <!-- <div class="pro-card-cont">
             <div align="center" class="flex-cont">
                 <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome ! {userInfo.firstName} {userInfo.lastName}</span></div>
@@ -225,23 +270,31 @@
         <div class="ml-4">
             <div class="pro-card-cont">
                 <div align="center" class="flex-cont">
-                    <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome ! {userInfo.firstName} {userInfo.lastName}</span></div>
-                    <img src={proIcon} alt="Profile" width="40px" class="profile-image pointer" on:click={toggleMenu}/>
+                    <div class="my-auto d-none d-sm-block"><span class="pro-card-user-name mr-2">Welcome { role === 'guest' ? 'to Rozmer' : '! '+userInfo.firstName+' '+userInfo.lastName}</span></div>
+                    <!-- <img src={proIcon} alt="Profile" width="40px" class="profile-image pointer" on:click={toggleMenu}/> -->
+                    <div class="bg-img profile-image pointer user-profile-image" style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});" on:click={toggleMenu}/>
                 </div>
             </div>
             <!-- Menu Popup -->
             <div class="menu p-3 {isMenuOpen ? 'd-block' : 'd-none'}">
                 <div class="d-flex">
-                    <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div>
+                    <!-- <div><img src={proIcon} alt="Profile" width="40px" class="profile-image"/></div> -->
+                     <div><div class="bg-img profile-image pointer user-profile-image" style="background-image: url({userInfo.imageName ? urlConst.get_profile_pic +userInfo.imageName : proIcon});" on:click={toggleMenu}/></div>
                     <div class="d-flex flex-column">
+                        {#if role !== 'guest'}
                         <div class="pro-card-user-name ml-2">{userInfo.firstName} {userInfo.lastName}</div>
-                        <div class="font14 ml-2">{userInfo.email}</div> 
+                        {/if}
+                        <div class="font14 ml-2 {role === 'guest' ? 'bold my-auto font18' : ''}">{userInfo.email}</div> 
                     </div>
                 </div>
                 <div class="border pl-3 pr-3 mt-3 mb-2"></div>
-                <div class="d-flex pointer">
+                <!-- <div class="d-flex pointer">
                     <i class="fa fa-gear fa-lg pointer my-auto" style="color: #1a9b97;"></i>
                     <span class="pro-card-user-name ml-2 pl-1 my-auto">Settings</span>
+                </div> -->
+                <div class="d-flex pointer" on:click={onContactUs}>
+                    <i class="fa fa-envelope" style="color: #1a9b97;" aria-hidden="true"></i>
+                    <span class="pro-card-user-name ml-2 pl-1 my-auto">Contact Us</span>
                 </div>
                 <div class="mt-2">
                     <span class="flex-cont pointer" on:click={onLogout}>
@@ -343,7 +396,7 @@
         padding: 4px 10px;
     }
     .pro-card-user-name {
-        padding-top: 4px;
+        /* padding-top: 4px; */
         font-size: 16px;
         font-weight: 500;
     }

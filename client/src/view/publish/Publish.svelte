@@ -15,6 +15,7 @@
     import Base from "../../util/Base";
 
     let editor, title, files, imageName, editorEl, userFeedCount;
+    let category = 'poem'
 
     export let postId;
 
@@ -22,7 +23,7 @@
         editor = KothingEditor.create("editor_classic", {
             display: "block",
             width: "100%",
-            height: innerHeight * 0.67 + "px", //"430px",
+            height: innerHeight * .4 + "px", //"430px",
             popupDisplay: "full",
             katex: katex,
             plugins: plugins,
@@ -65,12 +66,30 @@
         getUserPosts();
     });
 
+    function showPostType(content) {
+        Utils.confirm(
+            'Publish this post as',
+            '',
+            function (btn) {
+                if (btn === "ok") {
+                    category = "article"
+                }else{
+                    category = "poem"
+                }
+                createPost(content)
+            },
+            'Article',
+            'Poem'
+        );
+    }
+
     function showSuccessConfirmation() {
         Utils.alert(Labels.publish.update_msg, Labels.alert.success);
     }
 
     function onSuccess(res) {
         Utils.mask();
+        let userInfo = SessionUtil.get("info", true);
 
         if (Utils.isEmpty(res.postId)) {
             return Utils.log("Post id is null");
@@ -79,7 +98,7 @@
         if ((imageName && !files) || !files) {
             Base.toast('success', Labels.publish.update_msg);
             getUserPosts();
-            Utils.redirectTo('home');
+            Utils.redirectTo(category+'s');
             return;
         }
 
@@ -89,7 +108,7 @@
         let formdata = new FormData();
         formdata.append("image", files[0]);
 
-        fetch(urlConst.upload_post_thumbnail.replace("{postId}", postId), {
+        fetch(urlConst.upload_post_thumbnail.replace("{postId}", postId).replace("{userId}", userInfo.userId), {
             method: "POST",
             body: formdata,
             redirect: "follow",
@@ -101,7 +120,7 @@
                 files = null;
                 Base.toast('success', Labels.publish.update_msg);
                 getUserPosts();
-                Utils.redirectTo('home');
+                Utils.redirectTo(category+'s');
             })
             .catch((error) => {
                 Utils.log(error);
@@ -118,7 +137,7 @@
     function getUserPosts() {
         let userInfo = SessionUtil.get("info", true);
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, ongetPostSuccess, ongetPostFailure, ongetPostSuccess);
+        if(userInfo?.userId) Request.get(url, null, ongetPostSuccess, ongetPostFailure, ongetPostSuccess);
     }
 
     function ongetPostSuccess(res) {
@@ -168,8 +187,9 @@
                     if (id === "ok") {
                         return;
                     }
-
-                    createPost(content);
+                    
+                    showPostType(content)
+                    // createPost(content);
                 },
                 Labels.publish.yes,
                 Labels.publish.later
@@ -177,8 +197,8 @@
 
             return;
         }
-
-        createPost(content);
+        showPostType(content)
+        // createPost(content);
     }
 
     function createPost(content) {
@@ -187,6 +207,7 @@
         let data = {
             content: content,
             title: title,
+            category: category
         };
 
         let userInfo = SessionUtil.get("info", true);
@@ -254,7 +275,7 @@
     }
 
     function onCancel() {
-        Utils.redirectTo("home");
+        Utils.redirectTo("articles");
     }
 
     function onPreview() {
@@ -271,14 +292,14 @@
 
     $: {
         let params = Utils.getParamsAsObject(location.hash);
-
+        let userInfo = SessionUtil.get("info", true);
         if (!Utils.isEmpty(params.postId)) {
             postId = params.postId;
 
             // get the publish page gets redirected for update then get the
             // details and fill the content
             Request.get(
-                urlConst.get_post_by_id.replace("{postId}", postId),
+                urlConst.get_post_by_id.replace("{postId}", postId).replace("{userId}", userInfo.userId),
                 null,
                 (resp) => {
                     Utils.log("[Post Details] Getting post details");

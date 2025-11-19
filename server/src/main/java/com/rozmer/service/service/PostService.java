@@ -1,9 +1,9 @@
 package com.rozmer.service.service;
 
-import java.util.List;
-
 import com.rozmer.service.dataobject.PostDto;
 import com.rozmer.service.response.PostResponse;
+
+import java.util.List;
 
 public interface PostService {
 
@@ -18,10 +18,10 @@ public interface PostService {
 	void deletePost(Integer postId);
 	
 	//get all posts
-	PostResponse getAllPost(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
+	PostResponse getAllPost(Integer pageNumber,Integer pageSize,String sortBy,String sortDir, String category, Long userId);
 
 	//get single post
-	PostDto getPostById(Integer postId);
+	PostDto getPostById(Integer postId, Long userId);
 	
 	//get all posts by user
 	List<PostDto> getPostsByUser(Long userId);
@@ -31,5 +31,7 @@ public interface PostService {
 
 	//Search Post Response
 	 PostResponse searchPostByTitleResponse(Integer pageNumber, Integer pageSize, String sortBy, String sortDir,String keyword);
+
+	boolean unlockPost(Integer postId, Long userId);
 
 }

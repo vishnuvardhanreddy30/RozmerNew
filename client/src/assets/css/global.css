@@ -78,14 +78,20 @@ body {
 .font14{
     font-size: 14px;
 }
+.font18{
+    font-size: 18px;
+}
 .flex-cont {
-    display: flex;
+    display: flex !important;
 }
 .m-auto{
     margin: auto;
 }
 .mx-auto{
     margin: 0 auto;
+}
+.my-auto{
+    margin: auto 0;
 }
 .mr-2{
     margin-right: 0.2rem;
@@ -126,6 +132,12 @@ body {
 .border-radius-10{
     border-radius: 10px;
 }
+
+
+/* bold */
+.bold{
+    font-weight: bold;
+}
 .flex-1 {
     flex: 1;
 }
@@ -137,6 +149,9 @@ body {
 
 .flex-dir-column {
     flex-direction: column;
+}
+.flex-between {
+    justify-content: space-between;
 }
 
 .margin-right-to-child-15>* {
@@ -185,6 +200,9 @@ body {
 .w-70-percent {
     width: 70%;
     /* overflow-y: auto; */
+}
+.w-90-percent {
+    width: 90%;
 }
 .h-100-percent {
     height: 80vh;
@@ -269,6 +287,12 @@ body {
     margin: auto;
 }
 
+.user-profile-image{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
 .txt-center {
     text-align: center;
 }
@@ -278,8 +302,12 @@ body {
 }
 
 .flex-mobile {
-    height: 66%;
+    height: 80%;
     flex: 1;
+}
+
+.height-300 {
+    height: 300px !important;
 }
 
 .x-mobile .flex-mobile {
@@ -342,6 +370,9 @@ body {
 }
 .space-between{
     justify-content: space-between;
+}
+.space-around{
+    justify-content: space-around;
 }
 .ke-powered-by {
     display: none;
@@ -438,15 +469,40 @@ body {
     box-shadow: none;
 }
 
+.btn-normal {
+    position: relative;
+    overflow: hidden;
+    transition: background 400ms;
+    color: var(--btn-color);
+    padding: 5px 12px;
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    font-size: 14px;
+    text-wrap: nowrap;
+    border: 1px solid var(--btn-background);
+    border-radius: 6rem;
+    box-shadow: 0 0 0.5rem rgb(0 0 0 / 30%);
+    cursor: pointer;
+    width: 130px;
+    text-align: center;
+    margin-right: 15px;
+}
+.btn-active {
+    background-color: var(--btn-background);
+}
+.width-auto{
+    width: auto !important;
+}
 
 /* Global css for feed design which utlises in FeedList and MyPosts */
 .virtual-list-item {
     background: var(--blue-shade-1) none repeat scroll 0 0;
     border: 1px solid var(--list-item-border);
     border-radius: 10px;
-    /* height: 92%; */
-    margin: 0.4rem auto;
+    height: 92% !important;
+    margin: 0.4rem auto !important;
     padding: 1% 2%;
+    display: flex;
 }
 
 .feed-info {
@@ -492,6 +548,9 @@ body {
     background-color: #ffffff;
     background-size: contain;
     background-position: center;
+    height: 90px;
+    width: 90px;
+    margin: auto 0;
 }
 
 .feed-list {
@@ -527,6 +586,7 @@ body {
 
 .comments-btn.btn-el {
     padding: 6px 12px;
+    width: 50px !important;
 }
 
 .qtn-mdle-auth-name {
@@ -559,7 +619,7 @@ body {
     font-size: 1em;
     color: var(--text-color);
     line-height: 1.3;
-    width: 80%;
+    width: 76%;
     display: inline-block;
 }
 
@@ -572,7 +632,7 @@ body {
 .comments-item,
 .question-item {
     margin: 10px 0;
-    padding: 5px 10px 0 10px;
+    padding: 5px 10px 10px 10px;
     line-height: 16px;
     font-size: 14px;
     background: var(--white-color) none repeat scroll 0 0;

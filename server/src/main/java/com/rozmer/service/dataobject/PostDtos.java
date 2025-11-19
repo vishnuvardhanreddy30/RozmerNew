@@ -17,6 +17,7 @@ public class PostDtos {
 	private Integer postId;
 
 	private String title;
+	private String category;
 
 	private String imageName;
 	
@@ -28,6 +29,8 @@ public class PostDtos {
 	private PostUserResponse user;
 
 	private Set<PratingGetDto> prating;
+
+	private boolean hasAccess;
 
 	// private Set<CommentDto> comments=new HashSet<>();
 

@@ -1,7 +1,7 @@
 <svelte:options accessors />
 
 <script>
-    import { onMount } from "svelte";
+    import { onMount, beforeUpdate } from "svelte";
     import VirtualList from "../../widget/tinylist/VirtualList.svelte";
     import InfiniteLoading from "../../widget/tinylist/InfiniteLoading.svelte";
     import FeedDetails from "./FeedDetails.svelte";
@@ -14,6 +14,19 @@
     import Labels from "../../const/Labels";
     import Request from "../../util/Request";
     import Boot from "../../util/Boot";
+    import SessionUtil from "../../util/SessionUtil";
+  
+    $: {
+        if(Utils.getPID()) {
+            postId = Utils.getPID();
+            Utils.redirectTo(Utils.getHash(), {
+                pid: Utils.getPID(),
+            });
+            setTimeout(() => {
+                showDetails = true;
+            })
+        }
+    }
 
     let api = urlConst.get_all_post,
         itemSize = 130, // list item height
@@ -23,14 +36,20 @@
         showDetails = false,
         detail,
         postId,
-        infiniteId = Symbol();
-
+        infiniteId = Symbol(),
+        category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
+    let initialLoad = true
+    let userId = SessionUtil.get("info", true).userId;
+    
     function infiniteHandler({ detail: { loaded, complete } }) {
         Request.get(
-            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc`,
+            `${api}?pageNumber=${page - 1}&pageSize=10&sortDir=desc&category=${category}&userId=${userId}`,
             null,
             (data) => {
+                initialLoad = false;
                 let records = data.content;
+                // Fetch payment details from localStorage
+                let paymentDetails = JSON.parse(localStorage.getItem("paymentDetails") || "[]");
 
                 if (!Utils.isEmpty(records)) {
                     page += 1;
@@ -38,13 +57,19 @@
 
                     for(let i = 0; i < records.length; i++) {
                         if(records[i].hidePost !== '1') {
+                            // Check if the postId matches with paymentDetails
+                            const isViewed = paymentDetails.some(
+                                (payment) => payment.postId === records[i].postId
+                            );
+                            // Add a viewed property to the record
+                            records[i].viewed = isViewed;
                             newRecords.push(records[i]);
                         } 
                     }
 
                     list = [...list, ...newRecords];
 
-                    if (data.totalRecords === records.length) {
+                    if (list.length >= data.totalRecords) {
                         complete();
                     } else {
                         loaded();
@@ -65,25 +90,22 @@
         showDetails = false;
 
         let idx = e && e.currentTarget.getAttribute("data-num");
-
         detail = list[+idx - 1] || {};
 
-        if (routeData) {
-            idx = routeData.params.id;
-
-            detail = {
-                postId: idx,
-            };
-        }
+        if(!detail.postId) return
 
         postId = detail.postId;
-        showDetails = true;
 
-        if(getPID() !== String(postId)) {
-            Utils.redirectTo("home", {
+        if (getPID() !== String(postId)) {
+            Utils.redirectTo(Utils.getHash(), {
                 pid: postId,
             });
         }
+        setTimeout(() => {
+            showDetails = true;
+        })
+        return; // Exit here to skip further checks
+
     }
 
     function onHideDetails() {
@@ -104,16 +126,31 @@
     }
 
     export function onRouteChange(data) {
-        if(data.params){
-            if(Utils.isEmpty(data.params.pid)){
+        if (data.params) {
+            if (Utils.isEmpty(data.params.pid)) {
                 onHideDetails();
             }
 
-            if(!Utils.isEmpty(data.params.pid)) {
+            if (!Utils.isEmpty(data.params.pid)) {
                 showDetailsFromRoute(data.params.pid);
             }
         }
+        initialLoad = true;
+
+        // Reset state and trigger infinite scroll for initial data fetch
+        category = Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '';
+        page = 1;
+        list = [];
+        infiniteId = Symbol();
+        // Ensure the first fetch occurs only once by directly calling the handler
+setTimeout(() => {
+        if (list.length === 0) {
+
+            infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } });
+        }
+    }, 0);
     }
+
     function hideDetailsPopup() {
         showDetails = false;
     }
@@ -133,13 +170,27 @@
     function getPID() {
         return Utils.getParamsAsObject(location.hash).pid;
     }
-    onMount(()=> {
+
+    onMount(() => {
         let pid = getPID();
 
         if(pid) {
             showDetailsFromRoute(pid);
         }
+    // Ensure the first fetch occurs only once by directly calling the handler
+    setTimeout(() => {
+        if (list.length === 0) {
+
+            infiniteHandler({ detail: { loaded: () => {}, complete: () => {} } });
+        }
+    }, 0);    });
+
+    beforeUpdate(() => {
+        if (category !== (Utils.getHash() == 'articles' ? 'article' : Utils.getHash() == 'poems' ? 'poem' : '')) {
+            onRouteChange({});
+        }
     });
+
 </script>
 
 <div class="feed-list flex-cont">
@@ -155,16 +206,19 @@
                 on:click={onItemClick}
             >
                 <div class="virtual-list-item">
-                    <div class="feed-info">
-                        <figure>
+                    <div class="w-90-percent">
+                    <div class="feed-info flex-cont">
+                        <!-- <figure>
                             <img
                                 src={proIcon}
                                 width="36px"
                                 height="36px"
                                 alt=""
                             />
-                        </figure>
-                        <div class="author-details">
+                        </figure> -->
+                        <div class="bg-img profile-image pointer user-profile-image" style="background-image: url({list[index].user.imageName ? urlConst.get_profile_pic +list[index].user.imageName : proIcon});"/>
+                        <div class="author-details flex-cont space-between">
+                            <div>
                             <span class="author-name"
                                 >Written by {list[index].user &&
                                     list[index].user.firstName}
@@ -177,28 +231,32 @@
                                 )}</span
                             >
                         </div>
+                        </div>
                     </div>
                     <div class="thumb-det-cont">
                         <div class="thumb-title">
                             <b>{list[index].title}</b>
                         </div>
                     </div>
-                    <!-- <div
+                    </div>
+                    <div
                         class="bg-img feed-thumbnail"
                         style="background-image: url({list[index].imageName
                             ? urlConst.get_thumbnail_image +
                               list[index].imageName
                             : no_image});"
-                    /> -->
+                    />
                 </div>
             </div>
 
             <div slot="footer" class="footer">
+                {#if !initialLoad}
                 <InfiniteLoading
                     on:infinite={infiniteHandler}
                     identifier={infiniteId}
-                    noResultsText={Labels.list.no_results}
+                    noResultsText=""
                 />
+                {/if}
             </div>
         </VirtualList>
     </div>
@@ -216,6 +274,7 @@
         <FeedDetailsMobile {postId} on:hidedetails={onHideDetails} on:hidedetailpopup={hideDetailsPopup}/>
     {/if}
 {/if}
+
 
 <style>
     .list {

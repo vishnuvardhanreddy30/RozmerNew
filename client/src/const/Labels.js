@@ -30,7 +30,8 @@ const Labels = {
         forgetPassword: 'Forget Password?',
         failed: "The email address or phone number that you've entered doesn't match any account. <br/> <b>Sign up for an account.</b>",
         login_error: "Login Error",
-        flash_msg: 'A new social media platform changing the meaning of news!'
+        flash_msg: 'A new social media platform changing the meaning of news!',
+        after_login: 'articles'
     },
 
     register: {
@@ -76,6 +77,8 @@ const Labels = {
         home: 'Feed',
         publish: 'Publish',
         profile: 'My Profile',
+        articles: "Articles",
+        poems: 'Poems',
         notification: 'Notification',
         logout: 'Logout'
     },
@@ -87,7 +90,7 @@ const Labels = {
     profile: {
         no_post: '<p>No content published yet.</p><p>Publish 2 articles and get free life time access to the platform.</p>',
         published: 'Published on',
-        my_post: 'My Posts',
+        my_post: 'Posts',
         edit_profile: 'Edit Profile',
         update_cnf: 'Profile Updated Successfully',
         update_fail: 'Failed to update User information',
@@ -145,7 +148,7 @@ const Labels = {
 
     details: {
         comment_title: 'Comments',
-        question_title: 'Questions',
+        question_title: 'Collaborate',
         rating_title: 'Rating',
         take_down_post: 'Take Down Post',
         submit_rating_popup: 'No takedown, just not cool 👎',
@@ -154,7 +157,7 @@ const Labels = {
 
     collaborate: {
         comment_title: 'Comment collaborated for the selected phrase',
-        question_title: 'Q&A collaborated for the selected phrase',
+        question_title: 'Creator – Audience Collab',
         submit: 'Submit',
         add_success: 'Successfully Collaborated',
         collaborate_body: 'Please drag and select the content from the blog you want to collaborate',
@@ -171,6 +174,10 @@ const Labels = {
         comments: "Type your comment here",
         question: "Type your question here",
         answer: "Type your answer here"
+    },
+
+    payment: {
+        recharge: "Payment completed successfully!",
     }
 };
 

@@ -15,4 +15,6 @@ public class QuestionResponse {
 	private int totalPages;	
 	private boolean lastPage;
 
+	private List<Object[]> qAverageRatings;
+
 }

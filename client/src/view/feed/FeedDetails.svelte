@@ -13,8 +13,10 @@
     import Button from "../../widget/button/Button.svelte";
     import Boot from "../../util/Boot";
     import SessionUtil from "../../util/SessionUtil";
+    import Share from '../../widget/share.svelte';
 
     import logo from "../../assets/logo_white.png";
+    import axios from "axios";
 
     export let detail = {
         title: "",
@@ -24,7 +26,8 @@
     export let postId = null;
     export let showEditPublishBtn = false;
 
-    let segmentActiveView = Comments,
+    let segmentActiveView = null,
+        selectedSegment = null,
         detailsEl,
         detailsElHeight,
         postUserId;
@@ -34,10 +37,12 @@
     let buttons = [
         {
             text: Labels.details.comment_title,
-            pressed: true,
         },
         {
             text: Labels.details.question_title,
+        },
+        {
+            text: Labels.details.rating_title,
         },
     ];
 
@@ -45,16 +50,30 @@
 
     let userId = SessionUtil.get("info", true).userId;
 
+    // Access functionality
+    let isBalanceModalOpen = false;
+    let modalMessage = "Insufficient balance. Please recharge to access this artcile.";
+    let isAccessModalOpen = false;
+    let unlockModalMessage = "You don't have access to this post. Do you want to unlock the post.?";
+    let category = Utils.getHash();
+
     function onBack() {
         dispatch("hidedetails");
-        location.hash = 'home';
+        const path = window.location;
+        location.hash = path?.hash?.includes('articles') || path?.hash?.includes('poems') || path?.hash?.includes('home') ? Utils.getHash() : 'mypost';
         // Utils.redirectTo("home");
     }
 
-    function onSegmentBtnSelect(e) {
-        let data = e.detail;
+    function onSegmentBtnSelect(e, index) {
+        // let data = e.detail;
+        if(selectedSegment == e) {
+            selectedSegment = null;
+            segmentActiveView = null
+        } else {
+            selectedSegment = e;
 
-        segmentActiveView = viewMap[data.itemId];
+            segmentActiveView = viewMap[index];
+        }
     }
 
     function onEdit() {
@@ -139,7 +158,7 @@
         if (!Utils.isEmpty(postId)) {
             Utils.mask(true);
             Request.get(
-                urlConst.get_post_by_id.replace("{postId}", postId),
+                urlConst.get_post_by_id.replace("{postId}", postId).replace("{userId}", userId),
                 null,
                 (resp) => {
                     Utils.mask();
@@ -150,7 +169,6 @@
                         buttons = [
                             {
                                 text: Labels.details.comment_title,
-                                pressed: true,
                             },
                             {
                                 text: Labels.details.question_title,
@@ -176,11 +194,139 @@
         }
     }
 
+    let truncatedHTML = '';
+    let showFull = false;
+    let totalWordsCount = 0
+
+    $: if (detail?.content) {
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = detail.content;
+
+        const allText = tempElement.textContent || '';
+        const allWords = allText.match(/\b[\w']+\b/g) || [];
+        const targetWordCount = Math.ceil(allWords.length * 0.2);
+        totalWordsCount = allWords.length;
+
+        let currentCount = 0;
+
+        function truncateNode(node) {
+            if (currentCount >= targetWordCount) return '';
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                const words = node.textContent.match(/\b[\w']+\b/g) || [];
+                if (currentCount + words.length <= targetWordCount) {
+                    currentCount += words.length;
+                    return node.textContent;
+                } else {
+                    const remaining = targetWordCount - currentCount;
+                    currentCount = targetWordCount;
+                    const text = words.slice(0, remaining).join(' ');
+                    return text + ' ';
+                }
+            }
+        
+
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const tag = node.tagName.toLowerCase();
+                let innerHTML = '';
+
+                node.childNodes.forEach(child => {
+                    innerHTML += truncateNode(child);
+                });
+
+                return `<${tag}${getAttributes(node)}>${innerHTML}</${tag}>`;
+            }
+
+            return '';
+        }
+
+        function getAttributes(node) {
+            if (!node.attributes || node.attributes.length === 0) return '';
+            return Array.from(node.attributes)
+                .map(attr => ` ${attr.name}="${attr.value}"`)
+                .join('');
+        }
+
+        tempElement.childNodes.forEach(child => {
+            truncatedHTML += truncateNode(child);
+        });
+        truncatedHTML = truncatedHTML
+
+        console.log("after 20%html : ", truncatedHTML);
+    }
+
+    function readMoreArticle() {
+        console.log("readmore article clicked", detail, userId)
+        if (!detail.hasAccess && detail?.user && detail?.user?.userId != userId) {
+            // Logic to open the payment modal goes here
+            isAccessModalOpen = true;
+        } else {
+            showFull = true
+        }
+    }
+
+    function unlockPost() {
+        isAccessModalOpen = false;
+        axios.post(
+            urlConst.unlock_post.replace('{postId}', detail.postId).replace('{loginUserId}', userId),
+            {},
+            {
+                headers: Request.getHeaders(null),
+                timeout: 120000
+            }
+            )
+            .then(function (response) {
+                console.log("Response after unlock:", response);
+                if (response.data === "Unlocked" || response.data === "Already unlocked") {
+                    showFull = true;
+                } else {
+                    openBalanceModal();
+                }
+            })
+            .catch(function (err) {
+                if (err.response?.data?.message === "Insufficient coins" || err.response?.data?.message?.includes("Wallet not found")) {
+                    openBalanceModal();
+                } else {
+                    Utils.log(err.response);
+                }
+            });
+    }
+    function openBalanceModal() {
+        isBalanceModalOpen = true;
+    }
+
+    function closeBalanceModal() {
+        isBalanceModalOpen = false;
+    }
+    function closeAccessModal() {
+        isAccessModalOpen = false;
+    }
+
+    function navigateToPayments() {
+        closeBalanceModal();
+        Utils.redirectTo('payment'); // Replace 'payments' with your actual payments page route
+    }
+
+
     onMount(() => {
         detailsElHeight = Utils.calculateAvailableSpace(detailsEl);
     });
-</script>
+    let isModalOpen = false;
 
+  function openModal() {
+    isModalOpen = true;
+  }
+
+  function closeModal() {
+    isModalOpen = false;
+  }
+</script>
+<Share
+    title="Share post"
+    isOpen={isModalOpen}
+    onClose={closeModal}
+    postData = {detail}
+    />
 <div
     class="feed-details wh-100-percent"
 >
@@ -211,10 +357,10 @@
 
     <div class="flex-cont">
         <div class="flex-cont flex-dir-column feed-details-body flex-1">
-            <div class="breadcrumb-cont d-flex justify-content-between">
-                <button on:click={onBack}>
+            <div class="breadcrumb-cont pr-2 d-flex justify-content-between">
+                <span class="back-btn" on:click={onBack}>
                     <i class="material-icons small">chevron_left</i> {Labels.dashboard.back}
-                </button>
+                </span>
                 {#if showEditPublishBtn}
                     <Button
                         iconCls="material-icons"
@@ -223,6 +369,42 @@
                         on:click={onEdit}
                     />
                 {/if}
+                <div class="flex-cont">
+                
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.comment_title}
+                            class:active={selectedSegment === Labels.details.comment_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.comment_title , 0)}
+                        >
+                            chat
+                        </span>
+                    </div>
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.question_title}
+                            class:active={selectedSegment === Labels.details.question_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.question_title, 1)}
+                        >
+                            quiz
+                        </span>
+                    </div>
+                    <div class="share-btn">
+                        <span
+                            class="material-symbols-outlined segment-icon pointer"
+                            title={Labels.details.rating_title}
+                            class:active={selectedSegment === Labels.details.rating_title}
+                            on:click={() => onSegmentBtnSelect(Labels.details.rating_title, 2)}
+                        >
+                            reviews
+                        </span>
+                    </div>
+                    <div class="share-btn ">
+                        <i class="fa fa-share pointer segment-icon" title="Share" on:click={openModal}></i>
+                    </div>
+                </div>
                 <!-- / -->
                 <!-- <span class="breadcrumb-thumb-title">{detail.title}</span> -->
             </div>
@@ -233,9 +415,24 @@
                 bind:this={detailsEl}
             >
                 <div class="thumb-title">{detail.title}</div>
+                {#if detail.user?.userId != userId && category != 'poems'}
+                    {#if totalWordsCount > 50 && !detail.hasAccess}
+                        <div on:click={onCollaborateClick}>
+                            {@html showFull ? detail.content : truncatedHTML}
+                        </div>
+                        {#if !showFull}
+                            <button class="read-more-btn" on:click={() => readMoreArticle()}>Read more...</button>
+                        {/if}
+                    {:else}
+                    <div on:click={onCollaborateClick}>
+                        {@html detail.content}
+                        </div>
+                    {/if}
+                {:else}
                 <div on:click={onCollaborateClick}>
-                    {@html detail.content}
-                </div>
+                    {@html detail.content}   
+                    </div>
+                {/if}
 
                 <!-- <Button
                     iconCls="material-icons"
@@ -246,9 +443,10 @@
             </div>
         </div>
 
-        {#if Boot.isDesktop()}
+        {#if segmentActiveView && Boot.isDesktop()}
             <div class="f1 feed-seg-cont">
-                <SegmentedButton {buttons} on:select={onSegmentBtnSelect} />
+                <!-- <SegmentedButton {buttons} on:select={onSegmentBtnSelect} /> -->
+                 <h6 class="text-center bold">{selectedSegment}</h6>
                 <svelte:component
                     this={segmentActiveView}
                     {postId}
@@ -259,6 +457,24 @@
         {/if}
     </div>
 </div>
+{#if isBalanceModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{modalMessage}</p>
+        <button on:click={navigateToPayments}>Payment</button>
+        <button on:click={closeBalanceModal}>Close</button>
+    </div>
+</div>
+{/if}
+{#if isAccessModalOpen}
+<div class="payment-modal-backdrop">
+    <div class="payment-modal">
+        <p>{unlockModalMessage}</p>
+        <button on:click={unlockPost}>Yes, Unlock</button>
+        <button on:click={closeAccessModal}>Cancel</button>
+    </div>
+</div>
+{/if}
 
 <style>
     .feed-details {
@@ -267,16 +483,45 @@
         left: 0;
         /* background-color: #fff; */
         background-color: var(--body-bg-color);
-        z-index: 2;
+        /* z-index: 2; */
+        border-radius: 10px;
     }
 
     .feed-details-body {
         height: calc(100vh - 54px);
+        background: transparent  !important;
+        border: 1px solid var(--primary-color-alternate-2);
+        border-radius: 10px;
+        height: 78vh;
+    }
+
+    .share-btn{
+        margin-right: 10px;
+    border-radius: 50%;
+    font-size: 24px;
+    background-color: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    }
+
+    .back-btn{
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--primary-color-alternate-2);
+        cursor: pointer;
+        padding-left: 10px;
+        margin: auto 0;
     }
 
     .breadcrumb-cont {
         width: 100%;
         margin-top: 20px;
+        border-radius: 10px !important;
+        background-color: transparent !important;
+    }
+    .thumb-autho{
+        border-radius: 10px;
+        background-color: transparent !important;
     }
 
     .breadcrumb-cont button {
@@ -305,6 +550,9 @@
         padding: 10px;
         background-color: var(--nav-menu-selected-bg);
         width: 400px;
+        border: 1px solid var(--primary-color-alternate-2);
+        border-radius: 10px;
+        margin-left: 10px;
     }
 
     :global(.feed-seg-cont .segmented-btn-cont) {
@@ -318,7 +566,7 @@
     }
 
     :global(.feed-seg-cont .segmented-btn-cont .btn-container.pressed) {
-        border-bottom: 4px solid var(--blue-shade-2);
+        border-bottom: 4px solid var(--primary-color-alternate-2);
     }
 
     :global(.feed-seg-cont .segmented-btn-cont .btn-container .ripple:hover) {
@@ -333,4 +581,73 @@
     :global(.edit-article-btn .material-icons) {
         font-size: 18px;
     } 
+    .read-more-btn {
+        color: blue;
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 0;
+        font-size: 16px;
+    }
+
+    .read-more-btn:hover {
+        text-decoration: underline;
+    }
+
+    .payment-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        z-index: 5;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .payment-modal {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .payment-modal button {
+        margin: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+    }
+
+    .payment-modal button:first-child {
+        background-color: #1a9b97;
+        color: white;
+    }
+
+    .modal button:last-child {
+        background-color: #ddd;
+    }
+    .segment-icon {
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 24px;
+    background-color: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.segment-icon:hover {
+    background-color: rgb(215, 215, 215);
+}
+
+.segment-icon.active {
+    background-color: var(--primary-color-alternate-2);
+    font-size: 20px;
+    color: white;
+}
+
 </style>

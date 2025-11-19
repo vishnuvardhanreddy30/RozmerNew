@@ -22,11 +22,13 @@
 
     export let postUserId = null;
 
-       
+
     let value = 0;
     let valueDisplayed = "Cool";
     let valueIcon = likeIcon;
     let maxLength = 999;
+    let role = SessionUtil.get("info", true).role;
+    let selectedQuestion = null;
 
     let cmpEl, questionValue, pressedReplyBtn, questionId, noResultsText;
 
@@ -41,6 +43,7 @@
 
     let page = 0;
     let list = [];
+    let currentUserRating = 0
 
     function infiniteHandler({ detail: { loaded, complete } }) {
         // reset the button reply button from send to reply
@@ -53,7 +56,7 @@
         Request.get(
             `${api}?pageNumber=${page}&pageSize=500&sortBy=postId&sortDir=asc`,
             null,
-            (data) => {
+            async (data) => {
                 if (!Utils.isEmpty(data) && !Utils.isEmpty(data.content)) {
                     page += 1;
                     list = [...data.content, ...list];
@@ -79,6 +82,10 @@
     }
 
     function onSend() {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         if (Utils.isEmpty(questionValue)) {
             return;
         }
@@ -125,6 +132,10 @@
         return record;
     }
     function postReply(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let btnEl = e.currentTarget,
             isSend = false;
 
@@ -217,6 +228,10 @@
     }
 
     function deleteQuestion(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -241,6 +256,10 @@
     }
 
     function deleteAns(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let answerId = e.currentTarget.getAttribute("itemId");
         let questionId = e.currentTarget.getAttribute("id");
         let questionIdx = getQtnInx(+questionId);
@@ -267,6 +286,10 @@
     }
 
     function collaborate(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         Utils.confirm(
             Labels.question.collaborate_confirm_msg,
@@ -305,18 +328,42 @@
     }
 
     function onQtnValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
 
         updateValueDisplayed(value);
         submitRating(value);
     }
 
-    function rateQuestion(e) {
+    // /**
+    //  * @param {number} value
+    //  * @param {any} item
+    //  */
+    // async function rateQuestion(value, item) {
+    async function rateQuestion(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
+        // selectedQuestion = await item
         let id = e.currentTarget.getAttribute("itemId");
-        let modal = document.getElementById("myModal");
-        Utils.log('Rate this comment!');
+        // setTimeout(() => {
+        let modal = document.getElementById("myModal1");
+        modal.style.display = "flex";
+        Utils.log('Rate this question!');
+        // console.log("valuevalue", value, item, selectedQuestion)
+        //                 item.qrating.qrating.forEach((rate) => {
+        //                     if(rate.user.userId == userId){
+        //                     currentUserRating = rate.rating
+        //                     console.log("current user rating", currentUserRating)
+        //                 }
+        //                 })
 
         questionId = id && id.replace('rate_', '');
+        console.log("questionId", questionId)
 
         Request.get(
             urlConst.get_question_rating
@@ -324,23 +371,47 @@
                 .replace("{qnId}", questionId),
             null,
             (res) => {
+                Utils.log(res);
+                console.log("respose : ", res)
+                if(res.qrating?.length > 0) {
                 value = res['qrating'][0].rating;
                 updateValueDisplayed(res['qrating'][0].rating);
-                Utils.log(res);
+                } else {
+                    value = 0;
+                    updateValueDisplayed(0)
+                }
+                
             },
             (err) => {
                 Utils.log(err);
             },
             submitRating
         );
+        console.log("value", value)
 
-        modal.style.display = "flex";
+    // },100)
+    }
+    /**
+     * @param {number} value
+     * @param {any} item
+     * @param {number} index
+     */
+    async function rateIndividualQuestion(value, item, index){
+        console.log("rate individaul", value, item)
+        submitRating(value)
+        selectedQuestion.qrating.qrating[index].rating = value
     }
 
     function closeModal(){
-        let modal = document.getElementById("myModal");
+        selectedQuestion = null
+        let modal = document.getElementById("myModal1");
 
         modal.style.display = "none"; 
+    }
+
+    function submitCurrentUserRating(value) {
+        currentUserRating = value
+        submitRating(currentUserRating)
     }
 
     function submitRating(value) {
@@ -388,10 +459,11 @@
         {#each list as item, index}
             <div class="question-item" data-num={list.length - index}>
                 <div class="question-item-q">
-                    <div class="question-text">{item.questions}</div>
+                    <div class="flex-cont flex-between">
+                        <div class="question-text">{item.questions}</div>
                     {#if (item.user && item.user.userId) === userId}
                         <span
-                            class="material-icons delete-btn"
+                            class="material-icons delete-btn mr-10"
                             on:click={deleteQuestion}
                             itemId={item.questionId}>delete</span
                         >
@@ -409,7 +481,11 @@
                             on:click={rateQuestion}
                             itemId={"rate_" + item.questionId}>star_rate</span
                         >
+                        <!-- {#each [1, 2, 3, 4, 5] as value}
+          <span on:click={() => rateQuestion(value, item)} class="star">{item.qaverageRating >= value ? '★' : '☆'}</span>
+        {/each} -->
                     {/if}
+                    </div>
                     <div class="feed-info qtn-auth-cont">
                         <div class="qtn-mdle-auth-details txt-right">
                             <span class="qtn-mdle-auth-name"
@@ -455,7 +531,7 @@
                         </div>
                     {/each}
                 </div>
-
+                {#if (item.user && item.user.userId) !== userId}
                 <Toolbar>
                     <div slot="center" />
                     <Button
@@ -468,6 +544,7 @@
                         itemId={item.questionId}
                     />
                 </Toolbar>
+                {/if}
             </div>
         {/each}
     </div>
@@ -492,15 +569,37 @@
     {/if}
 </div>
 
+<!-- {#if selectedQuestion} -->
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div id="myModal1" class="modal">
 
     <!-- Modal content -->
     <div class="modal-content">
         <div align="right">
             <span class="close" on:click={closeModal}>&times;</span>
         </div>
-        <div align="center" class="rating-container wh-100-percent">
+        <div align="center">
+            <span class="bold">Question Ratings</span>
+        </div>
+        <div class="rating-container wh-100-percent flex-cont ratings-modal">
+            <!-- {#if (selectedQuestion.user && selectedQuestion.user.userId) !== userId}
+            <div class="flex-cont space-between">
+                <span class="bold">Your review</span>
+                <span>{#each [1, 2, 3, 4, 5] as value}
+                    <span class="star1 pointer" on:click={() => submitCurrentUserRating(value)} title="Provide your rating for this question">{currentUserRating >= value ? '★' : '☆'}</span>
+                    {/each}<span class="rating-number">{currentUserRating}</span></span>
+                    </div>
+            {/if}
+            {#each selectedQuestion.qrating.qrating as item, index}
+            <div class="flex-cont space-between">
+                {#if item.user.userId !== userId}
+                <span class="text-capitalize">{item.user.firstName} {item.user.lastName}</span>
+                <span>{#each [1, 2, 3, 4, 5] as value}
+                    <span class="star1" >{item.rating >= value ? '★' : (item.rating + 0.5 === value ? '½' : '☆')}</span>
+                    {/each}<span class="rating-number">{item.rating}</span></span>
+                {/if}
+    </div>
+            {/each} -->
             <label for="points">Your rating for the selected Comment: 
                 <b>{valueDisplayed} 
                     <img class="icon-cont" alt="" width="13px" src={valueIcon} />
@@ -522,7 +621,7 @@
         </div>
     </div>
 </div>
-
+<!-- {/if} -->
 <style>
     :global(.questions-container .field-container){
         width: 85%;
@@ -547,4 +646,42 @@
         width: 90%;
         display: inline-block;
     }
+    .star {
+        color: gold;
+        cursor: pointer;
+        font-size: 18px;
+    }
+    .star1{
+        color: gold;
+        font-size: 22px;
+    }
+    .pointer {
+        cursor: pointer;
+    }
+    .rating-number{
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    .bold{
+        font-weight: bold;
+    }
+    .ratings-modal{
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-content{
+        padding: 40px;
+    }
+    .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* font-size: 30px; */
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 50%;
+    text-align: center;
+  }
 </style>

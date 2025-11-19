@@ -5,9 +5,11 @@ import com.rozmer.service.response.LoginResponse;
 import com.rozmer.service.response.UserResponse;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.mail.MessagingException;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rozmer.service.dataobject.Response;
@@ -27,7 +29,7 @@ public interface UserService {
 
     LoginResponse userLogin (String email,  String password);
 
-    SuccessResponse<String> logUserOut (String email);
+    SuccessResponse<String> logUserOut (String email, String role);
 
     public boolean verify(String verificationCode);
 
@@ -42,7 +44,11 @@ public interface UserService {
 
     //update User
 	UserResponse updateUser(UserCreateRequestObject userCreateRequestObject, Long userId);
+    ResponseEntity<SuccessResponse<String>> followUser(Long followerId, Long followingId);
+    ResponseEntity<SuccessResponse<String>> unfollowUser(Long followerId, Long followingId);
 
-
-    
+    List<com.rozmer.service.dataobject.User> getFollowers(Long loginUserId);
+    List<com.rozmer.service.dataobject.User> getFollowings(Long loginUserId);
+    List<com.rozmer.service.dataobject.User> getAllUsersWithFollowingFlag(Long loginUserId);
+    com.rozmer.service.dataobject.User getUserDetails(Long userId);
 }

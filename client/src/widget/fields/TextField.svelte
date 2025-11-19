@@ -21,6 +21,7 @@
     export let placeholder = "";
     export let fieldtype = "";
     export let autofocus = false;
+    export let disabled = false;
     let searchVal;
 
     let searchIconText = "refresh";
@@ -72,10 +73,12 @@
         bind:value
         {placeholder}
         {autofocus}
+        {disabled}
+        autocomplete="off"
         on:keydown={onkeydown}
         bind:this={inputEl}
     />
-    {#if fieldtype}
+    {#if fieldtype === 'search'}
     <span class="pointer" title={fieldtype} on:click={dispatch("enter", value)}>
         <i class="fa fa-search" style="color: #1a9b97;"></i>
     </span>

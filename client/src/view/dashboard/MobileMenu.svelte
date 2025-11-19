@@ -11,10 +11,22 @@
     let myTotalFeed;
 
     let menuItems = [
+        // {
+        //     text: Labels.menu.home,
+        //     icon: "menu_book",
+        //     action: "home",
+        //     selected: true,
+        // },
         {
-            text: Labels.menu.home,
+            text: Labels.menu.articles,
             icon: "menu_book",
-            action: "home",
+            action: "articles",
+            selected: true,
+        },
+        {
+            text: Labels.menu.poems,
+            icon: "menu_book",
+            action: "poems",
             selected: true,
         },
         /* {
@@ -52,20 +64,18 @@
 
     function setSelection() {
         let items = document.querySelectorAll("[item-action]");
-        console.log("items list : ", items)
 
         for (let i = 0; i < items.length; i++) {
             items[i].classList.remove("menu-selected");
         }
 
         let item = document.querySelector(`[item-action=${selected}]`);
-        console.log("selected item : ", item)
         if (!Utils.isEmpty(item)) {
             item.classList.add("menu-selected");
         }
 
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
-        Request.get(url, null, onSuccess, onFailure, onSuccess);
+        if(userInfo?.userId) Request.get(url, null, onSuccess, onFailure, onSuccess);
     }
 
     function onSuccess(res) {
@@ -77,10 +87,10 @@
     }
 
     $: {
+        userInfo = SessionUtil.get("info", true);
         if (selected) {
             setSelection();
         }
-        userInfo = SessionUtil.get("info", true);
     }
 
     onMount(() => setSelection());

@@ -37,6 +37,7 @@
     const api = urlConst.get_all_comments.replace("{postId}", postId);
 
     let userId = SessionUtil.get("info", true).userId;
+    let role = SessionUtil.get("info", true).role;
     let page = 0;
     let list = [];
 
@@ -79,6 +80,10 @@
         if(!commentValue) {
             return;
         }
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
 
         Request.post(
             urlConst.post_comments
@@ -107,6 +112,11 @@
     }
 
     function collaborate(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
+
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -139,6 +149,10 @@
     }
 
     function deleteComment(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         
         Utils.confirm(
@@ -179,6 +193,10 @@
     }
 
     function onCmtValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
 
         updateValueDisplayed(value);
@@ -186,6 +204,10 @@
     }
 
     function rateComment(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         let id = e.currentTarget.getAttribute("itemId");
         let modal = document.getElementById("myModal");
         Utils.log('Rate this comment!');
@@ -198,8 +220,13 @@
                 .replace("{commentId}", commentId),
             null,
             (res) => {
+                if(res.crating?.length > 0) {
                 value = res['crating'][0].rating;
                 updateValueDisplayed(res['crating'][0].rating);
+                } else {
+                    value = 0;
+                    updateValueDisplayed(0)
+                }
                 Utils.log(res);
             },
             (err) => {
@@ -218,6 +245,10 @@
     }
 
     function submitRating(value) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         Request.post(
             urlConst.post_comment_rating
                 .replace("{userId}", SessionUtil.get("info", true).userId)
@@ -244,7 +275,7 @@
 
         setTimeout(() => {
             if(cmpEl){
-                let adjustHeight = (document.body.classList.contains('x-mobile')) ? 120 : 70;
+                let adjustHeight = (document.body.classList.contains('x-mobile')) ? 120 : 100;
 
                 cmpEl.style.height = Utils.calculateAvailableSpace(cmpEl, adjustHeight);
             }
@@ -264,14 +295,15 @@
 
         {#each list as item, index}
             <div class="comments-item" data-num={list.length - index}>
+                <div class="flex-cont flex-between">
                 <div class="question-text">{item.content}</div>
-                {#if postUserId === userId}
+                <!-- {#if postUserId != userId}
                     <span
                          class="material-icons collab-btn"
                          on:click={collaborate}
                          itemId={"collab_" + item.id}>people-plus</span
                      >
-                {/if}
+                {/if} -->
                 {#if (item.user && item.user.userId) === userId}
                      <span
                         class="material-icons delete-btn"
@@ -280,12 +312,18 @@
                     >
                 {/if}
                 {#if (item.user && item.user.userId) !== userId}
-                <span
+                <!-- <span
                     class="material-icons rate-btn"
                     on:click={rateComment}
                     itemId={"rate_" + item.id}>star_rate</span
+                > -->
+                <span
+                    class="material-icons rate-btn"
+                    on:click={rateComment}
+                    itemId={"rate_" + item.id}>favorite</span
                 >
                 {/if}
+            </div>
                 <div class="feed-info qtn-auth-cont">
                     <div class="qtn-mdle-auth-details txt-right">
                         <span class="qtn-mdle-auth-name"
@@ -308,6 +346,7 @@
             cls="comments-field"
             placeholder= {Labels.placeholder.comments}
             maxLength={maxLength}
+            fieldtype="comment"
             bind:value={commentValue}
             on:enter={onSend}
         />

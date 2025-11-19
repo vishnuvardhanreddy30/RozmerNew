@@ -26,4 +26,6 @@ public class QuestionDto {
     private Date addedDate;
 
     private QratingResponse qrating;
+
+    private Double qAverageRating;
 }

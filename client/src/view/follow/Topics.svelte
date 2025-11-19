@@ -1,28 +1,146 @@
 <script>
-    import { onMount, createEventDispatcher } from "svelte";
-    // import Utils from "../../util/Utils";
+// @ts-nocheck
+import { writable } from 'svelte/store';
+    import { onMount, onDestroy, createEventDispatcher } from "svelte";
+    import Utils from "../../util/Utils";
     // import Labels from "../../const/Labels";
-    // import urlConst from "../../const/Url";
-    // import Request from "../../util/Request";
+    import urlConst from "../../const/Url";
+    import Request from "../../util/Request";
     // import Button from "../../widget/button/Button.svelte";
     // import Boot from "../../util/Boot";
-    // import SessionUtil from "../../util/SessionUtil";
+    import SessionUtil from "../../util/SessionUtil";
     import proIcon from "../../assets/user-icon.png";
-
+    import axios from "axios";
+    let userInfo = {};
+    const activeTab = writable('users');
+    var hideUsersTab = writable(false);
     let title = 'YOU ARE FOLLOWING'
     let follow_list = [
         'Technology',
         'Health',
         'Education'
     ]
+    let usersList = []
     let title1 = "SEE MORE TOPICS"
 
+    $: {
+        userInfo = SessionUtil.get("info", true);
+    }
+
+    // $: {
+    //     fetchData('users')
+    // }
     onMount(() => {
+        userInfo = SessionUtil.get("info", true);
+        updateTabFromURL();
+
+        // Listen for hashchange events
+        window.addEventListener("hashchange", updateTabFromURL);
     });
+    onDestroy(() => {
+            window.removeEventListener("hashchange", updateTabFromURL);
+        });
+    function updateTabFromURL() {
+        if (window.location.href.includes("#account")) {
+            hideUsersTab = true
+            activeTab.set('followers');
+            fetchData('followers');
+        } else {
+            hideUsersTab = false
+            activeTab.set('users');
+            fetchData('users');
+        }
+    }
+    function fetchData(tab) {
+        usersList = []
+        let url;
+        if(tab === 'users') {
+            url = urlConst.users_list.replace("{loginUserId}", userInfo.userId)
+        }else if(tab==='followers') {
+            url = urlConst.followers_list.replace("{loginUserId}", userInfo.userId)
+        }else if(tab==='following') {
+            url = urlConst.following_list.replace("{loginUserId}", userInfo.userId)
+        }
+        getUsersList(url)
+    }
+
+    function getUsersList(url) {
+        axios.get(url, {
+            headers: Request.getHeaders(null),
+            params: null,
+            timeout: 120000
+        })
+            .then(function (response) {
+                let data = response.data;
+                console.log("response : ", data)
+                if(data.length > 0) {
+                    if($activeTab == 'following') {
+                        data.forEach(item => {
+                            item.following = true;
+                        });
+                    }
+                    usersList = data
+                }
+
+            })
+            .catch(function (err) {
+                Utils.log(err);
+            });
+    }
+
+    function viewUserDetails(user, index) {
+        Utils.redirectTo('account', {
+                uid: user.userId,
+            });
+        setTimeout(() => {
+            window.location.reload()
+        }, 100)
+    }
+
+    function unFollowUser(user, index) {
+        axios.get(urlConst.unfollow_user.replace("{followerId}", userInfo.userId).replace("{followingId}", user.userId), {
+            headers: Request.getHeaders(null),
+            params: null,
+            timeout: 120000
+        })
+            .then(function (response) {
+                let data = response.data;
+                console.log("after unfollow : ", data)
+                usersList[index].following = false;
+            })
+            .catch(function (err) {
+                Utils.log(err);
+            });
+
+    }
+
+    function followUser(user, index) {
+        axios.get(urlConst.follow_user.replace("{followerId}", userInfo.userId).replace("{followingId}", user.userId), {
+            headers: Request.getHeaders(null),
+            params: null,
+            timeout: 120000
+        })
+            .then(function (response) {
+                let data = response.data;
+                console.log("after follow : ", data)
+                usersList[index].following = true;
+            })
+            .catch(function (err) {
+                Utils.log(err);
+            });
+    }
+
 </script>
 
 <div class="feed-details col-12 mx-auto">
     <div class="">
+        <div class="tab-buttons">
+            {#if !hideUsersTab}
+                <button on:click={() => {$activeTab = 'users'; fetchData('users')}} class:active={$activeTab === 'users'}>Users</button>
+            {/if}
+            <button on:click={() => {$activeTab = 'followers'; fetchData('followers')}} class:active={$activeTab === 'followers'}>Followers</button>
+            <button on:click={() => {$activeTab = 'following'; fetchData('following')}} class:active={$activeTab === 'following'}>Following</button>
+        </div>
         <!-- Added comments for following topics section -->
         <!-- <div class="mb-10">
             <span class="follow-title">{title}</span>
@@ -38,27 +156,35 @@
             <span class="follow-title">{title1}</span>
             <span class="material-icons pointer"> add_box </span>
         </div> -->
-        <div class="standard-bg border-radius-10 mt-10 p1">
+        <div class="standard-bg border-radius-10 mt-10 p1 height-80">
             <div class="mb-10">
-                <span class="whom-to-follow">WHOM TO FOLLOW</span>
+                {#if usersList?.length > 0}
+                    {#if $activeTab != 'following'}
+                        <span class="whom-to-follow">WHOM TO FOLLOW</span>
+                    {/if}
+                {:else}
+                <span class="whom-to-follow">No Results Found</span>
+                {/if}
             </div>
-            <div class="d-flex flex-wrap">
-                <img width="60px" height="60px" src={proIcon} />
-                <div class="user-info">
-                    <span class="user-name">Vishnu Vardhan</span>
-                    <span class="user-role">Software Engineer</span>
-                    <button class="follow-btn">Follow</button>
+            {#each usersList as user,index (user.userId)}
+                {#if user.userId !== userInfo.userId}
+                <div class="d-flex flex-wrap" key={'follow'+user.userId}>
+                    <img width="60px" height="60px" src={proIcon} alt="Profile Icon" />
+                    <div class="user-info">
+                        <span class="user-name pointer" on:click={() => viewUserDetails(user, index)}>{user.firstName} {user.lastName}</span>
+                        <span class="user-role">{user.email}</span>
+                        {#if user.following}
+                        <button class="follow-btn" on:click={() => unFollowUser(user, index)}>Following</button>
+                        {:else}
+                        <button class="follow-btn" on:click={() => followUser(user, index)}>Follow</button>
+                        {/if}
+                    </div>
                 </div>
-            </div>
-            <div class="border-b-2 mt-20 mb-20"></div>
-            <div class="d-flex flex-wrap">
-                <img width="60px" height="60px" src={proIcon} />
-                <div class="user-info">
-                    <span class="user-name">Neeraj</span>
-                    <span class="user-role">Software Engineer</span>
-                    <button class="follow-btn">Follow</button>
-                </div>
-            </div>
+                {#if usersList.length-1 > index}
+                <div class="border-b-2 mt-20 mb-20"></div>
+                {/if}
+                {/if}
+            {/each}
         </div>
     </div>
 </div>
@@ -107,4 +233,30 @@
     width: 100px;
     padding: 4px;
 }
+.tab-buttons {
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    margin-bottom: 30px;
+  }
+
+  .tab-buttons button {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--primary-color-alternate-2); /* Adjust the color as needed */
+  }
+
+  .tab-buttons button.active {
+    border-bottom: 3px solid var(--primary-color-alternate-2); /* Adjust the color as needed */
+    font-weight: 700;
+  }
+  .height-80{
+    height: 70vh;
+    overflow-y: auto;
+  }
 </style>

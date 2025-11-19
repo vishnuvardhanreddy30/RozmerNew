@@ -7,15 +7,20 @@
     import likeIcon from "../../assets/rating/like.png";
     import dislikeIcon from "../../assets/rating/dislike.png";
     import awesomeIcon from "../../assets/rating/ok.png";
+    import { onMount } from "svelte";
 
     export let postId = "";
     export let postUserId = null;
     export let details;
 
     let value = 0;
+    let rating = 0;
+    let postRatingData = {}
+    let role = SessionUtil.get("info", true).role;
+    let userId = SessionUtil.get("info", true).userId;
     let valueDisplayed = "Cool";
     let valueIcon = likeIcon;
-
+    rating = details.rating
     /**
      * 0 --> Post
      * 1 --> Comment
@@ -26,18 +31,19 @@
 
     function submitRating(value) {
         if(value === '-5') {
-            Base.createRatingPopup({
-                callback: function(action, comment) {
-                    Utils.hideAlert();
+            // Base.createRatingPopup({
+            //     callback: function(action, comment) {
+            //         Utils.hideAlert();
                     
-                    // 1: takedown
-                    if(action) {
-                        submitRatingConfirm(value, 1, comment);
-                    } else {
-                        submitRatingConfirm(value);
-                    }
-                }
-            });
+            //         // 1: takedown
+            //         if(action) {
+            //             submitRatingConfirm(value, 1, comment);
+            //         } else {
+            //             submitRatingConfirm(value);
+            //         }
+            //     }
+            // });
+            submitRatingConfirm(value);
             return;
         }
 
@@ -56,12 +62,13 @@
             },
             (res) => {
                 updateValueDisplayed(res.rating);
+                value = res.rating
                 Utils.log(res);
             },
             (err) => {
                 Utils.log(err);
             },
-            submitRating
+            // submitRating
         );
     }
 
@@ -82,54 +89,100 @@
     }
 
     function onValueChange(e) {
+        if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
         value = e.target.value;
-    
+        updateValueDisplayed(value);
         submitRating(value);
     }
 
-    $: {
+    onMount(() => {
         Request.get(
             urlConst.get_rating
                 .replace("{postId}", postId)
                 .replace("{userId}", SessionUtil.get("info", true).userId),
             null,
-            (res) => {
-                let pRating = (res.pratingGetDto[0] && res.pratingGetDto[0].rating) || 0;
-
-                value = pRating;
-                updateValueDisplayed(pRating);
-                Utils.log(res);
+            async (res) => {
+                await res?.paverageRating?.forEach(item => {
+                        const matchingRating = res?.paverageRating.find(rating => rating[0] == postId);
+                        if (matchingRating) {
+                            value = matchingRating[1];
+                        }
+                        
+                    });
+                rating = value
+                await res?.pratingGetDto?.forEach(item => {
+                        if (item.user.userId == userId) {
+                            postRatingData = item;
+                            value = item.rating;
+                            updateValueDisplayed(item.rating)
+                        }
+                    });
             },
             (err) => {
                 Utils.log(err);
             },
             submitRating
         );
-    }
+    })
+ 
+
+  /**
+     * @param {number} value
+     */
+  function handleRatingClick(value) {
+    if(role === 'guest'){
+            Utils.showNotification('You should signup to access this screen (or) functionality')
+            return
+        }
+        postRatingData.rating = value;
+    submitRating(value);
+    console.log("after rading updated : ", rating)
+  }
 </script>
 
 <div class="rating-container wh-100-percent">
     <!-- Rating: {value} -->
     <div class="points-value-cont">
-        <label for="points"> 
-            <b>{valueDisplayed} 
+        <!-- <span class="points">  -->
+            <!-- <b>{valueDisplayed} 
                 <img class="icon-cont" alt="" width="13px" src={valueIcon} />
-            </b>
-        </label>
+            </b> -->
+            <!-- <b>Average Rating</b>
+        </span> -->
     </div>
-    <input
-        type="range"
-        min="-5"
-        max="5"
-        {value}
-        class="slider"
-        on:change={onValueChange}
-    />
-    <div class="slider-values">
-        <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
-        <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
-        <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
+    <!-- <div class="text-center mb-20">
+        {#each [1, 2, 3, 4, 5] as starvalue}
+        <span class="star">{rating >= starvalue ? '★' : (rating + 0.5 === starvalue ? '½' : '☆')}</span>
+        {/each}
+      </div> -->
+      {#if postUserId !== userId}
+    <div class="points-value-cont mt-20">
+        <span class="points"> <b>Your Rating</b></span>
     </div>
+        <div class="text-center">
+            <!-- {#if postRatingData?.user?.userId === userId} -->
+            <!-- <span>{#each [1, 2, 3, 4, 5] as value}
+                <span class="star1" on:click={() => handleRatingClick(value)}>{postRatingData?.rating >= value ? '★' : '☆'}</span>
+                {/each}</span> -->
+            <!-- {/if} -->
+            <input
+                type="range"
+                min="-5"
+                max="5"
+                {value}
+                class="slider"
+                on:change={onValueChange}
+            />
+            <div class="slider-values">
+                <span>Not Cool <img class="icon-cont" alt="" width="13px" src={dislikeIcon} /></span>
+                <span>Cool <img class="icon-cont" alt="" width="13px" src={likeIcon} /></span>
+                <span>Awesome <img class="icon-cont" alt="" width="13px" src={awesomeIcon} /></span>
+            </div>
+    </div>
+    {/if}
 </div>
 
 <style>
@@ -142,7 +195,19 @@
     }
 
     .points-value-cont {
-        margin-bottom: 20px;
+        margin-top: 10px;
         text-align: center;
+    }
+    .points{
+        font-size: 20px;
+    }
+    .star {
+        color: gold;
+        font-size: 40px;
+    }
+    .star1{
+        color: gold;
+        cursor: pointer;
+        font-size: 40px;
     }
 </style>

@@ -5,12 +5,15 @@ const base = 'http://localhost:9001/' // Enable it for Development
 const urlConst = {
     register: base + 'add-user',
     verify_user: base + 'add-user/verify',
+    upload_profile_pic: base + 'add-user/profile/image/upload/{loginUserId}',
+    get_profile_pic: base + 'add-user/profile/image/',
+    get_user_details: base + 'add-user/getUserDetails/{userId}',
 
     // login
     login: base + 'add-user/login-user',
 
     //logout
-    logout: base + '/add-user/users/logout',
+    logout: base + 'add-user/users/logout',
 
     forgot_password: base + 'forgot_password',
     reset_pass: base + 'reset_password',
@@ -19,7 +22,7 @@ const urlConst = {
     create_post: base + 'api/user/{userId}/posts',
 
     // Thumbnail update
-    upload_post_thumbnail: base + 'api/post/image/upload/{postId}',
+    upload_post_thumbnail: base + 'api/post/image/upload/{postId}?userId={userId}',
 
     // get thumbnail image - 'api/post/image/{imageName}'
     get_thumbnail_image: base + 'api/post/image/',
@@ -33,11 +36,14 @@ const urlConst = {
     // Get User POST
     get_user_posts: base + 'api/user/{userId}/posts',
 
+    // Get User Comments
+    get_user_comments: base + 'api/comments/my/{userId}',
+
     // Update a post
     update_post: base + 'api/posts/{postId}',
 
     // get post by post ID
-    get_post_by_id: base + 'api/posts/{postId}',
+    get_post_by_id: base + 'api/posts/{postId}?userId={userId}',
 
     // delete a post by ID
     delete_post_by_id: base + 'api/posts/{postId}',
@@ -88,7 +94,28 @@ const urlConst = {
     post_answer: base + 'answer-question/question/{questionId}/answer/user/{userId}',
 
     //update user profile
-    post_user_profile: base + 'add-user/update-user/{userId}'
+    post_user_profile: base + 'add-user/update-user/{userId}',
+
+    // get userlist with follow flag
+    users_list: base + 'add-user/getAllUsersWithFollowingFlag/{loginUserId}',
+
+    // follow user
+    follow_user: base + '/add-user/followUser/{followerId}/{followingId}',
+
+    // unfollow user
+    unfollow_user: base + '/add-user/unfollowUser/{followerId}/{followingId}',
+
+    // followers list
+    followers_list: base + 'add-user/followers/{loginUserId}',
+
+    //following users list
+    following_list: base + 'add-user/following/{loginUserId}',
+
+    // Payments API's
+    recharge_coins: base + 'api/wallet/recharge',
+    balance: base + 'api/wallet/balance?userId={loginUserId}',
+    unlock_post: base + 'api/posts/{postId}/unlock?userId={loginUserId}',
+    transaction_history: base + 'api/wallet/transactions'
 };
 
 export default urlConst;

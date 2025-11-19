@@ -29,9 +29,15 @@
 
     let menuItems = [
         {
-            text: Labels.menu.home,
+            text: Labels.menu.articles,
             icon: "menu_book",
-            action: "home",
+            action: "articles",
+            selected: true,
+        },
+        {
+            text: Labels.menu.poems,
+            icon: "menu_book",
+            action: "poems",
             selected: true,
         },
         /* {
@@ -95,9 +101,10 @@
         if (!Utils.isEmpty(item)) {
             item.classList.add("menu-selected");
         }
-
+        if(userInfo?.userId){
         let url = urlConst.get_user_posts.replace("{userId}", userInfo.userId);
         Request.get(url, null, onSuccess, onFailure, onSuccess);
+        }
     }
     $: {
         if (selected) {

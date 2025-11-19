@@ -153,7 +153,7 @@
             <div slot="footer">
                 <InfiniteLoading
                     on:infinite={infiniteHandler}
-                    noResultsText={Labels.list.no_results}
+                    noResultsText=""
                     identifier={infiniteId}
                 />
             </div>

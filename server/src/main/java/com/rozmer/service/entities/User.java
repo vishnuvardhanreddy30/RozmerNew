@@ -49,6 +49,8 @@ public class User {
 	@Column(name = "last_name", nullable = false, length = 20)
 	private String lastName;
 
+	private String imageName;
+
 	@Column(name = "verification_code", length = 64)
 	private String verificationCode;
 
@@ -77,5 +79,13 @@ public class User {
 	public User orElseThrow(Object object) {
 		return null;
 	}
+
+	@OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+	private List<UserFollower> followers = new ArrayList<>();
+
+	@OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+	private List<UserFollower> followings = new ArrayList<>();
+
+	private boolean following;
 
 }

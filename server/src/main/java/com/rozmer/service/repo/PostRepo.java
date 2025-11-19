@@ -28,7 +28,5 @@ public interface PostRepo extends JpaRepository<Post, Integer> {
 
 	/* @Query(value = "select p.post_id, p.content,r.rating from posts p join ratings r where p.post_id=r.post_post_id",nativeQuery = true)
 	List<Post> findByPostId(Integer postId); */
-
-	
-
+	Page<Post> findByCategory(String category, Pageable p);
 }

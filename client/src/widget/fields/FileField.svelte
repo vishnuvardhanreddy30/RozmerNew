@@ -41,7 +41,7 @@
 </script>
 
 <div class="field-container text-field flex-cont flex-dir-{labelAlign} {cls}">
-    <label class="field-label custom-file-upload" for={cmpId} width={labelWidth}
+    <label class="field-label custom-file-upload" for='thumbnail' width={labelWidth}
         ><span class="material-icons file-upload">file_upload</span> {label}
         {#if required}
             <span class="req-lbl">*</span>
@@ -49,7 +49,7 @@
         {labelSeperator}
 
     <input
-        id={cmpId}
+        id='thumbnail'
         {name}
         {required}
         minlength={minLength}

@@ -37,6 +37,9 @@ public class Post {
 	@Column(name = "post_title", length = 100, nullable = false)
 	private String title;
 
+	@Column(name = "post_category", length = 100, nullable = false)
+	private String category;
+
 	@Lob
 	private String content;
 
@@ -60,6 +63,9 @@ public class Post {
 
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private Set<Prating> prating = new HashSet<>();
+
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private Set<ArticleAccess> articleAccesses = new HashSet<>();
 
 
 }
